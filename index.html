@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workgraph - Task Coordination for Humans and AI Agents</title>
+    <meta name="description" content="A task graph for getting things done. Works for humans, works for AI agents, works for both at once.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <header class="hero">
+        <nav class="nav">
+            <div class="logo">workgraph</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#install">Install</a>
+                <a href="#workflow">Workflow</a>
+                <a href="https://github.com/graphwork/workgraph" class="btn-nav">GitHub</a>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <h1>Task graphs for humans and AI agents</h1>
+            <p class="tagline">Coordinate work across humans and AI. Dependencies respected. No double-work. Just flow.</p>
+
+            <div class="install-box">
+                <code>cargo install --git https://github.com/graphwork/workgraph</code>
+                <button class="copy-btn" onclick="copyInstall()">Copy</button>
+            </div>
+
+            <div class="hero-demo">
+                <pre><code><span class="cmd">$</span> wg add "Design the API"
+<span class="cmd">$</span> wg add "Build backend" --blocked-by design-the-api
+<span class="cmd">$</span> wg add "Write tests" --blocked-by build-backend
+
+<span class="cmd">$</span> wg ready
+<span class="output">Ready tasks (1):
+  design-the-api - Design the API</span>
+
+<span class="cmd">$</span> wg claim design-the-api --actor erik
+<span class="output">Claimed: design-the-api</span>
+
+<span class="cmd">$</span> wg done design-the-api
+<span class="output">Done: design-the-api
+Newly unblocked:
+  build-backend</span></code></pre>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2>Why workgraph?</h2>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="5" r="3"/>
+                        <circle cx="5" cy="19" r="3"/>
+                        <circle cx="19" cy="19" r="3"/>
+                        <line x1="12" y1="8" x2="5" y2="16"/>
+                        <line x1="12" y1="8" x2="19" y2="16"/>
+                    </svg>
+                </div>
+                <h3>Dependency Graphs</h3>
+                <p>Tasks block other tasks. When you complete work, downstream tasks automatically unblock. No manual tracking needed.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3>Multi-Agent Coordination</h3>
+                <p>Humans and AI agents work together. Atomic claims prevent double-work. Heartbeats detect dead agents.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <h3>Project Analysis</h3>
+                <p>Find bottlenecks, trace critical paths, forecast completion. Understand your project's health at a glance.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <h3>AI-Native Design</h3>
+                <p>Context flow, trajectories, and skills. AI agents know what to work on, what context is available, and when to stop.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <h3>Plain Text Storage</h3>
+                <p>Everything in <code>.workgraph/graph.jsonl</code>. Human-readable, git-friendly, easy to hack on.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                </div>
+                <h3>Simple Protocol</h3>
+                <p><code>wg ready</code> &rarr; <code>wg claim</code> &rarr; <code>wg done</code>. That's it. Works in any shell, any workflow.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Animated Workflow Diagram -->
+    <section class="workflow-diagram">
+        <h2>How It Works</h2>
+        <div class="diagram-container">
+            <svg class="workflow-svg" viewBox="0 0 700 200" preserveAspectRatio="xMidYMid meet">
+                <!-- Task Nodes -->
+                <g class="task-node task-1">
+                    <rect x="50" y="70" width="120" height="60" rx="8"/>
+                    <text x="110" y="95" class="task-title">Design API</text>
+                    <text x="110" y="115" class="task-status status-done">done</text>
+                </g>
+
+                <g class="task-node task-2">
+                    <rect x="230" y="70" width="120" height="60" rx="8"/>
+                    <text x="290" y="95" class="task-title">Build Backend</text>
+                    <text x="290" y="115" class="task-status status-progress">in-progress</text>
+                </g>
+
+                <g class="task-node task-3">
+                    <rect x="410" y="30" width="120" height="60" rx="8"/>
+                    <text x="470" y="55" class="task-title">Write Tests</text>
+                    <text x="470" y="75" class="task-status status-blocked">blocked</text>
+                </g>
+
+                <g class="task-node task-4">
+                    <rect x="410" y="110" width="120" height="60" rx="8"/>
+                    <text x="470" y="135" class="task-title">Update Docs</text>
+                    <text x="470" y="155" class="task-status status-blocked">blocked</text>
+                </g>
+
+                <g class="task-node task-5">
+                    <rect x="590" y="70" width="100" height="60" rx="8"/>
+                    <text x="640" y="95" class="task-title">Deploy</text>
+                    <text x="640" y="115" class="task-status status-blocked">blocked</text>
+                </g>
+
+                <!-- Dependency Arrows -->
+                <g class="arrows">
+                    <line x1="170" y1="100" x2="225" y2="100" class="arrow done"/>
+                    <polygon points="225,100 215,95 215,105" class="arrow-head done"/>
+
+                    <line x1="350" y1="90" x2="405" y2="60" class="arrow"/>
+                    <polygon points="405,60 393,58 397,68" class="arrow-head"/>
+
+                    <line x1="350" y1="110" x2="405" y2="140" class="arrow"/>
+                    <polygon points="405,140 397,132 393,142" class="arrow-head"/>
+
+                    <line x1="530" y1="60" x2="585" y2="85" class="arrow"/>
+                    <polygon points="585,85 573,80 575,91" class="arrow-head"/>
+
+                    <line x1="530" y1="140" x2="585" y2="115" class="arrow"/>
+                    <polygon points="585,115 575,109 573,120" class="arrow-head"/>
+                </g>
+
+                <!-- Actor Labels -->
+                <g class="actors">
+                    <text x="110" y="150" class="actor-label">erik</text>
+                    <text x="290" y="150" class="actor-label">claude</text>
+                </g>
+
+                <!-- Pulse animation on in-progress -->
+                <circle class="pulse" cx="290" cy="100" r="70">
+                    <animate attributeName="r" values="65;75;65" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.15;0.05;0.15" dur="2s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+        <p class="diagram-caption">Tasks flow through the graph. Complete one, and blocked tasks become ready.</p>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="install" class="install">
+        <h2>Get Started</h2>
+
+        <div class="install-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Install</h3>
+                    <pre><code>cargo install --git https://github.com/graphwork/workgraph</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Initialize</h3>
+                    <pre><code><span class="cmd">$</span> cd your-project
+<span class="cmd">$</span> wg init
+<span class="output">Created .workgraph/</span></code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Add tasks</h3>
+                    <pre><code><span class="cmd">$</span> wg add "Set up CI pipeline"
+<span class="cmd">$</span> wg add "Deploy to staging" --blocked-by set-up-ci-pipeline
+<span class="cmd">$</span> wg add "Run integration tests" --blocked-by deploy-to-staging</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Work</h3>
+                    <pre><code><span class="cmd">$</span> wg ready                    <span class="comment"># what can I do?</span>
+<span class="cmd">$</span> wg claim set-up-ci-pipeline --actor erik
+<span class="comment"># ... do the work ...</span>
+<span class="cmd">$</span> wg done set-up-ci-pipeline  <span class="comment"># unblocks downstream</span></code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Section -->
+    <section id="workflow" class="workflow">
+        <h2>Human + AI Coordination</h2>
+        <p class="section-intro">Workgraph shines when humans and AI agents work together on the same project.</p>
+
+        <div class="workflow-examples">
+            <div class="workflow-card">
+                <h3>Human Plans, Agent Executes</h3>
+                <pre><code><span class="comment"># You define the work</span>
+<span class="cmd">$</span> wg add "Refactor auth module" --skill rust
+<span class="cmd">$</span> wg add "Update tests" --blocked-by refactor-auth-module
+<span class="cmd">$</span> wg add "Update docs" --blocked-by refactor-auth-module
+
+<span class="comment"># Agent runs through ready tasks</span>
+<span class="cmd">$</span> wg agent --actor claude --max-tasks 10</code></pre>
+            </div>
+
+            <div class="workflow-card">
+                <h3>Parallel Agents</h3>
+                <pre><code><span class="comment"># Multiple agents, no conflicts</span>
+<span class="cmd">$</span> wg coordinate --max-parallel 3
+<span class="output">Parallel execution slots:
+  1. implement-api (rust)
+  2. write-docs (documentation)
+  3. setup-ci (devops)</span>
+
+<span class="comment"># Each agent claims different work</span>
+<span class="cmd">$</span> wg agent --actor agent-1 &
+<span class="cmd">$</span> wg agent --actor agent-2 &
+<span class="cmd">$</span> wg agent --actor agent-3 &</code></pre>
+            </div>
+
+            <div class="workflow-card">
+                <h3>Mixed Workflow</h3>
+                <pre><code><span class="comment"># Human takes design decisions</span>
+<span class="cmd">$</span> wg claim design-api --actor erik
+<span class="comment"># ... human does design work ...</span>
+<span class="cmd">$</span> wg done design-api
+
+<span class="comment"># Agent implements once design is done</span>
+<span class="cmd">$</span> wg agent --actor claude
+<span class="output">-> Working on: implement-api
+   Executing: cargo build
+   Completed: implement-api</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analysis Section -->
+    <section id="analysis" class="analysis">
+        <h2>Project Intelligence</h2>
+
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <h3>wg bottlenecks</h3>
+                <p>Find tasks blocking the most downstream work</p>
+                <pre><code><span class="output">Bottlenecks:
+  1. design-api - blocks 12 tasks
+  2. setup-infra - blocks 8 tasks</span></code></pre>
+            </div>
+
+            <div class="analysis-card">
+                <h3>wg critical-path</h3>
+                <p>Longest dependency chain (minimum project duration)</p>
+                <pre><code><span class="output">Critical path (28h):
+  design-api (4h)
+  -> implement-api (8h)
+  -> run-tests (4h)
+  -> deploy (12h)</span></code></pre>
+            </div>
+
+            <div class="analysis-card">
+                <h3>wg forecast</h3>
+                <p>Project completion estimation</p>
+                <pre><code><span class="output">Remaining: 23 tasks (68h)
+Velocity: 10.5 tasks/week
+Est. completion: ~2.2 weeks</span></code></pre>
+            </div>
+
+            <div class="analysis-card">
+                <h3>wg why-blocked</h3>
+                <p>Trace the full blocker chain</p>
+                <pre><code><span class="output">deploy-prod is blocked by:
+  -> run-tests (open)
+    -> implement-api (in-progress)
+      -> design-api (done)</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Integration Section -->
+    <section id="ai-integration" class="ai-integration">
+        <h2>Works with AI Coding Assistants</h2>
+
+        <div class="integration-content">
+            <div class="integration-text">
+                <p>Workgraph includes a skill that teaches AI assistants the full protocol. Drop it into your project and any AI can participate.</p>
+
+                <h3>Claude Code</h3>
+                <pre><code><span class="cmd">$</span> mkdir -p .claude/skills
+<span class="cmd">$</span> cp workgraph/.claude/skills/wg.md .claude/skills/</code></pre>
+
+                <h3>Other Agents (OpenCode, Codex, etc.)</h3>
+                <pre><code><span class="cmd">$</span> cat workgraph/.claude/skills/wg.md >> AGENTS.md</code></pre>
+
+                <p class="note">The skill covers: claim/work/done protocol, progress logging, planning with dependencies, analysis commands, and multi-agent coordination rules.</p>
+            </div>
+
+            <div class="integration-demo">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-title">claude-code</span>
+                    </div>
+                    <div class="terminal-content">
+                        <p class="ai-prompt">User: implement the auth module</p>
+                        <p class="ai-response">I'll check workgraph for available tasks.</p>
+                        <pre><code><span class="cmd">$</span> wg ready
+<span class="output">Ready tasks:
+  implement-auth - Implement auth module</span>
+
+<span class="cmd">$</span> wg claim implement-auth --actor claude
+<span class="output">Claimed: implement-auth</span></code></pre>
+                        <p class="ai-response">Working on auth implementation...</p>
+                        <p class="ai-response">[creates src/auth.rs]</p>
+                        <pre><code><span class="cmd">$</span> wg done implement-auth
+<span class="output">Done: implement-auth
+Newly unblocked:
+  write-auth-tests</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">workgraph</div>
+            <p>A task graph for getting things done.</p>
+            <div class="footer-links">
+                <a href="https://github.com/graphwork/workgraph">GitHub</a>
+                <a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">Docs</a>
+                <a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">MIT License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyInstall() {
+            const code = 'cargo install --git https://github.com/graphwork/workgraph';
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+        }
+    </script>
+</body>
+</html>

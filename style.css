@@ -1,0 +1,745 @@
+/* Reset and Base Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --text-primary: #f0f6fc;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --accent: #58a6ff;
+    --accent-hover: #79c0ff;
+    --success: #3fb950;
+    --border: #30363d;
+    --code-bg: #0d1117;
+    --card-bg: #161b22;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+code {
+    font-family: 'SF Mono', 'Fira Code', 'Monaco', 'Menlo', monospace;
+    font-size: 0.9em;
+    background: var(--bg-tertiary);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+}
+
+pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+/* Navigation */
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.nav-links a:hover {
+    color: var(--text-primary);
+}
+
+.btn-nav {
+    background: var(--bg-tertiary);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.btn-nav:hover {
+    background: var(--bg-secondary);
+    border-color: var(--text-muted);
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    padding-bottom: 4rem;
+}
+
+.hero-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.install-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 3rem;
+}
+
+.install-box code {
+    background: none;
+    color: var(--accent);
+    font-size: 0.9rem;
+}
+
+.copy-btn {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.copy-btn:hover {
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-color: var(--accent);
+}
+
+.hero-demo {
+    text-align: left;
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.hero-demo pre {
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+/* Code highlighting */
+.cmd {
+    color: var(--success);
+}
+
+.output {
+    color: var(--text-secondary);
+}
+
+.comment {
+    color: var(--text-muted);
+}
+
+/* Features Section */
+.features {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.feature-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--text-muted);
+}
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+}
+
+.feature-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Workflow Diagram Section */
+.workflow-diagram {
+    padding: 6rem 2rem;
+    background: var(--bg-secondary);
+}
+
+.workflow-diagram h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.diagram-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.workflow-svg {
+    width: 100%;
+    height: auto;
+}
+
+.task-node rect {
+    fill: var(--bg-tertiary);
+    stroke: var(--border);
+    stroke-width: 2;
+    transition: all 0.3s;
+}
+
+.task-node.task-1 rect {
+    fill: rgba(63, 185, 80, 0.15);
+    stroke: var(--success);
+}
+
+.task-node.task-2 rect {
+    fill: rgba(88, 166, 255, 0.15);
+    stroke: var(--accent);
+}
+
+.task-title {
+    fill: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+.task-status {
+    font-size: 10px;
+    text-anchor: middle;
+    font-family: 'SF Mono', monospace;
+}
+
+.status-done {
+    fill: var(--success);
+}
+
+.status-progress {
+    fill: var(--accent);
+}
+
+.status-blocked {
+    fill: var(--text-muted);
+}
+
+.arrow {
+    stroke: var(--border);
+    stroke-width: 2;
+}
+
+.arrow.done {
+    stroke: var(--success);
+}
+
+.arrow-head {
+    fill: var(--border);
+}
+
+.arrow-head.done {
+    fill: var(--success);
+}
+
+.actor-label {
+    fill: var(--text-muted);
+    font-size: 11px;
+    text-anchor: middle;
+    font-style: italic;
+}
+
+.pulse {
+    fill: var(--accent);
+    opacity: 0.1;
+}
+
+.diagram-caption {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .diagram-container {
+        padding: 1rem;
+        overflow-x: auto;
+    }
+
+    .workflow-svg {
+        min-width: 600px;
+    }
+}
+
+/* Installation Section */
+.install {
+    padding: 6rem 2rem;
+    background: var(--bg-secondary);
+}
+
+.install h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.install-steps {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.step {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    background: var(--accent);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.step-content pre {
+    margin: 0;
+}
+
+/* Workflow Section */
+.workflow {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workflow h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-intro {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 4rem;
+    font-size: 1.1rem;
+}
+
+.workflow-examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.workflow-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.workflow-card h3 {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+}
+
+.workflow-card pre {
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+/* Analysis Section */
+.analysis {
+    padding: 6rem 2rem;
+    background: var(--bg-secondary);
+}
+
+.analysis h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.analysis-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.analysis-card h3 {
+    font-family: 'SF Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.analysis-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.analysis-card pre {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    border: none;
+    background: var(--bg-tertiary);
+}
+
+/* AI Integration Section */
+.ai-integration {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ai-integration h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.integration-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.integration-text h3 {
+    font-size: 1.125rem;
+    margin: 2rem 0 1rem;
+    color: var(--text-primary);
+}
+
+.integration-text h3:first-of-type {
+    margin-top: 1.5rem;
+}
+
+.integration-text p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.integration-text pre {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.note {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 1.5rem;
+}
+
+.terminal {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.terminal-header {
+    background: var(--bg-tertiary);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.terminal-title {
+    margin-left: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.terminal-content {
+    padding: 1.5rem;
+}
+
+.ai-prompt {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.ai-response {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+}
+
+.terminal-content pre {
+    font-size: 0.8rem;
+    margin: 1rem 0;
+    background: var(--code-bg);
+}
+
+/* Footer */
+.footer {
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.footer-content > p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.footer-links a {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-links {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero-content h1 {
+        font-size: 2.25rem;
+    }
+
+    .tagline {
+        font-size: 1.1rem;
+    }
+
+    .install-box {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+    }
+
+    .install-box code {
+        font-size: 0.75rem;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .step {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .workflow-examples {
+        grid-template-columns: 1fr;
+    }
+
+    .integration-content {
+        grid-template-columns: 1fr;
+    }
+
+    .integration-demo {
+        order: -1;
+    }
+
+    .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content {
+        padding: 2rem 1rem;
+    }
+
+    .hero-content h1 {
+        font-size: 1.75rem;
+    }
+
+    .features h2,
+    .install h2,
+    .workflow h2,
+    .analysis h2,
+    .ai-integration h2 {
+        font-size: 1.75rem;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+/* Animation for hero demo */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-demo {
+    animation: fadeIn 0.6s ease-out 0.3s backwards;
+}
