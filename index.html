@@ -37,13 +37,13 @@
 └→ evaluate-redesign-website-vibe  <span class="open">(open)</span>
 </pre>
 
-<p>real output from <code>wg viz</code>. that's what the tool does.</p>
+<p>real output from <code>wg viz</code>.</p>
 
 <h2>what is it</h2>
 
-<p>A directed acyclic graph of tasks. Dependencies are edges. Completing a task
-unblocks downstream work. A background service auto-dispatches AI agents to
-ready tasks.</p>
+<p>A task graph with dependencies. Completing a task unblocks downstream work.
+Loop edges create cycles — iteration, retries, continuous processes. A
+background service auto-dispatches AI agents to ready tasks.</p>
 
 <p>Plain text storage (<code>.workgraph/graph.jsonl</code>). Git-friendly. No
 server. No account. Just a binary and a directory.</p>
@@ -76,10 +76,9 @@ Loop summary: 2 active, 0 exhausted
 No blocked_by cycles detected.
 </pre>
 
-<p>Loop edges are separate from blocked_by. They don't affect scheduling. The
-DAG stays clean. Loops are evaluated at completion time only. Every loop
-requires max_iterations. No unbounded loops. Optional guards and delays
-control when they fire.</p>
+<p>Loop edges are separate from blocked_by. They don't affect scheduling.
+Dependency resolution stays clean. Loops fire at completion time only.
+Optional max_iterations, guards, and delays control when they fire.</p>
 
 <pre>
 <span class="prompt">$</span> wg add "Run tests" --id ci-run-tests
