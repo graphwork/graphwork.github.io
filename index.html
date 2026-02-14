@@ -185,6 +185,91 @@ roles), gap analysis (find missing skills), retirement (remove
 underperformers), motivation tuning (adjust trade-off boundaries), and all
 (let the evolver pick).</p>
 
+<h2>the coordination layer</h2>
+
+<p>The service is not an agent. It's infrastructure. A background process that
+polls the graph, finds ready tasks, spawns agents, detects dead ones, and
+handles loop resets. No LLM in the scheduling loop — just deterministic graph
+traversal.</p>
+
+<pre>
+<span class="prompt">$</span> wg service start --max-agents 4
+Service started (pid 4821)
+Coordinator active — 4 max agents
+
+<span class="prompt">$</span> wg service status
+Service: running (pid 4821)
+Uptime: 3h 42m
+Tasks dispatched: 17
+Agents spawned: 23
+Dead agents recovered: 2
+Loop resets: 4
+</pre>
+
+<p>It runs indefinitely. Add tasks while it's running and they get picked up
+on the next poll. An agent dies mid-task — the coordinator detects the missing
+heartbeat, marks the agent dead, and the task goes back to open. No manual
+intervention.</p>
+
+<pre>
+<span class="prompt">$</span> wg agents
+ID          TASK                EXECUTOR  PID    UPTIME STATUS
+agent-1     fix-auth-bug        claude    12345  14m    working
+agent-2     update-docs         claude    12347  3m     working
+agent-3     add-rate-limiting   claude    12350  45s    working
+
+3 agent(s): 3 alive, 0 dead
+</pre>
+
+<p>The coordinator is the part you don't think about. It just works. You define
+the graph and it executes it. That's the point — reliable scheduling so you can
+focus on the shape of the work, not the mechanics of running it.</p>
+
+<h2>human-agent interface</h2>
+
+<p>The human designs. Agents execute. The CLI is the design surface.</p>
+
+<p>You describe what needs to happen — tasks, dependencies, loops, agency
+configuration. The system fills in the details. You don't write the code. You
+don't run the tasks. You shape the graph and the coordinator handles the
+rest.</p>
+
+<pre>
+<span class="prompt">$</span> <span class="dim"># define the shape of work</span>
+<span class="prompt">$</span> wg add "Audit authentication module" --id audit-auth
+<span class="prompt">$</span> wg add "Fix findings" --id fix-findings --blocked-by audit-auth
+<span class="prompt">$</span> wg add "Verify fixes" --id verify-fixes --blocked-by fix-findings \
+    --loops-to audit-auth --loop-max 3
+
+<span class="prompt">$</span> <span class="dim"># configure the agency</span>
+<span class="prompt">$</span> wg role add security-reviewer --skills "security auditing, code review" \
+    --desired-outcome "identified vulnerabilities with severity ratings"
+<span class="prompt">$</span> wg agent create "Security Bot" --role security-reviewer
+
+<span class="prompt">$</span> <span class="dim"># start and walk away</span>
+<span class="prompt">$</span> wg service start
+</pre>
+
+<p>The whole workflow — audit, fix, verify, loop back — runs without you. Come
+back later and check the results.</p>
+
+<pre>
+<span class="prompt">$</span> wg list --status done
+ID              TITLE                    STATUS  ITER
+audit-auth      Audit authentication     done    3/3
+fix-findings    Fix findings             done    3/3
+verify-fixes    Verify fixes             done    3/3
+
+<span class="prompt">$</span> wg show audit-auth --logs
+<span class="dim">[iter 1]</span> Found 4 issues: SQL injection in login, missing rate limit...
+<span class="dim">[iter 2]</span> Re-audit after fixes. 1 remaining: rate limit bypass...
+<span class="dim">[iter 3]</span> All issues resolved. Clean audit.
+</pre>
+
+<p>You define tasks. You set dependencies. You configure loops and agents. Then
+the system runs it. That's the interface — you describe the shape, not the
+steps.</p>
+
 <h2>commands</h2>
 
 <pre>
