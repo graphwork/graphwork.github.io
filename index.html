@@ -3,333 +3,621 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>workgraph</title>
-    <meta name="description" content="Task graph coordination for humans and AI agents.">
+    <title>Workgraph - Task Coordination for Humans and AI Agents</title>
+    <meta name="description" content="Define tasks. Declare dependencies. Let the coordinator handle the rest. Works for humans, AI agents, or both.">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Nav dropdown */
+        .nav-dropdown {
+            position: relative;
+        }
+        .nav-dropdown-trigger {
+            cursor: pointer;
+        }
+        .nav-dropdown-trigger::after {
+            content: ' \25BE';
+            font-size: 0.7em;
+        }
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+            min-width: 200px;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+        .nav-dropdown:hover .nav-dropdown-menu {
+            display: block;
+        }
+        .nav-dropdown-menu a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            transition: background 0.15s, color 0.15s;
+        }
+        .nav-dropdown-menu a:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Hamburger */
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--text-secondary);
+            border-radius: 1px;
+        }
+
+        /* Waiting status (same as blocked) */
+        .status-waiting {
+            fill: var(--text-muted);
+        }
+
+        /* Agency section */
+        .agency {
+            padding: 6rem 2rem;
+            background: var(--bg-secondary);
+        }
+        .agency-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .agency h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+        .agency-description {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+        .agency-description strong {
+            color: var(--text-primary);
+        }
+        .agency-content pre {
+            font-size: 0.85rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        .agency-footnote {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* Documentation section */
+        .docs-section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .docs-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 4rem;
+        }
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .docs-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: border-color 0.2s;
+        }
+        .docs-card:hover {
+            border-color: var(--text-muted);
+        }
+        .docs-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .docs-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .docs-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .docs-link {
+            font-size: 0.9rem;
+            color: var(--accent);
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .docs-link:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
+        }
+
+        /* Mobile overrides for new sections */
+        @media (max-width: 768px) {
+            .nav-hamburger {
+                display: flex;
+            }
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+            .nav-links.nav-open {
+                display: flex;
+            }
+            .nav-dropdown-menu {
+                position: static;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                background: transparent;
+                padding: 0.25rem 0 0;
+                min-width: auto;
+            }
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .agency h2,
+            .docs-section h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<h1>workgraph</h1>
-<p>task graph coordination for humans and AI agents</p>
-
-<pre>
-<span class="prompt">$</span> wg viz
-
-<span class="g">design-agent-service</span>  <span class="done">(done)</span>
-├→ implement-agent-registry  <span class="done">(done)</span>
-│ ├→ add-agent-heartbeat  <span class="done">(done)</span>
-│ │ └→ implement-dead-agent  <span class="done">(done)</span>
-│ ├→ implement-wg-agents  <span class="done">(done)</span>
-│ ├→ implement-wg-kill  <span class="done">(done)</span>
-│ └→ <span class="multi">implement-wg-service</span>  <span class="done">(done)</span>  <span class="dep">(← implement-agent-registry, implement-executor-plugin)</span>
-│   └→ <span class="multi">integration-coordinator-spawns</span>  <span class="done">(done)</span>  <span class="dep">(← implement-claude-executor, implement-wg-service, implement-wg-spawn)</span>
-├→ implement-executor-plugin  <span class="done">(done)</span>
-│ ├→ implement-claude-executor  <span class="done">(done)</span>
-│ │ └→ <span class="multi">integration-coordinator-spawns</span>  <span class="done">(done)</span> ...
-│ ├→ implement-shell-executor  <span class="done">(done)</span>
-│ └→ <span class="multi">implement-wg-service</span>  <span class="done">(done)</span> ...
-└→ implement-wg-spawn  <span class="done">(done)</span>
-  ├→ implement-output-capture  <span class="done">(done)</span>
-  │ └→ link-agent-outputs  <span class="done">(done)</span>
-  └→ <span class="multi">integration-coordinator-spawns</span>  <span class="done">(done)</span> ...
-
-<span class="g">redesign-website-vibe</span>  <span class="inprog">(in-progress)</span>
-└→ evaluate-redesign-website-vibe  <span class="open">(open)</span>
-</pre>
-
-<p>real output from <code>wg viz</code>.</p>
-
-<h2>what is it</h2>
-
-<p>A task graph with dependencies. Completing a task unblocks downstream work.
-Loop edges create cycles — iteration, retries, continuous processes. A
-background service auto-dispatches AI agents to ready tasks.</p>
-
-<p>Plain text storage (<code>.workgraph/graph.jsonl</code>). Git-friendly. No
-server. No account. Just a binary and a directory.</p>
-
-<h2>loop edges</h2>
-
-<p>Tasks can loop. Not everything is a straight line.</p>
-
-<pre>
-ci-run-tests → ci-fix-failures → ci-push-check ↺ ci-run-tests
-</pre>
-
-<p>When ci-push-check completes, it re-opens ci-run-tests. The whole chain
-resets. Iteration counter increments. Agents read previous logs and pick up
-where they left off.</p>
-
-<pre>
-<span class="prompt">$</span> wg loops
-
-Loop edges: 2
-
-  ci-push-check --[loops_to]--> ci-run-tests  <span class="g">[ACTIVE]</span>
-    iterations: 1/5  guard: none (always)
-
-  test-loop-dummy --[loops_to]--> nonexistent  <span class="g">[ACTIVE]</span>
-    iterations: 0/2  guard: none (always)
-
-Loop summary: 2 active, 0 exhausted
-
-No blocked_by cycles detected.
-</pre>
-
-<p>Loop edges are separate from blocked_by. They don't affect scheduling.
-Dependency resolution stays clean. Loops fire at completion time only.
-Optional max_iterations, guards, and delays control when they fire.</p>
-
-<pre>
-<span class="prompt">$</span> wg add "Run tests" --id ci-run-tests
-<span class="prompt">$</span> wg add "Fix failures" --id ci-fix-failures --blocked-by ci-run-tests
-<span class="prompt">$</span> wg add "Push check" --id ci-push-check --blocked-by ci-fix-failures \
-    --loops-to ci-run-tests --loop-max 5
-</pre>
-
-<h2>recursive prompting</h2>
-
-<p>Tasks create tasks create tasks.</p>
-
-<p>Create a task that surveys the codebase, then spawns subtasks for each gap
-it finds. The coordinator dispatches agents to each subtask. When those
-complete, evaluation tasks spawn automatically. The whole thing recurses.</p>
-
-<pre>
-<span class="prompt">$</span> wg add "Survey codebase for gaps" --spawn-subtasks
-<span class="prompt">$</span> wg service start --max-agents 4
-
-<span class="dim"># the survey agent runs, finds 3 gaps, creates subtasks:</span>
-<span class="prompt">$</span> wg viz
-
-<span class="g">survey-codebase-for-gaps</span>  <span class="done">(done)</span>
-├→ fix-auth-validation  <span class="inprog">(in-progress)</span>  <span class="dim">agent-1</span>
-│ └→ evaluate-fix-auth-validation  <span class="open">(open)</span>
-├→ add-rate-limiting  <span class="inprog">(in-progress)</span>  <span class="dim">agent-2</span>
-│ └→ evaluate-add-rate-limiting  <span class="open">(open)</span>
-└→ update-error-handling  <span class="open">(open)</span>  <span class="dim">waiting for agent slot</span>
-  └→ evaluate-update-error-handling  <span class="open">(open)</span>
-</pre>
-
-<p>Meta-tasks (assigner, evaluator, evolver) use the same mechanism. The
-system bootstraps itself. You define the shape of the work; agents fill in
-the details.</p>
-
-<h2>the agency system</h2>
-
-<p>Agents have roles (what they do) and motivations (why they do it). They get
-evaluated after each task. The evolver mutates and crosses over the best
-performers. Darwinian prompt engineering.</p>
-
-<pre>
-<span class="prompt">$</span> wg agent list
-
-Agents:
-
-  4a8c6c70  Research Analyst     role:e49c5293 mot:2dc69b33 exec:claude score:0.88 tasks:22
-  bd49ff30  CLI Developer        role:b491d6c1 mot:2dc69b33 exec:claude score:0.75 tasks:10
-  c573e9d1  Technical Writer     role:ef51f2a4 mot:2dc69b33 exec:claude score:0.88 tasks:19
-  e7c2321f  Alice                role:e86f44c7 mot:8ace8967 exec:claude score:n/a tasks:0
-  f473ba8b  Rust Systems Programmer role:b491d6c1 mot:1caa4c3c exec:claude score:0.93 tasks:63
-</pre>
-
-<pre>
-<span class="prompt">$</span> wg agency stats
-
-=== Agency Performance Stats ===
-
-  Roles:        8
-  Motivations:  6
-  Evaluations:  114
-  Avg score:    0.90
-
---- Role Leaderboard ---
-
-  Role                      Avg  Tasks  Trend
-  --------------------------------------------
-  b491d6c1                 0.90     73     up
-  ef51f2a4                 0.88     19     up
-  e49c5293                 0.88     22   flat
-
---- Synergy Matrix (Role x Motivation) ---
-
-  Role                 Motivation                Avg  Count   Rating
-  ------------------------------------------------------------------
-  b491d6c1             1caa4c3c                 0.93     63     HIGH
-  ef51f2a4             2dc69b33                 0.88     19     HIGH
-  e49c5293             2dc69b33                 0.88     22     HIGH
-  b491d6c1             2dc69b33                 0.75     10
-</pre>
-
-<p>The synergy matrix shows which role+motivation combos perform best.
-b491d6c1 x 1caa4c3c averaging 0.93 across 63 tasks — that's the Rust
-Systems Programmer with the top motivation. The evolver sees this and creates
-more agents with that combo.</p>
-
-<p>Roles define skills and desired outcomes. Motivations define acceptable
-trade-offs and non-negotiable constraints. Combine them into agents. Evaluate
-after every task. Evolve the population.</p>
-
-<pre>
-<span class="dim"># the loop: assign → execute → evaluate → evolve → assign</span>
-
-<span class="prompt">$</span> wg assign implement-auth careful-coder
-<span class="prompt">$</span> wg service start              <span class="dim"># agent executes the task</span>
-<span class="prompt">$</span> wg evaluate implement-auth     <span class="dim"># score: correctness, completeness, efficiency, style</span>
-<span class="prompt">$</span> wg evolve --strategy all       <span class="dim"># mutate, crossover, retire, gap-fill</span>
-</pre>
-
-<p>Six evolution strategies: mutation (tweak a role), crossover (combine two
-roles), gap analysis (find missing skills), retirement (remove
-underperformers), motivation tuning (adjust trade-off boundaries), and all
-(let the evolver pick).</p>
-
-<h2>the coordination layer</h2>
-
-<p>The service is not an agent. It's infrastructure. A background process that
-polls the graph, finds ready tasks, spawns agents, detects dead ones, and
-handles loop resets. No LLM in the scheduling loop — just deterministic graph
-traversal.</p>
-
-<pre>
-<span class="prompt">$</span> wg service start --max-agents 4
-Service started (pid 4821)
-Coordinator active — 4 max agents
-
-<span class="prompt">$</span> wg service status
-Service: running (pid 4821)
-Uptime: 3h 42m
-Tasks dispatched: 17
-Agents spawned: 23
-Dead agents recovered: 2
-Loop resets: 4
-</pre>
-
-<p>It runs indefinitely. Add tasks while it's running and they get picked up
-on the next poll. An agent dies mid-task — the coordinator detects the missing
-heartbeat, marks the agent dead, and the task goes back to open. No manual
-intervention.</p>
-
-<pre>
-<span class="prompt">$</span> wg agents
-ID          TASK                EXECUTOR  PID    UPTIME STATUS
-agent-1     fix-auth-bug        claude    12345  14m    working
-agent-2     update-docs         claude    12347  3m     working
-agent-3     add-rate-limiting   claude    12350  45s    working
-
-3 agent(s): 3 alive, 0 dead
-</pre>
-
-<p>The coordinator is the part you don't think about. It just works. You define
-the graph and it executes it. That's the point — reliable scheduling so you can
-focus on the shape of the work, not the mechanics of running it.</p>
-
-<h2>human-agent interface</h2>
-
-<p>The human designs. Agents execute. The CLI is the design surface.</p>
-
-<p>You describe what needs to happen — tasks, dependencies, loops, agency
-configuration. The system fills in the details. You don't write the code. You
-don't run the tasks. You shape the graph and the coordinator handles the
-rest.</p>
-
-<pre>
-<span class="prompt">$</span> <span class="dim"># define the shape of work</span>
-<span class="prompt">$</span> wg add "Audit authentication module" --id audit-auth
-<span class="prompt">$</span> wg add "Fix findings" --id fix-findings --blocked-by audit-auth
-<span class="prompt">$</span> wg add "Verify fixes" --id verify-fixes --blocked-by fix-findings \
-    --loops-to audit-auth --loop-max 3
-
-<span class="prompt">$</span> <span class="dim"># configure the agency</span>
-<span class="prompt">$</span> wg role add security-reviewer --skills "security auditing, code review" \
-    --desired-outcome "identified vulnerabilities with severity ratings"
-<span class="prompt">$</span> wg agent create "Security Bot" --role security-reviewer
-
-<span class="prompt">$</span> <span class="dim"># start and walk away</span>
-<span class="prompt">$</span> wg service start
-</pre>
-
-<p>The whole workflow — audit, fix, verify, loop back — runs without you. Come
-back later and check the results.</p>
-
-<pre>
-<span class="prompt">$</span> wg list --status done
-ID              TITLE                    STATUS  ITER
-audit-auth      Audit authentication     done    3/3
-fix-findings    Fix findings             done    3/3
-verify-fixes    Verify fixes             done    3/3
-
-<span class="prompt">$</span> wg show audit-auth --logs
-<span class="dim">[iter 1]</span> Found 4 issues: SQL injection in login, missing rate limit...
-<span class="dim">[iter 2]</span> Re-audit after fixes. 1 remaining: rate limit bypass...
-<span class="dim">[iter 3]</span> All issues resolved. Clean audit.
-</pre>
-
-<p>You define tasks. You set dependencies. You configure loops and agents. Then
-the system runs it. That's the interface — you describe the shape, not the
-steps.</p>
-
-<h2>commands</h2>
-
-<pre>
-<span class="prompt">$</span> wg init
-Created .workgraph/
-
-<span class="prompt">$</span> wg add "Design the API"
-<span class="prompt">$</span> wg add "Build backend" --blocked-by design-the-api
-<span class="prompt">$</span> wg add "Write tests" --blocked-by build-backend
-
-<span class="prompt">$</span> wg viz
-<span class="g">design-the-api</span>  <span class="open">(open)</span>
-├→ build-backend  <span class="open">(open)</span>
-│ └→ write-tests  <span class="open">(open)</span>
-</pre>
-
-<pre>
-<span class="prompt">$</span> wg service start --max-agents 3
-Service started (pid 4821)
-Coordinator active — 3 max agents
-
-<span class="prompt">$</span> wg agents
-ID          TASK             EXECUTOR  PID    UPTIME STATUS
-agent-1     design-the-api   claude    12345  3m     working
-agent-2     —               claude    12346  45s    idle
-
-2 agent(s): 2 alive, 0 dead
-</pre>
-
-<pre>
-<span class="prompt">$</span> wg --help
-
-wg - workgraph task management
-
-Your most-used:
-  show            Show detailed information about a single task
-  log             Add progress log/notes to a task
-
-Also used:
-  done            Mark a task as done
-  artifact        Manage task artifacts (produced outputs)
-  agent           Manage agents (role+motivation pairings)
-  evaluate        Trigger evaluation of a completed task
-  role            Manage agency roles (what an agent does)
-  fail            Mark a task as failed (can be retried)
-  add             Add a new task
-  assign          Assign an agent to a task
-
-More commands:
-  list, motivation, service, quickstart, ... and 49 more (--help-all)
-</pre>
-
-<pre>
-git clone https://github.com/graphwork/workgraph
-cd your-project && wg init
-wg service start
-</pre>
-
-<footer>
-<a href="https://github.com/graphwork/workgraph">source</a> · <a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">mit</a> · <a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">docs</a>
-</footer>
-
+    <!-- Hero Section -->
+    <header class="hero">
+        <nav class="nav">
+            <div class="logo">workgraph</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#install">Install</a>
+                <div class="nav-dropdown">
+                    <a href="#docs" class="nav-dropdown-trigger">Docs</a>
+                    <div class="nav-dropdown-menu">
+                        <a href="workgraph-manual.pdf">Manual (PDF)</a>
+                        <a href="organizational-patterns.pdf">Org Patterns (PDF)</a>
+                        <a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">CLI Reference</a>
+                    </div>
+                </div>
+                <a href="https://github.com/graphwork/workgraph" class="btn-nav">GitHub</a>
+            </div>
+            <button class="nav-hamburger" onclick="toggleNav()" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </nav>
+
+        <div class="hero-content">
+            <h1>Task graphs for humans and AI agents</h1>
+            <p class="tagline">Define tasks. Declare dependencies. Let the coordinator handle the rest.</p>
+
+            <div class="install-box">
+                <code>cargo install --git https://github.com/graphwork/workgraph</code>
+                <button class="copy-btn" onclick="copyInstall()">Copy</button>
+            </div>
+
+            <div class="hero-demo">
+                <pre><code><span class="cmd">$</span> wg add "Design the API"
+<span class="cmd">$</span> wg add "Build backend" --after design-the-api
+<span class="cmd">$</span> wg add "Write tests" --after build-backend
+
+<span class="cmd">$</span> wg service start
+<span class="output">  Spawning agent on: design-the-api
+  ✓ design-the-api → done. Unblocked: build-backend
+  Spawning agent on: build-backend
+  ✓ build-backend → done. Unblocked: write-tests
+  Spawning agent on: write-tests
+  ✓ write-tests → done. All tasks complete.</span></code></pre>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2>Why workgraph?</h2>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="5" r="3"/>
+                        <circle cx="5" cy="19" r="3"/>
+                        <circle cx="19" cy="19" r="3"/>
+                        <line x1="12" y1="8" x2="5" y2="16"/>
+                        <line x1="12" y1="8" x2="19" y2="16"/>
+                    </svg>
+                </div>
+                <h3>Dependency Graphs</h3>
+                <p>Tasks depend on other tasks. Complete one, downstream tasks unblock. The coordinator handles the rest.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                    </svg>
+                </div>
+                <h3>Service Coordinator</h3>
+                <p>Run <code>wg service start</code> — it spawns agents, detects dead ones, picks up new work. Set and forget.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3>Agency System</h3>
+                <p>Agents have roles and motivations. Evaluated after each task. Evolved over time. Not generic — specialized identities.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <polyline points="1 20 1 14 7 14"/>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                </div>
+                <h3>Cycles &amp; Convergence</h3>
+                <p>Write &rarr; review &rarr; revise loops with structural back-edges. Agents signal <code>--converged</code> when done iterating.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                </div>
+                <h3>Workflow Functions</h3>
+                <p>Extract proven patterns into reusable templates. <code>wg func extract</code> &rarr; <code>wg func apply</code>. Static, generative, or adaptive.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <h3>Plain Text, Git-Friendly</h3>
+                <p>Everything in <code>.workgraph/</code>. JSONL graph, TOML config, YAML agency. Human-readable, hackable.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Animated Workflow Diagram -->
+    <section class="workflow-diagram">
+        <h2>How It Works</h2>
+        <div class="diagram-container">
+            <svg class="workflow-svg" viewBox="0 0 700 200" preserveAspectRatio="xMidYMid meet">
+                <!-- Task Nodes -->
+                <g class="task-node task-1">
+                    <rect x="50" y="70" width="120" height="60" rx="8"/>
+                    <text x="110" y="95" class="task-title">Design API</text>
+                    <text x="110" y="115" class="task-status status-done">done</text>
+                </g>
+
+                <g class="task-node task-2">
+                    <rect x="230" y="70" width="120" height="60" rx="8"/>
+                    <text x="290" y="95" class="task-title">Build Backend</text>
+                    <text x="290" y="115" class="task-status status-progress">in-progress</text>
+                </g>
+
+                <g class="task-node task-3">
+                    <rect x="410" y="30" width="120" height="60" rx="8"/>
+                    <text x="470" y="55" class="task-title">Write Tests</text>
+                    <text x="470" y="75" class="task-status status-waiting">waiting</text>
+                </g>
+
+                <g class="task-node task-4">
+                    <rect x="410" y="110" width="120" height="60" rx="8"/>
+                    <text x="470" y="135" class="task-title">Update Docs</text>
+                    <text x="470" y="155" class="task-status status-waiting">waiting</text>
+                </g>
+
+                <g class="task-node task-5">
+                    <rect x="590" y="70" width="100" height="60" rx="8"/>
+                    <text x="640" y="95" class="task-title">Deploy</text>
+                    <text x="640" y="115" class="task-status status-waiting">waiting</text>
+                </g>
+
+                <!-- Dependency Arrows -->
+                <g class="arrows">
+                    <line x1="170" y1="100" x2="225" y2="100" class="arrow done"/>
+                    <polygon points="225,100 215,95 215,105" class="arrow-head done"/>
+
+                    <line x1="350" y1="90" x2="405" y2="60" class="arrow"/>
+                    <polygon points="405,60 393,58 397,68" class="arrow-head"/>
+
+                    <line x1="350" y1="110" x2="405" y2="140" class="arrow"/>
+                    <polygon points="405,140 397,132 393,142" class="arrow-head"/>
+
+                    <line x1="530" y1="60" x2="585" y2="85" class="arrow"/>
+                    <polygon points="585,85 573,80 575,91" class="arrow-head"/>
+
+                    <line x1="530" y1="140" x2="585" y2="115" class="arrow"/>
+                    <polygon points="585,115 575,109 573,120" class="arrow-head"/>
+                </g>
+
+                <!-- Pulse animation on in-progress -->
+                <circle class="pulse" cx="290" cy="100" r="70">
+                    <animate attributeName="r" values="65;75;65" dur="2s" repeatCount="indefinite"/>
+                    <animate attributeName="opacity" values="0.15;0.05;0.15" dur="2s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+        <p class="diagram-caption">Tasks flow through the graph. Complete one, and waiting tasks become ready.</p>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="install" class="install">
+        <h2>Get Started</h2>
+
+        <div class="install-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Install</h3>
+                    <pre><code>cargo install --git https://github.com/graphwork/workgraph</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Setup</h3>
+                    <pre><code><span class="cmd">$</span> cd your-project
+<span class="cmd">$</span> wg setup     <span class="comment"># interactive wizard — configures executor, model, agency</span></code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Define work &amp; go</h3>
+                    <pre><code><span class="cmd">$</span> wg add "Set up CI pipeline"
+<span class="cmd">$</span> wg add "Deploy to staging" --after set-up-ci-pipeline
+<span class="cmd">$</span> wg service start   <span class="comment"># spawns agents on ready tasks automatically</span></code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coordination Patterns Section -->
+    <section id="workflow" class="workflow">
+        <h2>Coordination Patterns</h2>
+        <p class="section-intro">Humans, AI agents, or both — workgraph handles the scheduling.</p>
+
+        <div class="workflow-examples">
+            <div class="workflow-card">
+                <h3>Service Mode</h3>
+                <pre><code><span class="comment"># Define work</span>
+<span class="cmd">$</span> wg add "Refactor auth" --skill rust
+<span class="cmd">$</span> wg add "Update tests" --after refactor-auth --skill testing
+
+<span class="comment"># Let the coordinator handle it</span>
+<span class="cmd">$</span> wg service start --max-agents 4
+<span class="cmd">$</span> wg tui   <span class="comment"># watch it happen</span></code></pre>
+            </div>
+
+            <div class="workflow-card">
+                <h3>Mixed Human + AI</h3>
+                <pre><code><span class="comment"># Human takes design, service handles the rest</span>
+<span class="cmd">$</span> wg claim design-api --actor erik
+<span class="comment"># ... do design work ...</span>
+<span class="cmd">$</span> wg done design-api
+
+<span class="comment"># Service picks up dependent tasks</span>
+<span class="cmd">$</span> wg service start</code></pre>
+            </div>
+
+            <div class="workflow-card">
+                <h3>Iterative Workflows</h3>
+                <pre><code><span class="comment"># Write → review cycle, max 3 passes</span>
+<span class="cmd">$</span> wg add "Write draft" --id write \
+    --after review --max-iterations 3
+<span class="cmd">$</span> wg add "Review draft" --id review --after write
+
+<span class="comment"># Agent signals when work converges</span>
+<span class="cmd">$</span> wg done write --converged</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agency Section -->
+    <section id="agency" class="agency">
+        <div class="agency-content">
+            <h2>Agency</h2>
+            <p class="agency-description">Agents aren't generic. Each gets a <strong>role</strong> (what it does) and a <strong>motivation</strong> (how it makes tradeoffs). After each task, performance is evaluated. Over time, roles and motivations <strong>evolve</strong> — the system learns which identities produce the best work.</p>
+
+            <pre><code><span class="cmd">$</span> wg agency init                          <span class="comment"># seed starter roles &amp; motivations</span>
+<span class="cmd">$</span> wg agent create "Careful Coder" \
+    --role abc123 --motivation def456
+<span class="cmd">$</span> wg config --auto-assign true            <span class="comment"># coordinator assigns identities</span>
+<span class="cmd">$</span> wg config --auto-evaluate true          <span class="comment"># evaluate after each task</span>
+<span class="cmd">$</span> wg evolve                               <span class="comment"># evolve based on performance</span></code></pre>
+
+            <p class="agency-footnote"><em>For the theoretical foundations — stigmergy, autopoiesis, cybernetic feedback — see the <a href="organizational-patterns.pdf">Organizational Patterns</a> paper.</em></p>
+        </div>
+    </section>
+
+    <!-- Analysis Section -->
+    <section id="analysis" class="analysis">
+        <h2>Project Intelligence</h2>
+
+        <div class="analysis-grid">
+            <div class="analysis-card">
+                <h3>wg bottlenecks</h3>
+                <p>Find tasks blocking the most downstream work</p>
+                <pre><code><span class="output">Bottlenecks:
+  1. design-api - blocks 12 tasks
+  2. setup-infra - blocks 8 tasks</span></code></pre>
+            </div>
+
+            <div class="analysis-card">
+                <h3>wg critical-path</h3>
+                <p>Longest dependency chain (minimum project duration)</p>
+                <pre><code><span class="output">Critical path (28h):
+  design-api (4h)
+  -> implement-api (8h)
+  -> run-tests (4h)
+  -> deploy (12h)</span></code></pre>
+            </div>
+
+            <div class="analysis-card">
+                <h3>wg forecast</h3>
+                <p>Project completion estimation</p>
+                <pre><code><span class="output">Remaining: 23 tasks (68h)
+Velocity: 10.5 tasks/week
+Est. completion: ~2.2 weeks</span></code></pre>
+            </div>
+
+            <div class="analysis-card">
+                <h3>wg why-blocked</h3>
+                <p>Trace the full blocker chain</p>
+                <pre><code><span class="output">deploy-prod is blocked by:
+  -> run-tests (open)
+    -> implement-api (in-progress)
+      -> design-api (done)</span></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Integration Section -->
+    <section id="ai-integration" class="ai-integration">
+        <h2>Works with AI Coding Assistants</h2>
+
+        <div class="integration-content">
+            <div class="integration-text">
+                <p>Workgraph integrates with any AI coding assistant. The setup wizard handles everything.</p>
+
+                <h3>Claude Code</h3>
+                <pre><code><span class="cmd">$</span> wg setup   <span class="comment"># installs skill automatically</span></code></pre>
+
+                <h3>Other Agents</h3>
+                <pre><code><span class="comment"># Add to your agent's system prompt or AGENTS.md:</span>
+<span class="comment"># "Use workgraph (wg) for task coordination.</span>
+<span class="comment">#  Run wg quickstart to orient."</span></code></pre>
+            </div>
+
+            <div class="integration-demo">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-title">claude-code</span>
+                    </div>
+                    <div class="terminal-content">
+                        <p class="ai-prompt">User: implement the auth module</p>
+                        <p class="ai-response">I'll check workgraph for available tasks.</p>
+                        <pre><code><span class="cmd">$</span> wg ready
+<span class="output">Ready tasks:
+  implement-auth - Implement auth module</span>
+
+<span class="comment"># Agent is spawned automatically by the service</span>
+<span class="cmd">$</span> wg log implement-auth "Starting auth implementation..."
+<span class="comment"># ... creates src/auth.rs ...</span>
+<span class="cmd">$</span> wg done implement-auth
+<span class="output">Done: implement-auth
+Newly unblocked:
+  write-auth-tests</span></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Section -->
+    <section id="docs" class="docs-section">
+        <h2>Documentation</h2>
+
+        <div class="docs-grid">
+            <div class="docs-card">
+                <h3>Manual</h3>
+                <p>The complete reference: task graphs, agency, coordination, evolution.</p>
+                <div class="docs-links">
+                    <a href="workgraph-manual.pdf" class="docs-link">Download PDF</a>
+                </div>
+            </div>
+
+            <div class="docs-card">
+                <h3>Organizational Patterns</h3>
+                <p>The theoretical angle: stigmergy, workflow patterns, autopoiesis, cybernetics.</p>
+                <div class="docs-links">
+                    <a href="organizational-patterns.pdf" class="docs-link">Download PDF</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">workgraph</div>
+            <p>A task graph for getting things done.</p>
+            <div class="footer-links">
+                <a href="https://github.com/graphwork/workgraph">GitHub</a>
+                <a href="workgraph-manual.pdf">Manual</a>
+                <a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">MIT License</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function copyInstall() {
+            const code = 'cargo install --git https://github.com/graphwork/workgraph';
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+        }
+
+        function toggleNav() {
+            document.querySelector('.nav-links').classList.toggle('nav-open');
+        }
+    </script>
 </body>
 </html>
