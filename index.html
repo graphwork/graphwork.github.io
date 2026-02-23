@@ -473,7 +473,7 @@
 
             <pre><code><span class="cmd">$</span> wg agency init                          <span class="comment"># seed starter roles &amp; motivations</span>
 <span class="cmd">$</span> wg agent create "Careful Coder" \
-    --role abc123 --motivation def456
+    --role implementer --motivation ship-quality
 <span class="cmd">$</span> wg config --auto-assign true            <span class="comment"># coordinator assigns identities</span>
 <span class="cmd">$</span> wg config --auto-evaluate true          <span class="comment"># evaluate after each task</span>
 <span class="cmd">$</span> wg evolve                               <span class="comment"># evolve based on performance</span></code></pre>
@@ -550,14 +550,9 @@ Est. completion: ~2.2 weeks</span></code></pre>
                         <span class="terminal-title">claude-code</span>
                     </div>
                     <div class="terminal-content">
-                        <p class="ai-prompt">User: implement the auth module</p>
-                        <p class="ai-response">I'll check workgraph for available tasks.</p>
-                        <pre><code><span class="cmd">$</span> wg ready
-<span class="output">Ready tasks:
-  implement-auth - Implement auth module</span>
-
-<span class="comment"># Agent is spawned automatically by the service</span>
-<span class="cmd">$</span> wg log implement-auth "Starting auth implementation..."
+                        <p class="ai-prompt">Agent spawned on: implement-auth</p>
+                        <p class="ai-response">I'll implement the auth module.</p>
+                        <pre><code><span class="cmd">$</span> wg log implement-auth "Starting implementation..."
 <span class="comment"># ... creates src/auth.rs ...</span>
 <span class="cmd">$</span> wg done implement-auth
 <span class="output">Done: implement-auth

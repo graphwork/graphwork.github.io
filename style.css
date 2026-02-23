@@ -1,26 +1,704 @@
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #0e0e0e; --fg: #b0b0b0; --fg2: #666; --hi: #4af626; }
+/* ── CSS Custom Properties ───────────────────────────────────────── */
+:root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111113;
+    --bg-tertiary: #1a1a1e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #8a8a8a;
+    --text-muted: #555555;
+    --accent: #4af626;
+    --accent-dim: #2a8a12;
+    --border: #252528;
+    --card-bg: #131315;
 }
-@media (prefers-color-scheme: light) {
-  :root { --bg: #fff; --fg: #222; --fg2: #777; --hi: #1a7a0a; }
+
+/* ── Reset & Base ────────────────────────────────────────────────── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
+
 body {
-  font: 14px/1.5 'SF Mono','Consolas','Liberation Mono',monospace;
-  background: var(--bg); color: var(--fg);
-  max-width: 72ch; margin: 0 auto; padding: 1em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
 }
-h1 { font-size: 1em; margin: 0 0 .2em; }
-h2 { font-size: 1em; font-weight: bold; margin: 1.5em 0 .3em; color: var(--hi); }
-p { margin: 0 0 .5em; }
-pre { overflow-x: auto; margin: 0 0 .8em; }
-a { color: var(--fg2); }
-a:hover { color: var(--hi); }
-code { font: inherit; }
-.g { color: var(--hi); font-weight: bold; }
-.done { color: var(--fg2); }
-.inprog { color: #5ac8fa; }
-.open { color: var(--fg); }
-.multi { color: #d4a017; }
-.dep, .dim { color: var(--fg2); font-size: .85em; }
-.prompt { color: var(--hi); }
-footer { margin-top: 2em; color: var(--fg2); font-size: .85em; }
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+a:hover {
+    color: #6fff4a;
+}
+
+code, pre {
+    font-family: 'SF Mono', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+}
+
+pre {
+    overflow-x: auto;
+}
+
+/* ── Navigation ──────────────────────────────────────────────────── */
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-family: 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--text-primary);
+}
+
+.btn-nav {
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn-nav:hover {
+    border-color: var(--accent);
+    color: var(--accent) !important;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────── */
+.hero {
+    background: var(--bg-primary);
+    padding-bottom: 6rem;
+}
+
+.hero-content {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 4rem 2rem 0;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+}
+
+.tagline {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+}
+
+.install-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 3rem;
+}
+
+.install-box code {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.copy-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 0.3rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.copy-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+.hero-demo {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.hero-demo pre {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+/* ── Code highlighting ───────────────────────────────────────────── */
+.cmd {
+    color: var(--accent);
+    font-weight: 600;
+    user-select: none;
+}
+
+.output {
+    color: var(--text-muted);
+}
+
+.comment {
+    color: #555;
+    font-style: italic;
+}
+
+/* ── Features ─────────────────────────────────────────────────────── */
+.features {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: border-color 0.2s;
+}
+
+.feature-card:hover {
+    border-color: var(--text-muted);
+}
+
+.feature-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1.25rem;
+    color: var(--accent);
+}
+
+.feature-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.feature-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.feature-card code {
+    font-size: 0.85rem;
+    color: var(--accent-dim);
+    background: var(--bg-tertiary);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+}
+
+/* ── Workflow Diagram ─────────────────────────────────────────────── */
+.workflow-diagram {
+    padding: 4rem 2rem 6rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.workflow-diagram h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.diagram-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.workflow-svg {
+    width: 100%;
+    height: auto;
+}
+
+/* SVG task nodes */
+.task-node rect {
+    fill: var(--bg-tertiary);
+    stroke: var(--border);
+    stroke-width: 1.5;
+}
+
+.task-node .task-title {
+    fill: var(--text-primary);
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 600;
+    text-anchor: middle;
+}
+
+.task-node .task-status {
+    font-size: 10px;
+    font-family: 'SF Mono', 'Consolas', monospace;
+    text-anchor: middle;
+}
+
+.status-done {
+    fill: var(--accent);
+}
+
+.status-progress {
+    fill: #5ac8fa;
+}
+
+.task-1 rect {
+    stroke: var(--accent);
+}
+
+.task-2 rect {
+    stroke: #5ac8fa;
+}
+
+/* Arrows */
+.arrow {
+    stroke: var(--text-muted);
+    stroke-width: 1.5;
+}
+
+.arrow.done {
+    stroke: var(--accent);
+}
+
+.arrow-head {
+    fill: var(--text-muted);
+}
+
+.arrow-head.done {
+    fill: var(--accent);
+}
+
+.pulse {
+    fill: #5ac8fa;
+}
+
+.diagram-caption {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* ── Install Section ──────────────────────────────────────────────── */
+.install {
+    padding: 6rem 2rem;
+    background: var(--bg-secondary);
+}
+
+.install h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.install-steps {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.step {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--accent);
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.step-content pre {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+/* ── Coordination Patterns ────────────────────────────────────────── */
+.workflow {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.workflow h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-intro {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-bottom: 3rem;
+}
+
+.workflow-examples {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.workflow-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    transition: border-color 0.2s;
+}
+
+.workflow-card:hover {
+    border-color: var(--text-muted);
+}
+
+.workflow-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.workflow-card pre {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+/* ── Analysis Section ─────────────────────────────────────────────── */
+.analysis {
+    padding: 6rem 2rem;
+    background: var(--bg-secondary);
+}
+
+.analysis h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 4rem;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.analysis-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    transition: border-color 0.2s;
+}
+
+.analysis-card:hover {
+    border-color: var(--text-muted);
+}
+
+.analysis-card h3 {
+    font-family: 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.analysis-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.analysis-card pre {
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+/* ── AI Integration ───────────────────────────────────────────────── */
+.ai-integration {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.ai-integration h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.integration-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.integration-text p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
+
+.integration-text h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+
+.integration-text pre {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+/* Terminal mockup */
+.terminal {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.terminal-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.75rem 1rem;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot.red { background: #ff5f57; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #28c840; }
+
+.terminal-title {
+    margin-left: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: 'SF Mono', 'Consolas', monospace;
+}
+
+.terminal-content {
+    padding: 1.25rem;
+}
+
+.ai-prompt {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+}
+
+.ai-response {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.terminal-content pre {
+    font-size: 0.8rem;
+    line-height: 1.7;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────── */
+.footer {
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-logo {
+    font-family: 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.footer-content > p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .feature-grid,
+    .workflow-examples {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .integration-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    .features h2,
+    .workflow-diagram h2,
+    .install h2,
+    .workflow h2,
+    .analysis h2,
+    .ai-integration h2 {
+        font-size: 1.75rem;
+    }
+
+    .nav {
+        flex-wrap: wrap;
+    }
+
+    .feature-grid,
+    .workflow-examples,
+    .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-content {
+        padding-top: 2rem;
+    }
+
+    .install-box {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .install-box code {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .hero {
+        padding-bottom: 3rem;
+    }
+
+    .features,
+    .workflow-diagram,
+    .install,
+    .workflow,
+    .analysis,
+    .ai-integration {
+        padding: 3rem 1rem;
+    }
+}
