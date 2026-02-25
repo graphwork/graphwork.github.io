@@ -17,6 +17,7 @@
   --bg: #fff;
   --fg: #222;
   --fg2: #666;
+  --link: #444;
   --done: #15803d;
   --in-progress: #a16207;
   --failed: #b91c1c;
@@ -31,6 +32,7 @@
     --bg: #0e0e0e;
     --fg: #b0b0b0;
     --fg2: #666;
+    --link: #d0d0d0;
     --done: #22c55e;
     --in-progress: #eab308;
     --failed: #ef4444;
@@ -117,8 +119,8 @@ code {
 .s-blocked { color: var(--blocked); }
 .s-dim { color: var(--dim); }
 
-a { color: var(--fg2); text-decoration: none; }
-a:hover { color: var(--fg); text-decoration: underline; }
+a { color: var(--link); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent); text-underline-offset: 2px; }
+a:hover { color: var(--fg); text-decoration-color: var(--fg); }
 
 footer {
   margin-top: 3em;
