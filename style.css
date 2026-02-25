@@ -75,10 +75,13 @@ h1 {
   font-size: 14px;
   margin-bottom: 2.5em;
   margin-left: -0.75em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
 }
-.nav a { margin-right: 0.25em; padding: 0.75em; display: inline-block; }
-.nav-item { display: inline-block; padding: 0.75em; }
-.nav-item a { padding: 0; margin-right: 0; display: inline; }
+.nav > a { padding: 0.75em; }
+.nav-item { padding: 0.75em; white-space: nowrap; }
+.nav-item a { display: inline; }
 .dl { font-size: 11px; color: var(--fg2); }
 
 section { margin-bottom: 2.5em; }

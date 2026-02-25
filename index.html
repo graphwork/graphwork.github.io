@@ -25,14 +25,18 @@
 
 <h1>workgraph</h1>
 <p class="subtitle">work fast<br>task graphs for humans and agents<br>self-organizing process flowgraphs<br>cybernetic autopoietic stigmergic medium</p>
-<nav class="nav"><span class="nav-item"><a href="organizational-patterns.md">Theory</a> <span class="dl">(<a href="organizational-patterns.pdf">pdf</a> · <a href="organizational-patterns.md">md</a>)</span></span><span class="nav-item"><a href="workgraph-manual.md">Manual</a> <span class="dl">(<a href="workgraph-manual.pdf">pdf</a> · <a href="workgraph-manual.md">md</a>)</span></span><a href="https://github.com/graphwork/workgraph">Source</a></nav>
+<nav class="nav">
+  <span class="nav-item"><a href="organizational-patterns.md">Theory</a> <span class="dl">(<a href="organizational-patterns.pdf">pdf</a> · <a href="organizational-patterns.md">md</a>)</span></span>
+  <span class="nav-item"><a href="workgraph-manual.md">Manual</a> <span class="dl">(<a href="workgraph-manual.pdf">pdf</a> · <a href="workgraph-manual.md">md</a>)</span></span>
+  <a href="https://github.com/graphwork/workgraph">Source</a>
+</nav>
 
 <section>
 <pre class="viz">$ wg viz design-api
 
 <span class="s-done">design-api  (done)</span>
 ├→ <span class="s-done">auth-module  (done)</span>
-│ └→ <span class="s-open">integration  (open)</span> <span class="s-dim">&lt;───────┐</span>
+│ └→ <span class="s-open">integration  (open)</span> <span class="s-dim">←───────┐</span>
 │   └→ <span class="s-open">deploy  (open)</span>            <span class="s-dim">│</span>
 ├→ <span class="s-ip">data-layer  (in-progress)</span> <span class="s-dim">────┤</span>
 └→ <span class="s-ip">search-index  (in-progress)</span> <span class="s-dim">──┘</span></pre>
@@ -55,7 +59,7 @@ The graph is the program.</p>
 are cycles in the graph. Each has a bound. Agents pick up
 where previous iterations left off.</p>
 
-<pre class="viz"><span class="s-open">run-tests  (open)</span> <span class="s-dim">~ (iter 0/5) &lt;─┐</span>
+<pre class="viz"><span class="s-open">run-tests  (open)</span> <span class="s-dim">↺ (iter 0/5) ←─┐</span>
 └→ <span class="s-open">fix-failures  (open)</span>          <span class="s-dim">│</span>
   └→ <span class="s-open">push-check  (open)</span> <span class="s-dim">─────────┘</span></pre>
 </section>
@@ -85,7 +89,7 @@ Arcs on the right show convergence.</p>
 
 <pre class="viz"><span class="s-open">hub  (open)</span>
 ├→ <span class="s-open">spoke-1  (open)</span>
-│ └→ <span class="s-open">collector  (open)</span> <span class="s-dim">&lt;─┐</span>
+│ └→ <span class="s-open">collector  (open)</span> <span class="s-dim">←─┐</span>
 ├→ <span class="s-open">spoke-2  (open)</span> <span class="s-dim">──────┤</span>
 ├→ <span class="s-open">spoke-3  (open)</span> <span class="s-dim">──────┤</span>
 └→ <span class="s-open">spoke-4  (open)</span> <span class="s-dim">──────┘</span></pre>
