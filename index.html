@@ -12,18 +12,18 @@
 <b>workgraph</b>
 an organizational DSL for autopoietic automation
 
-<a href="organizational-patterns.pdf">Theory</a> · <a href="workgraph-manual.pdf">Manual</a> · <a href="https://github.com/graphwork/workgraph">Source</a>
+<a href="organizational-patterns.pdf">Theory</a>  <a href="workgraph-manual.pdf">Manual</a>  <a href="https://github.com/graphwork/workgraph">Source</a>
 
 
 $ wg viz arena-research-spec
 
 arena-research-spec  (done)
-├&gt; arena-context-selection  (done)
-│ └&gt; arena-synthesize  (done) &lt;────────────┐
-│   └&gt; arena-refine  (done) ~ (iter 0/3)   │
-├&gt; arena-eval-integration  (done) ─────────┤
-├&gt; arena-evolution-input  (done) ──────────┤
-└&gt; arena-model-selection  (done) ──────────┘
++-- arena-context-selection  (done)
+|   '-- arena-synthesize  (done) &lt;-----------+
+|       '-- arena-refine  (done) ~ (iter 0/3)|
++-- arena-eval-integration  (done) ----------+
++-- arena-evolution-input  (done) -----------+
+'-- arena-model-selection  (done) -----------+
 
 
 A dependency graph of tasks stored as plain text.
@@ -32,18 +32,18 @@ A coordinator service dispatches AI agents to ready tasks.
 Cycles let long-running processes loop with bounded iteration.
 The graph is the program.
 
-.workgraph/graph.jsonl — git-friendly, no server, no account.
+.workgraph/graph.jsonl -- git-friendly, no server, no account.
 
 
 <b>cycles</b>
 
-Processes that repeat — CI, monitoring, convergence — are
-cycles in the graph. Each has a bound. Agents pick up where
-previous iterations left off.
+Processes that repeat -- CI, monitoring, convergence --
+are cycles in the graph. Each has a bound. Agents pick up
+where previous iterations left off.
 
-run-tests  (open) ~ (iter 0/5) &lt;────────┐
-└&gt; fix-failures  (open)                   │
-  └&gt; push-check  (open) ────────────────┘
+run-tests  (open) ~ (iter 0/5) &lt;---------+
+'-- fix-failures  (open)                  |
+    '-- push-check  (open) --------------+
 
 
 <b>organizational synthesis</b>
@@ -56,7 +56,7 @@ restructures itself based on what works.
 $ wg agency stats
 
   Role        Motivation   Avg  Count  Rating
-  ───────────────────────────────────────────
+  -------------------------------------------
   Programmer  Thorough    0.93     63    HIGH
   Writer      Balanced    0.88     19    HIGH
   Analyst     Balanced    0.88     22    HIGH
@@ -68,11 +68,11 @@ Fan-out decomposes work. Fan-in synchronizes it.
 Arcs on the right show convergence.
 
 hub  (open)
-├&gt; spoke-1  (open)
-│ └&gt; collector  (open) &lt;─┐
-├&gt; spoke-2  (open) ──────┤
-├&gt; spoke-3  (open) ──────┤
-└&gt; spoke-4  (open) ──────┘
++-- spoke-1  (open)
+|   '-- collector  (open) &lt;--+
++-- spoke-2  (open) ---------+
++-- spoke-3  (open) ---------+
+'-- spoke-4  (open) ---------+
 
 
 <b>get started</b>
@@ -91,7 +91,7 @@ git clone https://github.com/graphwork/workgraph
 cd your-project &amp;&amp; wg init &amp;&amp; wg service start
 
 
-<a href="https://github.com/graphwork/workgraph">source</a> · <a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">mit</a> · <a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">docs</a>
+<a href="https://github.com/graphwork/workgraph">source</a>  <a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">mit</a>  <a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">docs</a>
 </pre>
 </body>
 </html>
