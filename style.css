@@ -21,6 +21,6 @@ code { font: inherit; }
 .inprog { color: #5ac8fa; }
 .open { color: var(--fg); }
 .multi { color: #d4a017; }
-.dep, .dim { color: var(--fg2); font-size: .85em; }
+.dep, .dim { color: var(--fg2); }
 .prompt { color: var(--hi); }
 footer { margin-top: 2em; color: var(--fg2); font-size: .85em; }

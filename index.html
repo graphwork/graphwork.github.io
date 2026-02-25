@@ -16,15 +16,15 @@
 <a href="organizational-patterns.pdf">Theory</a> · <a href="workgraph-manual.pdf">Manual</a></p>
 
 <pre>
-<span class="prompt">$</span> wg viz arena-research-spec
+$ wg viz arena-research-spec
 
-<span class="g">arena-research-spec</span>  <span class="done">(done)</span>
-├→ arena-context-selection  <span class="done">(done)</span>
-│ └→ arena-synthesize  <span class="done">(done)</span> <span class="dim">◀────────────┐</span>
-│   └→ arena-refine  <span class="done">(done)</span> <span class="dim">↺ (iter 0/3)</span>   <span class="dim">│</span>
-├→ arena-eval-integration  <span class="done">(done)</span> <span class="dim">─────────┤</span>
-├→ arena-evolution-input  <span class="done">(done)</span> <span class="dim">──────────┤</span>
-└→ arena-model-selection  <span class="done">(done)</span> <span class="dim">──────────┘</span>
+arena-research-spec  (done)
+├→ arena-context-selection  (done)
+│ └→ arena-synthesize  (done) ◀────────────┐
+│   └→ arena-refine  (done) ↺ (iter 0/3)   │
+├→ arena-eval-integration  (done) ─────────┤
+├→ arena-evolution-input  (done) ──────────┤
+└→ arena-model-selection  (done) ──────────┘
 </pre>
 
 <h2>what it is</h2>
@@ -43,9 +43,9 @@ convergence loops — are expressed as cycles in the graph. Each cycle has a
 bound. Agents pick up where previous iterations left off.</p>
 
 <pre>
-<span class="g">run-tests</span>  <span class="open">(open)</span> <span class="dim">↺ (iter 0/5) ◀────────┐</span>
-└→ fix-failures  <span class="open">(open)</span>                   <span class="dim">│</span>
-  └→ push-check  <span class="open">(open)</span> <span class="dim">────────────────┘</span>
+run-tests  (open) ↺ (iter 0/5) ◀────────┐
+└→ fix-failures  (open)                   │
+  └→ push-check  (open) ────────────────┘
 </pre>
 
 <h2>organizational synthesis</h2>
@@ -56,7 +56,7 @@ the best performers. The organization restructures itself based on
 what works.</p>
 
 <pre>
-<span class="prompt">$</span> wg agency stats
+$ wg agency stats
 
   Role        Motivation   Avg  Count  Rating
   ───────────────────────────────────────────
@@ -71,22 +71,22 @@ what works.</p>
 show convergence — multiple paths feeding into one task.</p>
 
 <pre>
-<span class="g">hub</span>  <span class="open">(open)</span>
-├→ spoke-1  <span class="open">(open)</span>
-│ └→ collector  <span class="open">(open)</span> <span class="dim">◀─┐</span>
-├→ spoke-2  <span class="open">(open)</span> <span class="dim">──────┤</span>
-├→ spoke-3  <span class="open">(open)</span> <span class="dim">──────┤</span>
-└→ spoke-4  <span class="open">(open)</span> <span class="dim">──────┘</span>
+hub  (open)
+├→ spoke-1  (open)
+│ └→ collector  (open) ◀─┐
+├→ spoke-2  (open) ──────┤
+├→ spoke-3  (open) ──────┤
+└→ spoke-4  (open) ──────┘
 </pre>
 
 <h2>coordination</h2>
 
 <pre>
-<span class="prompt">$</span> wg init
-<span class="prompt">$</span> wg add "Design the API"
-<span class="prompt">$</span> wg add "Build backend" --after design-the-api
-<span class="prompt">$</span> wg add "Write tests" --after build-backend
-<span class="prompt">$</span> wg service start --max-agents 3
+$ wg init
+$ wg add "Design the API"
+$ wg add "Build backend" --after design-the-api
+$ wg add "Write tests" --after build-backend
+$ wg service start --max-agents 3
 </pre>
 
 <p>The service dispatches agents to ready tasks, evaluates results, evolves
@@ -94,7 +94,7 @@ the agent population, and loops. You define structure. It does the rest.</p>
 
 <pre>
 git clone https://github.com/graphwork/workgraph
-cd your-project && wg init && wg service start
+cd your-project &amp;&amp; wg init &amp;&amp; wg service start
 </pre>
 
 <footer>
