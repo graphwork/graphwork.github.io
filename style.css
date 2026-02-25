@@ -74,8 +74,9 @@ h1 {
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   margin-bottom: 2.5em;
+  margin-left: -0.75em;
 }
-.nav a { margin-right: 1.5em; }
+.nav a { margin-right: 0.25em; padding: 0.75em; display: inline-block; }
 
 section { margin-bottom: 2.5em; }
 
@@ -127,8 +128,9 @@ footer {
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   color: var(--fg2);
+  margin-left: -0.75em;
 }
-footer a { margin-right: 1.5em; }
+footer a { margin-right: 0.25em; padding: 0.75em; display: inline-block; }
 
 @media (max-width: 480px) {
   body { padding: 1.5em 0.75em; }
