@@ -24,7 +24,7 @@
 <body>
 
 <h1>workgraph</h1>
-<p class="subtitle">self-organizing process flowgraphs<br>a cybernetic autopoietic stigmergic medium</p>
+<p class="subtitle">self-organizing process flowgraphs<br>cybernetic autopoietic stigmergic medium</p>
 <nav class="nav"><a href="organizational-patterns.md">Theory</a> <span class="dl"><a href="organizational-patterns.pdf">pdf</a>/<a href="organizational-patterns.md">md</a></span><a href="workgraph-manual.md">Manual</a> <span class="dl"><a href="workgraph-manual.pdf">pdf</a>/<a href="workgraph-manual.md">md</a></span><a href="https://github.com/graphwork/workgraph">Source</a></nav>
 
 <section>
@@ -37,12 +37,12 @@
 ├→ <span class="s-ip">data-layer  (in-progress)</span> <span class="s-dim">────┤</span>
 └→ <span class="s-ip">search-index  (in-progress)</span> <span class="s-dim">──┘</span></pre>
 
-<p>A dependency graph of tasks stored as plain text.
-Completing a task unblocks downstream work.
-A coordinator service dispatches AI agents to ready tasks —
-each agent is an AI model (Claude, etc.) that receives the task description
-and context from upstream work, executes autonomously, and reports results back to the graph.
-Cycles let long-running processes loop with bounded iteration.
+<p>Building enormous things requires organizing at the same scale.
+Workgraph is a dependency graph of tasks — completing one unblocks the next.
+A coordinator dispatches AI agents to ready work.
+Each agent receives context from upstream, executes autonomously,
+and reports results back to the graph.
+Cycles let long-running processes iterate.
 The graph is the program.</p>
 
 <p><code>.workgraph/graph.jsonl</code> — git-friendly, no server, no account.</p>
