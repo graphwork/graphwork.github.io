@@ -4,131 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>workgraph</title>
-    <meta name="description" content="Task graph coordination for humans and AI agents.">
+    <meta name="description" content="An organizational DSL for autopoietic automation.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <h1>workgraph</h1>
-<p>task graph coordination for humans and AI agents</p>
+<p>an organizational DSL for autopoietic automation</p>
 
-<p class="dim">Self-organizing task systems. Agents that evolve. Work that learns from itself.<br>
-<a href="organizational-patterns.pdf">Read the theory.</a> <a href="workgraph-manual.pdf">Read the manual.</a></p>
+<p class="dim">Define what you want done. Agents figure out how.<br>
+<a href="organizational-patterns.pdf">Theory</a> · <a href="workgraph-manual.pdf">Manual</a></p>
 
 <pre>
-<span class="prompt">$</span> wg viz
+<span class="prompt">$</span> wg viz arena-research-spec
 
-<span class="g">research-spec</span>  <span class="done">(done)</span>
-├→ context-selection  <span class="done">(done)</span>
-│ └→ synthesize  <span class="done">(done)</span> <span class="dim">◀──────────────────────┐</span>
-│   └→ refine  <span class="done">(done)</span> <span class="dim">↺ (iter 0/3)</span>           <span class="dim">│</span>
-├→ eval-integration  <span class="done">(done)</span> <span class="dim">─────────────────────┤</span>
-├→ evolution-input  <span class="done">(done)</span> <span class="dim">──────────────────────┤</span>
-└→ model-selection  <span class="done">(done)</span> <span class="dim">──────────────────────┘</span>
+<span class="g">arena-research-spec</span>  <span class="done">(done)</span>
+├→ arena-context-selection  <span class="done">(done)</span>
+│ └→ arena-synthesize  <span class="done">(done)</span> <span class="dim">◀────────────┐</span>
+│   └→ arena-refine  <span class="done">(done)</span> <span class="dim">↺ (iter 0/3)</span>   <span class="dim">│</span>
+├→ arena-eval-integration  <span class="done">(done)</span> <span class="dim">─────────┤</span>
+├→ arena-evolution-input  <span class="done">(done)</span> <span class="dim">──────────┤</span>
+└→ arena-model-selection  <span class="done">(done)</span> <span class="dim">──────────┘</span>
 </pre>
 
-<p>real output from <code>wg viz</code>. tree edges on the left,
-fan-in arcs on the right with <code>◀</code> arrowheads. that's
-what the tool does.</p>
+<h2>what it is</h2>
 
-<h2>what is it</h2>
+<p>A dependency graph of tasks stored as plain text. Dependencies are edges.
+Completing a task unblocks downstream work. A coordinator service dispatches
+AI agents to ready tasks. Cycles let long-running processes loop with
+bounded iteration. The graph is the program.</p>
 
-<p>A directed acyclic graph of tasks. Dependencies are edges. Completing a task
-unblocks downstream work. A background service auto-dispatches AI agents to
-ready tasks.</p>
-
-<p>Plain text storage (<code>.workgraph/graph.jsonl</code>). Git-friendly. No
-server. No account. Just a binary and a directory.</p>
+<p><code>.workgraph/graph.jsonl</code> — git-friendly, no server, no account.</p>
 
 <h2>cycles</h2>
 
-<p>Tasks can cycle. Not everything is a straight line.</p>
+<p>Processes that need to repeat — CI pipelines, monitoring checks,
+convergence loops — are expressed as cycles in the graph. Each cycle has a
+bound. Agents pick up where previous iterations left off.</p>
 
 <pre>
-<span class="prompt">$</span> wg add "Run tests" --after push-check \
-    --max-iterations 5
-
-<span class="prompt">$</span> wg viz
 <span class="g">run-tests</span>  <span class="open">(open)</span> <span class="dim">↺ (iter 0/5) ◀────────┐</span>
 └→ fix-failures  <span class="open">(open)</span>                   <span class="dim">│</span>
   └→ push-check  <span class="open">(open)</span> <span class="dim">────────────────┘</span>
 </pre>
 
-<p>When push-check completes, run-tests re-opens. The whole chain
-resets. Iteration counter increments. Agents read previous logs and pick up
-where they left off. Every cycle requires max_iterations. No unbounded loops.
-Optional guards and delays control when they fire.</p>
+<h2>organizational synthesis</h2>
 
-<h2>recursive prompting</h2>
-
-<p>Tasks create tasks create tasks.</p>
-
-<p>Create a task that surveys the codebase, then spawns subtasks for each gap
-it finds. The coordinator dispatches agents to each subtask. When those
-complete, evaluation tasks spawn automatically. The whole thing recurses.</p>
-
-<pre>
-<span class="prompt">$</span> wg add "Survey codebase for gaps"
-<span class="prompt">$</span> wg service start --max-agents 4
-
-<span class="dim"># survey agent runs, finds 3 gaps, creates subtasks:</span>
-<span class="prompt">$</span> wg viz
-
-<span class="g">survey-codebase-for-gaps</span>  <span class="done">(done)</span>
-├→ fix-auth  <span class="inprog">(in-progress)</span>  <span class="dim">agent-1</span>
-│ └→ evaluate-fix-auth  <span class="open">(open)</span>
-├→ add-rate-limiting  <span class="inprog">(in-progress)</span>  <span class="dim">agent-2</span>
-│ └→ evaluate-rate-limiting  <span class="open">(open)</span>
-└→ update-errors  <span class="open">(open)</span>  <span class="dim">waiting</span>
-  └→ evaluate-errors  <span class="open">(open)</span>
-</pre>
-
-<h2>the agency system</h2>
-
-<p>Agents have roles (what they do) and motivations (why they do it). They get
-evaluated after each task. The evolver mutates and crosses over the best
-performers. Darwinian prompt engineering.</p>
-
-<pre>
-<span class="prompt">$</span> wg agent list
-
-Agents:
-
-  4a8c6c70  Research Analyst     score:0.88 tasks:22
-  bd49ff30  CLI Developer        score:0.75 tasks:10
-  c573e9d1  Technical Writer     score:0.88 tasks:19
-  f473ba8b  Rust Programmer      score:0.93 tasks:63
-</pre>
+<p>Agents have roles (what they do) and motivations (constraints on how).
+After each task, agents are evaluated. An evolver mutates and recombines
+the best performers. The organization restructures itself based on
+what works.</p>
 
 <pre>
 <span class="prompt">$</span> wg agency stats
-
-=== Agency Performance Stats ===
-
-  Roles:        8
-  Motivations:  6
-  Evaluations:  114
-  Avg score:    0.90
-
---- Synergy Matrix (Role x Motivation) ---
 
   Role        Motivation   Avg  Count  Rating
   ───────────────────────────────────────────
   Programmer  Thorough    0.93     63    HIGH
   Writer      Balanced    0.88     19    HIGH
   Analyst     Balanced    0.88     22    HIGH
-  Programmer  Balanced    0.75     10
 </pre>
 
-<p>The synergy matrix shows which role+motivation combos perform best.
-Programmer x Thorough averaging 0.93 across 63 tasks. The evolver sees this
-and creates more agents with that combo.</p>
+<h2>graph structure</h2>
 
-<h2>fan-in and fan-out</h2>
+<p>Fan-out decomposes work. Fan-in synchronizes it. Arcs on the right
+show convergence — multiple paths feeding into one task.</p>
 
 <pre>
-<span class="prompt">$</span> wg viz
-
 <span class="g">hub</span>  <span class="open">(open)</span>
 ├→ spoke-1  <span class="open">(open)</span>
 │ └→ collector  <span class="open">(open)</span> <span class="dim">◀─┐</span>
@@ -137,58 +79,22 @@ and creates more agents with that combo.</p>
 └→ spoke-4  <span class="open">(open)</span> <span class="dim">──────┘</span>
 </pre>
 
-<p>Left side shows fan-out: <code>hub</code> has four children. Right side
-shows fan-in: all four spokes converge on <code>collector</code>. The
-<code>◀</code> arrowhead marks the target. One tree edge on the left,
-the rest are arcs on the right.</p>
-
-<h2>commands</h2>
+<h2>coordination</h2>
 
 <pre>
 <span class="prompt">$</span> wg init
-Created .workgraph/
-
 <span class="prompt">$</span> wg add "Design the API"
 <span class="prompt">$</span> wg add "Build backend" --after design-the-api
 <span class="prompt">$</span> wg add "Write tests" --after build-backend
-
-<span class="prompt">$</span> wg viz
-<span class="g">design-the-api</span>  <span class="open">(open)</span>
-├→ build-backend  <span class="open">(open)</span>
-│ └→ write-tests  <span class="open">(open)</span>
-</pre>
-
-<pre>
 <span class="prompt">$</span> wg service start --max-agents 3
-Service started (pid 4821)
-Coordinator active — 3 max agents
-
-<span class="prompt">$</span> wg agents
-ID       TASK            EXECUTOR  PID    STATUS
-agent-1  design-the-api  claude    12345  working
-agent-2  —               claude    12346  idle
 </pre>
 
-<pre>
-<span class="prompt">$</span> wg --help
-
-wg - workgraph task management
-
-Your most-used:
-  show    Show detailed information about a task
-  log     Add progress log/notes to a task
-
-Also used:
-  done, add, fail, agent, evaluate, assign ...
-
-More commands:
-  list, service, viz, cycles, evolve, ... and 49 more
-</pre>
+<p>The service dispatches agents to ready tasks, evaluates results, evolves
+the agent population, and loops. You define structure. It does the rest.</p>
 
 <pre>
 git clone https://github.com/graphwork/workgraph
-cd your-project && wg init
-wg service start
+cd your-project && wg init && wg service start
 </pre>
 
 <footer>
