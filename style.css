@@ -5,11 +5,13 @@
   :root { --bg: #fff; --fg: #222; --fg2: #777; }
 }
 body, pre {
-  font: 14px/1.5 'SF Mono','Consolas','Liberation Mono','Menlo',monospace;
+  font: 14px/1.5 'JetBrains Mono','SF Mono','Consolas','Liberation Mono','Menlo',monospace;
+  font-variant-ligatures: none;
   background: var(--bg); color: var(--fg);
 }
 body { max-width: 72ch; margin: 0 auto; padding: 1em; }
 pre { margin: 0; }
-a { color: var(--fg2); }
-a:hover { color: var(--fg); }
+a, b { font: inherit; }
+a { color: var(--fg2); text-decoration: none; }
+a:hover { color: var(--fg); text-decoration: underline; }
 b { color: var(--fg); }
