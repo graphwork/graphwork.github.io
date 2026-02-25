@@ -1,26 +1,15 @@
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #0e0e0e; --fg: #b0b0b0; --fg2: #666; --hi: #4af626; }
+  :root { --bg: #0e0e0e; --fg: #b0b0b0; --fg2: #666; }
 }
 @media (prefers-color-scheme: light) {
-  :root { --bg: #fff; --fg: #222; --fg2: #777; --hi: #1a7a0a; }
+  :root { --bg: #fff; --fg: #222; --fg2: #777; }
 }
 body {
   font: 14px/1.5 'SF Mono','Consolas','Liberation Mono',monospace;
   background: var(--bg); color: var(--fg);
   max-width: 72ch; margin: 0 auto; padding: 1em;
 }
-h1 { font-size: 1em; margin: 0 0 .2em; }
-h2 { font-size: 1em; font-weight: bold; margin: 1.5em 0 .3em; color: var(--hi); }
-p { margin: 0 0 .5em; }
-pre { overflow-x: auto; margin: 0 0 .8em; }
+pre { margin: 0; white-space: pre-wrap; }
 a { color: var(--fg2); }
-a:hover { color: var(--hi); }
-code { font: inherit; }
-.g { color: var(--hi); font-weight: bold; }
-.done { color: var(--fg2); }
-.inprog { color: #5ac8fa; }
-.open { color: var(--fg); }
-.multi { color: #d4a017; }
-.dep, .dim { color: var(--fg2); }
-.prompt { color: var(--hi); }
-footer { margin-top: 2em; color: var(--fg2); font-size: .85em; }
+a:hover { color: var(--fg); }
+b { color: var(--fg); }

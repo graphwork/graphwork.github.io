@@ -8,14 +8,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h1>workgraph</h1>
-<p>an organizational DSL for autopoietic automation</p>
-
-<p class="dim">Define what you want done. Agents figure out how.<br>
-<a href="organizational-patterns.pdf">Theory</a> · <a href="workgraph-manual.pdf">Manual</a></p>
-
 <pre>
+<b>workgraph</b>
+an organizational DSL for autopoietic automation
+
+<a href="organizational-patterns.pdf">Theory</a> · <a href="workgraph-manual.pdf">Manual</a> · <a href="https://github.com/graphwork/workgraph">Source</a>
+
+
 $ wg viz arena-research-spec
 
 arena-research-spec  (done)
@@ -25,37 +24,35 @@ arena-research-spec  (done)
 ├→ arena-eval-integration  (done) ─────────┤
 ├→ arena-evolution-input  (done) ──────────┤
 └→ arena-model-selection  (done) ──────────┘
-</pre>
 
-<h2>what it is</h2>
 
-<p>A dependency graph of tasks stored as plain text. Dependencies are edges.
-Completing a task unblocks downstream work. A coordinator service dispatches
-AI agents to ready tasks. Cycles let long-running processes loop with
-bounded iteration. The graph is the program.</p>
+A dependency graph of tasks stored as plain text.
+Completing a task unblocks downstream work.
+A coordinator service dispatches AI agents to ready tasks.
+Cycles let long-running processes loop with bounded iteration.
+The graph is the program.
 
-<p><code>.workgraph/graph.jsonl</code> — git-friendly, no server, no account.</p>
+.workgraph/graph.jsonl — git-friendly, no server, no account.
 
-<h2>cycles</h2>
 
-<p>Processes that need to repeat — CI pipelines, monitoring checks,
-convergence loops — are expressed as cycles in the graph. Each cycle has a
-bound. Agents pick up where previous iterations left off.</p>
+<b>cycles</b>
 
-<pre>
+Processes that repeat — CI, monitoring, convergence — are
+cycles in the graph. Each has a bound. Agents pick up where
+previous iterations left off.
+
 run-tests  (open) ↺ (iter 0/5) ◀────────┐
 └→ fix-failures  (open)                   │
   └→ push-check  (open) ────────────────┘
-</pre>
 
-<h2>organizational synthesis</h2>
 
-<p>Agents have roles (what they do) and motivations (constraints on how).
-After each task, agents are evaluated. An evolver mutates and recombines
-the best performers. The organization restructures itself based on
-what works.</p>
+<b>organizational synthesis</b>
 
-<pre>
+Agents have roles (what they do) and motivations (constraints
+on how). After each task, agents are evaluated. An evolver
+mutates and recombines the best performers. The organization
+restructures itself based on what works.
+
 $ wg agency stats
 
   Role        Motivation   Avg  Count  Rating
@@ -63,43 +60,38 @@ $ wg agency stats
   Programmer  Thorough    0.93     63    HIGH
   Writer      Balanced    0.88     19    HIGH
   Analyst     Balanced    0.88     22    HIGH
-</pre>
 
-<h2>graph structure</h2>
 
-<p>Fan-out decomposes work. Fan-in synchronizes it. Arcs on the right
-show convergence — multiple paths feeding into one task.</p>
+<b>graph structure</b>
 
-<pre>
+Fan-out decomposes work. Fan-in synchronizes it.
+Arcs on the right show convergence.
+
 hub  (open)
 ├→ spoke-1  (open)
 │ └→ collector  (open) ◀─┐
 ├→ spoke-2  (open) ──────┤
 ├→ spoke-3  (open) ──────┤
 └→ spoke-4  (open) ──────┘
-</pre>
 
-<h2>coordination</h2>
 
-<pre>
+<b>get started</b>
+
 $ wg init
 $ wg add "Design the API"
 $ wg add "Build backend" --after design-the-api
 $ wg add "Write tests" --after build-backend
 $ wg service start --max-agents 3
-</pre>
 
-<p>The service dispatches agents to ready tasks, evaluates results, evolves
-the agent population, and loops. You define structure. It does the rest.</p>
+The service dispatches agents to ready tasks, evaluates
+results, evolves the agent population, and loops.
+You define structure. It does the rest.
 
-<pre>
 git clone https://github.com/graphwork/workgraph
 cd your-project &amp;&amp; wg init &amp;&amp; wg service start
-</pre>
 
-<footer>
+
 <a href="https://github.com/graphwork/workgraph">source</a> · <a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">mit</a> · <a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">docs</a>
-</footer>
-
+</pre>
 </body>
 </html>
