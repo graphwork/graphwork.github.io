@@ -18,29 +18,18 @@
 <pre>
 <span class="prompt">$</span> wg viz
 
-<span class="g">design-agent-service</span>  <span class="done">(done)</span>
-├→ implement-agent-registry  <span class="done">(done)</span>
-│ ├→ add-agent-heartbeat  <span class="done">(done)</span>
-│ │ └→ implement-dead-agent  <span class="done">(done)</span>
-│ ├→ implement-wg-agents  <span class="done">(done)</span>
-│ ├→ implement-wg-kill  <span class="done">(done)</span>
-│ └→ <span class="multi">implement-wg-service</span>  <span class="done">(done)</span>  <span class="dep">(← implement-agent-registry, implement-executor-plugin)</span>
-│   └→ <span class="multi">integration-coordinator-spawns</span>  <span class="done">(done)</span>  <span class="dep">(← implement-claude-executor, implement-wg-service, implement-wg-spawn)</span>
-├→ implement-executor-plugin  <span class="done">(done)</span>
-│ ├→ implement-claude-executor  <span class="done">(done)</span>
-│ │ └→ <span class="multi">integration-coordinator-spawns</span>  <span class="done">(done)</span> ...
-│ ├→ implement-shell-executor  <span class="done">(done)</span>
-│ └→ <span class="multi">implement-wg-service</span>  <span class="done">(done)</span> ...
-└→ implement-wg-spawn  <span class="done">(done)</span>
-  ├→ implement-output-capture  <span class="done">(done)</span>
-  │ └→ link-agent-outputs  <span class="done">(done)</span>
-  └→ <span class="multi">integration-coordinator-spawns</span>  <span class="done">(done)</span> ...
-
-<span class="g">redesign-website-vibe</span>  <span class="inprog">(in-progress)</span>
-└→ evaluate-redesign-website-vibe  <span class="open">(open)</span>
+<span class="g">research-spec</span>  <span class="done">(done)</span>
+├→ context-selection  <span class="done">(done)</span>
+│ └→ synthesize  <span class="done">(done)</span> <span class="dim">◀──────────────────────┐</span>
+│   └→ refine  <span class="done">(done)</span> <span class="dim">↺ (iter 0/3)</span>           <span class="dim">│</span>
+├→ eval-integration  <span class="done">(done)</span> <span class="dim">─────────────────────┤</span>
+├→ evolution-input  <span class="done">(done)</span> <span class="dim">──────────────────────┤</span>
+└→ model-selection  <span class="done">(done)</span> <span class="dim">──────────────────────┘</span>
 </pre>
 
-<p>real output from <code>wg viz</code>. that's what the tool does.</p>
+<p>real output from <code>wg viz</code>. tree edges on the left,
+fan-in arcs on the right with <code>◀</code> arrowheads. that's
+what the tool does.</p>
 
 <h2>what is it</h2>
 
@@ -51,45 +40,24 @@ ready tasks.</p>
 <p>Plain text storage (<code>.workgraph/graph.jsonl</code>). Git-friendly. No
 server. No account. Just a binary and a directory.</p>
 
-<h2>loop edges</h2>
+<h2>cycles</h2>
 
-<p>Tasks can loop. Not everything is a straight line.</p>
+<p>Tasks can cycle. Not everything is a straight line.</p>
 
 <pre>
-ci-run-tests → ci-fix-failures → ci-push-check ↺ ci-run-tests
+<span class="prompt">$</span> wg add "Run tests" --after push-check \
+    --max-iterations 5
+
+<span class="prompt">$</span> wg viz
+<span class="g">run-tests</span>  <span class="open">(open)</span> <span class="dim">↺ (iter 0/5) ◀────────┐</span>
+└→ fix-failures  <span class="open">(open)</span>                   <span class="dim">│</span>
+  └→ push-check  <span class="open">(open)</span> <span class="dim">────────────────┘</span>
 </pre>
 
-<p>When ci-push-check completes, it re-opens ci-run-tests. The whole chain
+<p>When push-check completes, run-tests re-opens. The whole chain
 resets. Iteration counter increments. Agents read previous logs and pick up
-where they left off.</p>
-
-<pre>
-<span class="prompt">$</span> wg loops
-
-Loop edges: 2
-
-  ci-push-check --[loops_to]--> ci-run-tests  <span class="g">[ACTIVE]</span>
-    iterations: 1/5  guard: none (always)
-
-  test-loop-dummy --[loops_to]--> nonexistent  <span class="g">[ACTIVE]</span>
-    iterations: 0/2  guard: none (always)
-
-Loop summary: 2 active, 0 exhausted
-
-No dependency cycles detected.
-</pre>
-
-<p>Loop edges are separate from dependency edges. They don't affect scheduling. The
-DAG stays clean. Loops are evaluated at completion time only. Every loop
-requires max_iterations. No unbounded loops. Optional guards and delays
-control when they fire.</p>
-
-<pre>
-<span class="prompt">$</span> wg add "Run tests" --id ci-run-tests
-<span class="prompt">$</span> wg add "Fix failures" --id ci-fix-failures --after ci-run-tests
-<span class="prompt">$</span> wg add "Push check" --id ci-push-check --after ci-fix-failures \
-    --loops-to ci-run-tests --loop-max 5
-</pre>
+where they left off. Every cycle requires max_iterations. No unbounded loops.
+Optional guards and delays control when they fire.</p>
 
 <h2>recursive prompting</h2>
 
@@ -100,24 +68,20 @@ it finds. The coordinator dispatches agents to each subtask. When those
 complete, evaluation tasks spawn automatically. The whole thing recurses.</p>
 
 <pre>
-<span class="prompt">$</span> wg add "Survey codebase for gaps" --spawn-subtasks
+<span class="prompt">$</span> wg add "Survey codebase for gaps"
 <span class="prompt">$</span> wg service start --max-agents 4
 
-<span class="dim"># the survey agent runs, finds 3 gaps, creates subtasks:</span>
+<span class="dim"># survey agent runs, finds 3 gaps, creates subtasks:</span>
 <span class="prompt">$</span> wg viz
 
 <span class="g">survey-codebase-for-gaps</span>  <span class="done">(done)</span>
-├→ fix-auth-validation  <span class="inprog">(in-progress)</span>  <span class="dim">agent-1</span>
-│ └→ evaluate-fix-auth-validation  <span class="open">(open)</span>
+├→ fix-auth  <span class="inprog">(in-progress)</span>  <span class="dim">agent-1</span>
+│ └→ evaluate-fix-auth  <span class="open">(open)</span>
 ├→ add-rate-limiting  <span class="inprog">(in-progress)</span>  <span class="dim">agent-2</span>
-│ └→ evaluate-add-rate-limiting  <span class="open">(open)</span>
-└→ update-error-handling  <span class="open">(open)</span>  <span class="dim">waiting for agent slot</span>
-  └→ evaluate-update-error-handling  <span class="open">(open)</span>
+│ └→ evaluate-rate-limiting  <span class="open">(open)</span>
+└→ update-errors  <span class="open">(open)</span>  <span class="dim">waiting</span>
+  └→ evaluate-errors  <span class="open">(open)</span>
 </pre>
-
-<p>Meta-tasks (assigner, evaluator, evolver) use the same mechanism. The
-system bootstraps itself. You define the shape of the work; agents fill in
-the details.</p>
 
 <h2>the agency system</h2>
 
@@ -130,11 +94,10 @@ performers. Darwinian prompt engineering.</p>
 
 Agents:
 
-  4a8c6c70  Research Analyst     role:e49c5293 mot:2dc69b33 exec:claude score:0.88 tasks:22
-  bd49ff30  CLI Developer        role:b491d6c1 mot:2dc69b33 exec:claude score:0.75 tasks:10
-  c573e9d1  Technical Writer     role:ef51f2a4 mot:2dc69b33 exec:claude score:0.88 tasks:19
-  e7c2321f  Alice                role:e86f44c7 mot:8ace8967 exec:claude score:n/a tasks:0
-  f473ba8b  Rust Systems Programmer role:b491d6c1 mot:1caa4c3c exec:claude score:0.93 tasks:63
+  4a8c6c70  Research Analyst     score:0.88 tasks:22
+  bd49ff30  CLI Developer        score:0.75 tasks:10
+  c573e9d1  Technical Writer     score:0.88 tasks:19
+  f473ba8b  Rust Programmer      score:0.93 tasks:63
 </pre>
 
 <pre>
@@ -147,46 +110,37 @@ Agents:
   Evaluations:  114
   Avg score:    0.90
 
---- Role Leaderboard ---
-
-  Role                      Avg  Tasks  Trend
-  --------------------------------------------
-  b491d6c1                 0.90     73     up
-  ef51f2a4                 0.88     19     up
-  e49c5293                 0.88     22   flat
-
 --- Synergy Matrix (Role x Motivation) ---
 
-  Role                 Motivation                Avg  Count   Rating
-  ------------------------------------------------------------------
-  b491d6c1             1caa4c3c                 0.93     63     HIGH
-  ef51f2a4             2dc69b33                 0.88     19     HIGH
-  e49c5293             2dc69b33                 0.88     22     HIGH
-  b491d6c1             2dc69b33                 0.75     10
+  Role        Motivation   Avg  Count  Rating
+  ───────────────────────────────────────────
+  Programmer  Thorough    0.93     63    HIGH
+  Writer      Balanced    0.88     19    HIGH
+  Analyst     Balanced    0.88     22    HIGH
+  Programmer  Balanced    0.75     10
 </pre>
 
 <p>The synergy matrix shows which role+motivation combos perform best.
-b491d6c1 x 1caa4c3c averaging 0.93 across 63 tasks — that's the Rust
-Systems Programmer with the top motivation. The evolver sees this and creates
-more agents with that combo.</p>
+Programmer x Thorough averaging 0.93 across 63 tasks. The evolver sees this
+and creates more agents with that combo.</p>
 
-<p>Roles define skills and desired outcomes. Motivations define acceptable
-trade-offs and non-negotiable constraints. Combine them into agents. Evaluate
-after every task. Evolve the population.</p>
+<h2>fan-in and fan-out</h2>
 
 <pre>
-<span class="dim"># the loop: assign → execute → evaluate → evolve → assign</span>
+<span class="prompt">$</span> wg viz
 
-<span class="prompt">$</span> wg assign implement-auth careful-coder
-<span class="prompt">$</span> wg service start              <span class="dim"># agent executes the task</span>
-<span class="prompt">$</span> wg evaluate implement-auth     <span class="dim"># score: correctness, completeness, efficiency, style</span>
-<span class="prompt">$</span> wg evolve --strategy all       <span class="dim"># mutate, crossover, retire, gap-fill</span>
+<span class="g">hub</span>  <span class="open">(open)</span>
+├→ spoke-1  <span class="open">(open)</span>
+│ └→ collector  <span class="open">(open)</span> <span class="dim">◀─┐</span>
+├→ spoke-2  <span class="open">(open)</span> <span class="dim">──────┤</span>
+├→ spoke-3  <span class="open">(open)</span> <span class="dim">──────┤</span>
+└→ spoke-4  <span class="open">(open)</span> <span class="dim">──────┘</span>
 </pre>
 
-<p>Six evolution strategies: mutation (tweak a role), crossover (combine two
-roles), gap analysis (find missing skills), retirement (remove
-underperformers), motivation tuning (adjust trade-off boundaries), and all
-(let the evolver pick).</p>
+<p>Left side shows fan-out: <code>hub</code> has four children. Right side
+shows fan-in: all four spokes converge on <code>collector</code>. The
+<code>◀</code> arrowhead marks the target. One tree edge on the left,
+the rest are arcs on the right.</p>
 
 <h2>commands</h2>
 
@@ -210,11 +164,9 @@ Service started (pid 4821)
 Coordinator active — 3 max agents
 
 <span class="prompt">$</span> wg agents
-ID          TASK             EXECUTOR  PID    UPTIME STATUS
-agent-1     design-the-api   claude    12345  3m     working
-agent-2     —               claude    12346  45s    idle
-
-2 agent(s): 2 alive, 0 dead
+ID       TASK            EXECUTOR  PID    STATUS
+agent-1  design-the-api  claude    12345  working
+agent-2  —               claude    12346  idle
 </pre>
 
 <pre>
@@ -223,21 +175,14 @@ agent-2     —               claude    12346  45s    idle
 wg - workgraph task management
 
 Your most-used:
-  show            Show detailed information about a single task
-  log             Add progress log/notes to a task
+  show    Show detailed information about a task
+  log     Add progress log/notes to a task
 
 Also used:
-  done            Mark a task as done
-  artifact        Manage task artifacts (produced outputs)
-  agent           Manage agents (role+motivation pairings)
-  evaluate        Trigger evaluation of a completed task
-  role            Manage agency roles (what an agent does)
-  fail            Mark a task as failed (can be retried)
-  add             Add a new task
-  assign          Assign an agent to a task
+  done, add, fail, agent, evaluate, assign ...
 
 More commands:
-  list, motivation, service, quickstart, ... and 49 more (--help-all)
+  list, service, viz, cycles, evolve, ... and 49 more
 </pre>
 
 <pre>
