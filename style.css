@@ -4,12 +4,12 @@
 @media (prefers-color-scheme: light) {
   :root { --bg: #fff; --fg: #222; --fg2: #777; }
 }
-body {
-  font: 14px/1.5 'SF Mono','Consolas','Liberation Mono',monospace;
+body, pre {
+  font: 14px/1.5 'SF Mono','Consolas','Liberation Mono','Menlo',monospace;
   background: var(--bg); color: var(--fg);
-  max-width: 72ch; margin: 0 auto; padding: 1em;
 }
-pre { margin: 0; white-space: pre-wrap; }
+body { max-width: 72ch; margin: 0 auto; padding: 1em; }
+pre { margin: 0; }
 a { color: var(--fg2); }
 a:hover { color: var(--fg); }
 b { color: var(--fg); }
