@@ -32,18 +32,18 @@ A coordinator service dispatches AI agents to ready tasks.
 Cycles let long-running processes loop with bounded iteration.
 The graph is the program.
 
-.workgraph/graph.jsonl — git-friendly, no server, no account.
+.workgraph/graph.jsonl -- git-friendly, no server, no account.
 
 
 <b>cycles</b>
 
-Processes that repeat — CI, monitoring, convergence —
+Processes that repeat -- CI, monitoring, convergence --
 are cycles in the graph. Each has a bound. Agents pick up
 where previous iterations left off.
 
-run-tests  (open) ↺ (iter 0/5) ◀────────┐
-└→ fix-failures  (open)                   │
-  └→ push-check  (open) ────────────────┘
+run-tests  (open) ↺ (iter 0/5) ◀─┐
+└→ fix-failures  (open)          │
+  └→ push-check  (open) ─────────┘
 
 
 <b>organizational synthesis</b>
@@ -56,7 +56,7 @@ restructures itself based on what works.
 $ wg agency stats
 
   Role        Motivation   Avg  Count  Rating
-  ───────────────────────────────────────────
+  -------------------------------------------
   Programmer  Thorough    0.93     63    HIGH
   Writer      Balanced    0.88     19    HIGH
   Analyst     Balanced    0.88     22    HIGH
