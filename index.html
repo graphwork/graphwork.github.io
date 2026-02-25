@@ -19,8 +19,8 @@ $ wg viz arena-research-spec
 
 arena-research-spec  (done)
 ├→ arena-context-selection  (done)
-│ └→ arena-synthesize  (done) ◀────────────┐
-│   └→ arena-refine  (done) ↺ (iter 0/3)   │
+│ └→ arena-synthesize  (done) &lt;────────────┐
+│   └→ arena-refine  (done) ~ (iter 0/3)   │
 ├→ arena-eval-integration  (done) ─────────┤
 ├→ arena-evolution-input  (done) ──────────┤
 └→ arena-model-selection  (done) ──────────┘
@@ -41,7 +41,7 @@ Processes that repeat -- CI, monitoring, convergence --
 are cycles in the graph. Each has a bound. Agents pick up
 where previous iterations left off.
 
-run-tests  (open) ↺ (iter 0/5) ◀─┐
+run-tests  (open) ~ (iter 0/5) &lt;─┐
 └→ fix-failures  (open)          │
   └→ push-check  (open) ─────────┘
 
@@ -69,7 +69,7 @@ Arcs on the right show convergence.
 
 hub  (open)
 ├→ spoke-1  (open)
-│ └→ collector  (open) ◀─┐
+│ └→ collector  (open) &lt;─┐
 ├→ spoke-2  (open) ──────┤
 ├→ spoke-3  (open) ──────┤
 └→ spoke-4  (open) ──────┘
