@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url(JetBrainsMono-Regular.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: url(JetBrainsMono-Bold.woff2) format('woff2');
+}
 @media (prefers-color-scheme: dark) {
   :root { --bg: #0e0e0e; --fg: #b0b0b0; --fg2: #666; }
 }
@@ -5,7 +17,7 @@
   :root { --bg: #fff; --fg: #222; --fg2: #777; }
 }
 body, pre {
-  font: 14px/1.5 'JetBrains Mono','SF Mono','Consolas','Liberation Mono','Menlo',monospace;
+  font: 14px/1.5 'JetBrains Mono', monospace;
   font-variant-ligatures: none;
   background: var(--bg); color: var(--fg);
 }
