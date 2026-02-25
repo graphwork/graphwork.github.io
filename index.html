@@ -8,90 +8,94 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<pre>
-<b>workgraph</b>
-an organizational DSL for autopoietic automation
 
-<a href="organizational-patterns.pdf">Theory</a>  <a href="workgraph-manual.pdf">Manual</a>  <a href="https://github.com/graphwork/workgraph">Source</a>
+<h1>workgraph</h1>
+<p class="subtitle">an organizational DSL for autopoietic automation</p>
+<nav class="nav"><a href="organizational-patterns.pdf">Theory</a><a href="workgraph-manual.pdf">Manual</a><a href="https://github.com/graphwork/workgraph">Source</a></nav>
 
+<section>
+<pre class="viz">$ wg viz arena-research-spec
 
-$ wg viz arena-research-spec
+<span class="s-done">arena-research-spec  (done)</span>
+├→ <span class="s-done">arena-context-selection  (done)</span>
+│ └→ <span class="s-done">arena-synthesize  (done)</span> <span class="s-dim">◀────────────┐</span>
+│   └→ <span class="s-done">arena-refine  (done)</span> <span class="s-dim">~ (iter 0/3)   │</span>
+├→ <span class="s-done">arena-eval-integration  (done)</span> <span class="s-dim">─────────┤</span>
+├→ <span class="s-done">arena-evolution-input  (done)</span> <span class="s-dim">──────────┤</span>
+└→ <span class="s-done">arena-model-selection  (done)</span> <span class="s-dim">──────────┘</span></pre>
 
-arena-research-spec  (done)
-├→ arena-context-selection  (done)
-│ └→ arena-synthesize  (done) &lt;────────────┐
-│   └→ arena-refine  (done) ~ (iter 0/3)   │
-├→ arena-eval-integration  (done) ─────────┤
-├→ arena-evolution-input  (done) ──────────┤
-└→ arena-model-selection  (done) ──────────┘
-
-
-A dependency graph of tasks stored as plain text.
+<p>A dependency graph of tasks stored as plain text.
 Completing a task unblocks downstream work.
 A coordinator service dispatches AI agents to ready tasks.
 Cycles let long-running processes loop with bounded iteration.
-The graph is the program.
+The graph is the program.</p>
 
-.workgraph/graph.jsonl -- git-friendly, no server, no account.
+<p><code>.workgraph/graph.jsonl</code> — git-friendly, no server, no account.</p>
+</section>
 
+<section>
+<h2>cycles</h2>
 
-<b>cycles</b>
-
-Processes that repeat -- CI, monitoring, convergence --
+<p>Processes that repeat — CI, monitoring, convergence —
 are cycles in the graph. Each has a bound. Agents pick up
-where previous iterations left off.
+where previous iterations left off.</p>
 
-run-tests  (open) ~ (iter 0/5) &lt;─┐
-└→ fix-failures  (open)          │
-  └→ push-check  (open) ─────────┘
+<pre class="viz"><span class="s-open">run-tests  (open)</span> <span class="s-dim">~ (iter 0/5) ◀─┐</span>
+└→ <span class="s-open">fix-failures  (open)</span>          <span class="s-dim">│</span>
+  └→ <span class="s-open">push-check  (open)</span> <span class="s-dim">─────────┘</span></pre>
+</section>
 
+<section>
+<h2>organizational synthesis</h2>
 
-<b>organizational synthesis</b>
-
-Agents have roles (what they do) and motivations (constraints
+<p>Agents have roles (what they do) and motivations (constraints
 on how). After each task, agents are evaluated. An evolver
 mutates and recombines the best performers. The organization
-restructures itself based on what works.
+restructures itself based on what works.</p>
 
-$ wg agency stats
+<pre class="viz">$ wg agency stats
 
   Role        Motivation   Avg  Count  Rating
   -------------------------------------------
-  Programmer  Thorough    0.93     63    HIGH
-  Writer      Balanced    0.88     19    HIGH
-  Analyst     Balanced    0.88     22    HIGH
+  Programmer  Thorough    0.93     63    <span class="s-done">HIGH</span>
+  Writer      Balanced    0.88     19    <span class="s-done">HIGH</span>
+  Analyst     Balanced    0.88     22    <span class="s-done">HIGH</span></pre>
+</section>
 
+<section>
+<h2>graph structure</h2>
 
-<b>graph structure</b>
+<p>Fan-out decomposes work. Fan-in synchronizes it.
+Arcs on the right show convergence.</p>
 
-Fan-out decomposes work. Fan-in synchronizes it.
-Arcs on the right show convergence.
+<pre class="viz"><span class="s-open">hub  (open)</span>
+├→ <span class="s-open">spoke-1  (open)</span>
+│ └→ <span class="s-open">collector  (open)</span> <span class="s-dim">◀─┐</span>
+├→ <span class="s-open">spoke-2  (open)</span> <span class="s-dim">──────┤</span>
+├→ <span class="s-open">spoke-3  (open)</span> <span class="s-dim">──────┤</span>
+└→ <span class="s-open">spoke-4  (open)</span> <span class="s-dim">──────┘</span></pre>
+</section>
 
-hub  (open)
-├→ spoke-1  (open)
-│ └→ collector  (open) &lt;─┐
-├→ spoke-2  (open) ──────┤
-├→ spoke-3  (open) ──────┤
-└→ spoke-4  (open) ──────┘
+<section>
+<h2>get started</h2>
 
-
-<b>get started</b>
-
-$ wg init
+<pre class="viz">$ wg init
 $ wg add "Design the API"
 $ wg add "Build backend" --after design-the-api
 $ wg add "Write tests" --after build-backend
-$ wg service start --max-agents 3
+$ wg service start --max-agents 3</pre>
 
-The service dispatches agents to ready tasks, evaluates
+<p>The service dispatches agents to ready tasks, evaluates
 results, evolves the agent population, and loops.
-You define structure. It does the rest.
+You define structure. It does the rest.</p>
 
-git clone https://github.com/graphwork/workgraph
-cd your-project &amp;&amp; wg init &amp;&amp; wg service start
+<pre class="cmd">git clone https://github.com/graphwork/workgraph
+cd your-project && wg init && wg service start</pre>
+</section>
 
+<footer>
+<a href="https://github.com/graphwork/workgraph">source</a><a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">mit</a><a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">docs</a>
+</footer>
 
-<a href="https://github.com/graphwork/workgraph">source</a>  <a href="https://github.com/graphwork/workgraph/blob/main/LICENSE">mit</a>  <a href="https://github.com/graphwork/workgraph/blob/main/docs/COMMANDS.md">docs</a>
-</pre>
 </body>
 </html>
