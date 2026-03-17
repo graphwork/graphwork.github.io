@@ -1,0 +1,83 @@
+---
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{filteredHeadings.length > 0 && (
+  <nav class="text-sm" aria-label="Table of contents">
+    <p class="font-mono text-xs uppercase tracking-widest text-text-tertiary mb-4">
+      On this page
+    </p>
+    <ul class="space-y-1 border-l border-border-primary">
+      {filteredHeadings.map((heading) => (
+        <li>
+          <a
+            href={`#${heading.slug}`}
+            class:list={[
+              'toc-link',
+              heading.depth === 3 ? 'pl-6' : 'pl-4',
+            ]}
+            data-heading={heading.slug}
+          >
+            {heading.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<script>
+  function initTOC() {
+    const links = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    if (links.length === 0) return;
+
+    const headingIds = Array.from(links).map((link) => link.dataset.heading!);
+    let activeId = headingIds[0];
+
+    function setActive(id: string) {
+      if (id === activeId) return;
+      activeId = id;
+      links.forEach((link) => {
+        if (link.dataset.heading === id) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
+
+    // Set first as active initially
+    setActive(headingIds[0]);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+            break;
+          }
+        }
+      },
+      {
+        rootMargin: '-80px 0px -70% 0px',
+        threshold: 0,
+      }
+    );
+
+    headingIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  }
+
+  // Run on page load
+  initTOC();
+
+  // Re-run on Astro page transitions (if View Transitions are used)
+  document.addEventListener('astro:after-swap', initTOC);
+</script>
