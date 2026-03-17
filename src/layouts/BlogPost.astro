@@ -1,0 +1,61 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import GradientDivider from '../components/GradientDivider.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  headings: { depth: number; slug: string; text: string }[];
+}
+
+const { post, headings } = Astro.props;
+const { title, description, date, author, readTime, tags } = post.data;
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<BaseLayout title={`${title} — Workgraph`} description={description}>
+  <article class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="flex gap-16">
+      <!-- Main content -->
+      <div class="min-w-0 max-w-prose">
+        <header class="mb-12">
+          <div class="blog-card-meta mb-4">
+            <time datetime={date.toISOString()}>{formattedDate}</time>
+            {readTime && <span class="mx-2">&middot;</span>}
+            {readTime && <span>{readTime}</span>}
+          </div>
+          <h1 class="text-4xl lg:text-5xl font-bold leading-tight text-zinc-50 mb-4">
+            {title}
+          </h1>
+          <p class="text-lg text-text-secondary">{description}</p>
+          {tags.length > 0 && (
+            <div class="flex gap-2 mt-4">
+              {tags.map((tag) => (
+                <span class="text-xs font-mono px-2 py-1 rounded-md bg-bg-tertiary text-text-secondary">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <GradientDivider />
+
+        <div class="prose prose-lg prose-invert mt-12">
+          <slot />
+        </div>
+      </div>
+
+      <!-- Sidebar TOC -->
+      <aside class="toc-sidebar hidden xl:block flex-shrink-0">
+        <TableOfContents headings={headings} />
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

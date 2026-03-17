@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Backgrounds */
+  --color-bg-primary: #020103;
+  --color-bg-secondary: #0a0a0b;
+  --color-bg-tertiary: #18181b;
+  --color-bg-input: #27272a;
+
+  /* Text */
+  --color-text-primary: #e4e4e7;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+
+  /* Accent */
+  --color-accent-primary: #8b5cf6;
+  --color-accent-hover: #a78bfa;
+
+  /* Borders */
+  --color-border-primary: #27272a;
+  --color-border-highlight: #3f3f46;
+
+  /* Fonts */
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* Base styles */
+html {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* Prose overrides for blog content */
+.prose {
+  --tw-prose-body: var(--color-text-primary);
+  --tw-prose-headings: #f4f4f5;
+  --tw-prose-links: var(--color-accent-primary);
+  --tw-prose-bold: #f4f4f5;
+  --tw-prose-code: #f4f4f5;
+  --tw-prose-pre-bg: var(--color-bg-secondary);
+  --tw-prose-pre-code: var(--color-text-primary);
+  --tw-prose-counters: var(--color-text-secondary);
+  --tw-prose-bullets: var(--color-text-tertiary);
+  --tw-prose-hr: var(--color-border-primary);
+  --tw-prose-quotes: var(--color-text-secondary);
+  --tw-prose-quote-borders: var(--color-accent-primary);
+  --tw-prose-th-borders: var(--color-border-highlight);
+  --tw-prose-td-borders: var(--color-border-primary);
+}
+
+.prose a:hover {
+  color: var(--color-accent-hover);
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--color-accent-primary);
+  padding-left: 1.5rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.prose pre {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  overflow-x: auto;
+}
+
+.prose code:not(pre code) {
+  background: var(--color-bg-tertiary);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+/* Gradient divider */
+.gradient-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--color-border-highlight) 50%, transparent 100%);
+  border: none;
+}
+
+/* Blog card */
+.blog-card {
+  border-bottom: 1px solid var(--color-border-primary);
+  padding: 2rem 0;
+}
+
+.blog-card:hover .blog-card-title {
+  color: var(--color-accent-primary);
+}
+
+.blog-card-meta {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Sticky TOC sidebar */
+.toc-sidebar {
+  position: sticky;
+  top: 6rem;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+  width: 16rem;
+}
+
+@media (max-width: 1279px) {
+  .toc-sidebar {
+    display: none;
+  }
+}
