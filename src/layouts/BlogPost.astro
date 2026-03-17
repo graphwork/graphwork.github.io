@@ -1,7 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import TableOfContents from '../components/TableOfContents.astro';
-import GradientDivider from '../components/GradientDivider.astro';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -20,40 +19,52 @@ const formattedDate = date.toLocaleDateString('en-US', {
 ---
 
 <BaseLayout title={`${title} — Workgraph`} description={description}>
-  <article class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="flex gap-16">
+  <article class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
+    <!-- Back link -->
+    <a href="/blog/" class="back-link mb-8 inline-flex">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to blog
+    </a>
+
+    <!-- Post header -->
+    <header class="mb-10 max-w-prose">
+      <h1 class="text-3xl md:text-5xl font-bold leading-tight text-zinc-50 mb-4">
+        {title}
+      </h1>
+      <p class="text-lg text-text-secondary mb-4">{description}</p>
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 blog-card-meta">
+        {author && <span>{author}</span>}
+        {author && <span class="text-border-highlight">&middot;</span>}
+        <time datetime={date.toISOString()}>{formattedDate}</time>
+        {readTime && <span class="text-border-highlight">&middot;</span>}
+        {readTime && <span>{readTime}</span>}
+      </div>
+      {tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mt-4">
+          {tags.map((tag) => (
+            <span class="text-xs font-mono px-2 py-1 rounded-md bg-bg-tertiary text-text-secondary">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <hr class="gradient-divider" />
+
+    <!-- Two-column layout -->
+    <div class="flex gap-12 mt-10">
       <!-- Main content -->
-      <div class="min-w-0 max-w-prose">
-        <header class="mb-12">
-          <div class="blog-card-meta mb-4">
-            <time datetime={date.toISOString()}>{formattedDate}</time>
-            {readTime && <span class="mx-2">&middot;</span>}
-            {readTime && <span>{readTime}</span>}
-          </div>
-          <h1 class="text-4xl lg:text-5xl font-bold leading-tight text-zinc-50 mb-4">
-            {title}
-          </h1>
-          <p class="text-lg text-text-secondary">{description}</p>
-          {tags.length > 0 && (
-            <div class="flex gap-2 mt-4">
-              {tags.map((tag) => (
-                <span class="text-xs font-mono px-2 py-1 rounded-md bg-bg-tertiary text-text-secondary">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-        </header>
-
-        <GradientDivider />
-
-        <div class="prose prose-lg prose-invert mt-12">
+      <div class="min-w-0 flex-1 max-w-prose">
+        <div class="prose prose-lg prose-invert">
           <slot />
         </div>
       </div>
 
       <!-- Sidebar TOC -->
-      <aside class="toc-sidebar hidden xl:block flex-shrink-0">
+      <aside class="toc-sidebar hidden xl:block">
         <TableOfContents headings={headings} />
       </aside>
     </div>

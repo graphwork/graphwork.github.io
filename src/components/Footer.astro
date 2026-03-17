@@ -1,18 +1,37 @@
 ---
-import GradientDivider from './GradientDivider.astro';
+const year = new Date().getFullYear();
 ---
 
 <footer class="mt-24 pb-12">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <GradientDivider />
-    <div class="mt-8 flex items-center justify-between text-sm text-text-tertiary">
-      <span>&copy; {new Date().getFullYear()} Workgraph</span>
-      <a
-        href="https://github.com/graphwork/workgraph"
-        class="hover:text-text-secondary transition-colors"
-      >
-        GitHub
-      </a>
+    <div class="border-t border-border-primary pt-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-tertiary">
+        <span>&copy; {year} Workgraph</span>
+        <div class="flex items-center gap-4">
+          <a
+            href="/blog/"
+            class="hover:text-text-secondary transition-colors"
+          >
+            Blog
+          </a>
+          <span class="text-border-highlight">&middot;</span>
+          <a
+            href="/workgraph-manual.html"
+            class="hover:text-text-secondary transition-colors"
+          >
+            Manual
+          </a>
+          <span class="text-border-highlight">&middot;</span>
+          <a
+            href="https://github.com/graphwork/workgraph"
+            class="hover:text-text-secondary transition-colors"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </footer>

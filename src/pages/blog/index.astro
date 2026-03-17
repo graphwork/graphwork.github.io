@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogCard from '../../components/BlogCard.astro';
-import GradientDivider from '../../components/GradientDivider.astro';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
@@ -9,15 +8,15 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
 ---
 
 <BaseLayout title="Blog — Workgraph" description="Updates, technical deep dives, and design philosophy from the Workgraph project.">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <header class="mb-12">
-      <h1 class="text-4xl lg:text-5xl font-bold text-zinc-50 leading-tight mb-4">Blog</h1>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
+    <header class="mb-10">
+      <h1 class="text-3xl md:text-5xl font-bold text-zinc-50 leading-tight mb-4">Blog</h1>
       <p class="text-lg text-text-secondary">
         Updates, technical deep dives, and design philosophy from the Workgraph project.
       </p>
     </header>
 
-    <GradientDivider />
+    <hr class="gradient-divider" />
 
     <div class="mt-8">
       {posts.length === 0 && (
