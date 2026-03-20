@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="workgraph — task graphs for humans and agents"
+  description="Work fast. Task graphs for humans and agents. Self-organizing, git-friendly, no server, no account."
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
+
+    <!-- Hero -->
+    <header class="mb-16">
+      <h1 class="text-4xl md:text-5xl font-bold text-zinc-50 leading-tight mb-4 font-mono">
+        workgraph
+      </h1>
+      <p class="text-lg text-text-secondary font-mono leading-relaxed">
+        work fast<br />
+        task graphs for humans and agents<br />
+        self-organizing process flowgraphs<br />
+        <span class="text-text-tertiary">cybernetic autopoietic stigmergic medium</span>
+      </p>
+    </header>
+
+    <!-- Positioning Statement -->
+    <section class="mb-16">
+      <p class="text-lg text-text-primary leading-relaxed">
+        Building enormous things requires organizing at the same scale.
+        Workgraph is a dependency graph of tasks — completing one unblocks the next.
+        A coordinator dispatches AI agents to ready work. Each agent receives context
+        from upstream, executes autonomously, and reports results back to the graph.
+      </p>
+      <p class="text-text-secondary mt-4">
+        For teams and individuals who coordinate humans and AI agents on complex projects.
+        No server, no account — just a <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/</code> directory in your repo.
+      </p>
+    </section>
+
+    <!-- Screencast Placeholder -->
+    <section class="mb-16">
+      <div class="border border-border-primary rounded-lg bg-bg-secondary p-8 flex items-center justify-center min-h-[320px]">
+        <p class="text-text-tertiary font-mono text-sm" id="screencast-placeholder">
+          [ TUI screencast coming soon ]
+        </p>
+      </div>
+    </section>
+
+    <!-- Viz: Task Graph -->
+    <section class="mb-16">
+      <pre class="viz-block"><span class="text-text-tertiary">$</span> wg viz design-api
+
+<span class="c-done">design-api  (done)</span>
+├→ <span class="c-done">auth-module  (done)</span>
+│ └→ <span class="c-open">integration  (open)</span> <span class="c-dim">←───────┐</span>
+│   └→ <span class="c-open">deploy  (open)</span>            <span class="c-dim">│</span>
+├→ <span class="c-ip">data-layer  (in-progress)</span> <span class="c-dim">────┤</span>
+└→ <span class="c-ip">search-index  (in-progress)</span> <span class="c-dim">──┘</span></pre>
+      <p class="text-text-secondary mt-4">
+        <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/graph.jsonl</code> — git-friendly, no server, no account.
+      </p>
+    </section>
+
+    <!-- Cycles -->
+    <section class="mb-16">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">cycles</h2>
+      <p class="text-text-secondary mb-4">
+        Processes that repeat — CI, monitoring, convergence —
+        are cycles in the graph. Each has a bound. Agents pick up
+        where previous iterations left off.
+      </p>
+      <pre class="viz-block"><span class="c-open">run-tests  (open)</span> <span class="c-dim">↺ (iter 0/5) ←─┐</span>
+└→ <span class="c-open">fix-failures  (open)</span>          <span class="c-dim">│</span>
+  └→ <span class="c-open">push-check  (open)</span> <span class="c-dim">─────────┘</span></pre>
+    </section>
+
+    <!-- Organizational Synthesis -->
+    <section class="mb-16">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">organizational synthesis</h2>
+      <p class="text-text-secondary mb-4">
+        Agents have roles (what they do) and motivations (constraints
+        on how). After each task, agents are evaluated. An evolver
+        mutates and recombines the best performers. The organization
+        restructures itself based on what works.
+      </p>
+      <pre class="viz-block"><span class="text-text-tertiary">$</span> wg agency stats
+
+  Role        Motivation   Avg  Count  Rating
+  -------------------------------------------
+  Programmer  Thorough    0.93     63    <span class="c-done">HIGH</span>
+  Writer      Balanced    0.88     19    <span class="c-done">HIGH</span>
+  Analyst     Balanced    0.88     22    <span class="c-done">HIGH</span></pre>
+    </section>
+
+    <!-- Graph Structure -->
+    <section class="mb-16">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">graph structure</h2>
+      <p class="text-text-secondary mb-4">
+        Fan-out decomposes work. Fan-in synchronizes it.
+        Arcs on the right show convergence.
+      </p>
+      <pre class="viz-block"><span class="c-open">hub  (open)</span>
+├→ <span class="c-open">spoke-1  (open)</span>
+│ └→ <span class="c-open">collector  (open)</span> <span class="c-dim">←─┐</span>
+├→ <span class="c-open">spoke-2  (open)</span> <span class="c-dim">──────┤</span>
+├→ <span class="c-open">spoke-3  (open)</span> <span class="c-dim">──────┤</span>
+└→ <span class="c-open">spoke-4  (open)</span> <span class="c-dim">──────┘</span></pre>
+    </section>
+
+    <!-- Install -->
+    <section class="mb-16">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">get started</h2>
+      <p class="text-text-secondary mb-4">
+        Install with <a href="https://rustup.rs" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Rust</a> (Linux, macOS, Windows):
+      </p>
+      <pre class="install-cmd">cargo install --git https://github.com/graphwork/workgraph</pre>
+      <p class="text-text-secondary mt-6 mb-4">Then start a project:</p>
+      <pre class="viz-block"><span class="text-text-tertiary">$</span> wg init
+<span class="text-text-tertiary">$</span> wg add "Design the API"
+<span class="text-text-tertiary">$</span> wg add "Build backend" --after design-the-api
+<span class="text-text-tertiary">$</span> wg add "Write tests" --after build-backend
+<span class="text-text-tertiary">$</span> wg service start --max-agents 3</pre>
+      <p class="text-text-secondary mt-4">
+        The service dispatches agents to ready tasks, evaluates
+        results, evolves the agent population, and loops.
+        You define structure. It does the rest.
+      </p>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  /* Viz blocks - terminal aesthetic */
+  .viz-block {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    font-variant-ligatures: none;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 0;
+  }
+
+  /* Install command - prominent */
+  .install-cmd {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-accent-primary);
+    border-radius: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    overflow-x: auto;
+    margin: 0;
+    color: var(--color-text-primary);
+  }
+
+  /* Status colors matching the original */
+  .c-done { color: #22c55e; }
+  .c-ip { color: #eab308; }
+  .c-fail { color: #ef4444; }
+  .c-open { color: #e5e7eb; }
+  .c-dim { color: #6b7280; }
+</style>
