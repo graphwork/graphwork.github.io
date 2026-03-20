@@ -1,0 +1,147 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="AI Assistant Integration — Workgraph"
+  description="Set up Claude Code, OpenCode, Codex, and other AI coding assistants with workgraph."
+>
+
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">AI Assistant Integration</h1>
+    <p class="text-lg text-text-secondary">
+      Teach your AI coding assistant to coordinate work through the task graph.
+    </p>
+  </header>
+
+  <hr class="gradient-divider" />
+
+  <div class="prose prose-lg prose-invert mt-10">
+
+    <h2>How it works</h2>
+
+    <p>
+      Workgraph includes a skill definition that teaches AI assistants to use it as
+      a coordinator. The skill teaches agents to:
+    </p>
+
+    <ul>
+      <li>Run <code>wg quickstart</code> at session start to orient themselves</li>
+      <li>Act as a coordinator — start the service, define tasks, monitor progress</li>
+      <li>Let the service handle claiming and spawning, not do it manually</li>
+      <li>Decompose complex goals into task graphs with dependencies</li>
+    </ul>
+
+    <h2>Claude Code</h2>
+
+    <p>Install the skill from the workgraph directory:</p>
+
+    <pre><code>wg skill install     # installs to ~/.claude/skills/</code></pre>
+
+    <p>
+      The skill has YAML frontmatter so Claude auto-detects when to use it.
+      You can also invoke it explicitly with <code>/wg</code>.
+    </p>
+
+    <p>Add this to your project's <code>CLAUDE.md</code> (or <code>~/.claude/CLAUDE.md</code> for global):</p>
+
+    <pre><code>Use workgraph for task management.
+
+At the start of each session, run `wg quickstart` to orient yourself.
+Use `wg service start` to dispatch work — do not manually claim tasks.</code></pre>
+
+    <p>You can also discover and inspect available skills:</p>
+
+    <pre><code>wg skill list              # list available skills
+wg skill find &lt;query&gt;      # search skills by keyword
+wg skill task &lt;task-id&gt;    # show skills relevant to a task</code></pre>
+
+    <h2>OpenCode, Codex, and other agents</h2>
+
+    <p>Add the core instruction to your agent's system prompt or <code>AGENTS.md</code>:</p>
+
+    <pre><code>## Task Management
+
+Use workgraph (`wg`) for task coordination.
+Run `wg quickstart` to orient yourself.
+
+As a top-level agent, use service mode:
+- `wg service start` to start the coordinator
+- `wg add "Task" --after dep` to define work
+- `wg list` / `wg agents` to monitor progress
+
+The service automatically spawns agents and claims tasks.
+See `wg --help` for all commands.</code></pre>
+
+    <h2>What the skill teaches</h2>
+
+    <p>
+      The skill turns an AI assistant into a <strong>thin orchestrator</strong>.
+      The orchestrating agent doesn't write code itself — it creates tasks with
+      descriptions, dependencies, and validation criteria, then delegates execution
+      to the service.
+    </p>
+
+    <p>The orchestrator's job is limited to:</p>
+
+    <ul>
+      <li><strong>Conversation</strong> with the user</li>
+      <li><strong>Inspection</strong> — <code>wg show</code>, <code>wg viz</code>, <code>wg list</code>, <code>wg status</code></li>
+      <li><strong>Task creation</strong> — <code>wg add</code> with descriptions, dependencies, and context</li>
+      <li><strong>Monitoring</strong> — <code>wg agents</code>, <code>wg service status</code>, <code>wg watch</code></li>
+    </ul>
+
+    <p>
+      Everything else — code, research, documentation — gets dispatched through
+      <code>wg add</code> and <code>wg service start</code>.
+    </p>
+
+    <h2>Task creation from agents</h2>
+
+    <p>
+      When an AI agent creates tasks, it should include validation criteria so
+      the service can verify the work:
+    </p>
+
+    <pre><code>wg add "Implement feature X" --after design \
+  --verify "cargo test test_feature_x passes" \
+  -d "## Description
+Implement the feature as designed.
+
+## Validation
+- [ ] Failing test written first (TDD)
+- [ ] Implementation makes the test pass
+- [ ] cargo build + cargo test pass"</code></pre>
+
+    <p>
+      The <code>--verify</code> flag attaches a machine-checkable gate. The
+      description's Validation section provides human-readable criteria for the
+      executing agent.
+    </p>
+
+    <h2>Multi-agent coordination</h2>
+
+    <p>
+      With the service running, the orchestrating agent can fan out parallel work:
+    </p>
+
+    <pre><code># Fan out
+wg add "Refactor auth" --skill rust
+wg add "Update tests" --after refactor-auth --skill testing
+wg add "Update docs" --after refactor-auth --skill docs
+
+# Start the service — it dispatches agents in parallel
+wg service start --max-agents 4
+
+# The orchestrating agent monitors
+wg agents
+wg list</code></pre>
+
+    <p>
+      Each spawned agent works in its own git worktree, so parallel agents
+      don't conflict. The coordinator handles worktree setup and cleanup.
+    </p>
+
+  </div>
+
+</DocsLayout>

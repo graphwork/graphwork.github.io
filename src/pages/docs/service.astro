@@ -1,0 +1,203 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="Service Management — Workgraph"
+  description="Configure and manage the workgraph coordinator daemon — agents, model selection, and runtime settings."
+>
+
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">Service Management</h1>
+    <p class="text-lg text-text-secondary">
+      The coordinator daemon watches your task graph and automatically spawns agents on ready work.
+    </p>
+  </header>
+
+  <hr class="gradient-divider" />
+
+  <div class="prose prose-lg prose-invert mt-10">
+
+    <h2>Starting the service</h2>
+
+    <pre><code>wg service start</code></pre>
+
+    <p>
+      The daemon runs in the background, continuously polling the task graph. When
+      a task becomes ready (all dependencies complete), the coordinator spawns an
+      agent to work on it — up to <code>max_agents</code> in parallel.
+    </p>
+
+    <pre><code># Limit parallel agents
+wg service start --max-agents 4
+
+# Override model for all spawned agents
+wg service start --model sonnet
+
+# Override executor
+wg service start --executor shell</code></pre>
+
+    <h2>Service commands</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg service start</code></td><td>Start the background daemon</td></tr>
+        <tr><td><code>wg service stop</code></td><td>Stop daemon (running agents continue)</td></tr>
+        <tr><td><code>wg service stop --kill-agents</code></td><td>Stop daemon and kill all agents</td></tr>
+        <tr><td><code>wg service status</code></td><td>Show daemon PID, uptime, agent summary</td></tr>
+        <tr><td><code>wg service reload</code></td><td>Re-read config.toml without restarting</td></tr>
+        <tr><td><code>wg service restart</code></td><td>Graceful stop then start</td></tr>
+        <tr><td><code>wg service pause</code></td><td>Pause (agents continue, no new spawns)</td></tr>
+        <tr><td><code>wg service resume</code></td><td>Resume (immediate tick)</td></tr>
+        <tr><td><code>wg service install</code></td><td>Generate a systemd user service file</td></tr>
+      </tbody>
+    </table>
+
+    <p>Reload lets you change settings at runtime without restarting:</p>
+
+    <pre><code>wg service reload                              # re-read config.toml
+wg service reload --max-agents 8 --model haiku # apply specific overrides</code></pre>
+
+    <h2>Configuration</h2>
+
+    <p>The service reads from <code>.workgraph/config.toml</code>:</p>
+
+    <pre><code>[coordinator]
+max_agents = 4         # max parallel agents (default: 4)
+poll_interval = 60     # seconds between ticks (default: 60)
+executor = "claude"    # "claude", "amplifier", or "shell"
+model = "opus"         # model for all spawned agents
+
+[agent]
+executor = "claude"
+model = "opus"         # default model
+heartbeat_timeout = 5  # minutes before agent is dead (default: 5)</code></pre>
+
+    <p>Set values from the command line:</p>
+
+    <pre><code>wg config --max-agents 8
+wg config --model sonnet
+wg config --executor shell
+wg config --poll-interval 120
+
+# Inspect merged config (shows source: global, local, or default)
+wg config --list</code></pre>
+
+    <h2>Agent management</h2>
+
+    <p>List and filter running agents:</p>
+
+    <pre><code>wg agents              # all agents
+wg agents --alive      # running only
+wg agents --dead       # dead only
+wg agents --working    # actively on a task
+wg agents --json       # JSON for scripting</code></pre>
+
+    <p>Kill agents:</p>
+
+    <pre><code>wg kill agent-7          # graceful: SIGTERM → wait → SIGKILL
+wg kill agent-7 --force  # immediate SIGKILL
+wg kill --all            # kill all running agents</code></pre>
+
+    <p>
+      Killing an agent automatically unclaims its task so another agent can pick it up.
+    </p>
+
+    <h3>Dead agent detection</h3>
+
+    <p>
+      Agents send heartbeats while working. If an agent's process exits or its
+      heartbeat goes stale (default: 5 minutes), the coordinator marks it dead
+      and unclaims its task.
+    </p>
+
+    <pre><code>wg dead-agents             # check for dead agents
+wg dead-agents --cleanup   # mark dead and unclaim tasks
+wg dead-agents --purge     # remove all dead agents</code></pre>
+
+    <h3>Smart triage</h3>
+
+    <p>
+      When a dead agent is detected, the coordinator can use an LLM to triage
+      the situation. The triager reads the agent's output log and decides whether
+      the task was actually completed, is still running, or needs to be restarted.
+    </p>
+
+    <pre><code>wg config --auto-triage true
+wg config --triage-model haiku</code></pre>
+
+    <h2>Model selection</h2>
+
+    <p>Models are resolved in priority order:</p>
+
+    <ol>
+      <li><strong>Task model</strong> — set with <code>wg add --model</code> or <code>wg edit --model</code></li>
+      <li><strong>Executor config</strong> — model field in the executor's config file</li>
+      <li><strong>Coordinator model</strong> — <code>coordinator.model</code> in config.toml</li>
+      <li><strong>Executor default</strong> — if nothing else is set</li>
+    </ol>
+
+    <pre><code># Per-task model at creation
+wg add "Simple fix" --model haiku
+wg add "Complex design" --model opus
+
+# Change model on existing task
+wg edit my-task --model sonnet
+
+# Set coordinator default
+wg config --model sonnet
+wg service reload</code></pre>
+
+    <p>
+      <strong>Cost guidance:</strong> Use <strong>haiku</strong> for simple formatting and linting,
+      <strong>sonnet</strong> for typical coding, and <strong>opus</strong> for complex reasoning and architecture.
+    </p>
+
+    <h3>Model registry</h3>
+
+    <p>
+      Manage available models and configure per-role routing:
+    </p>
+
+    <pre><code>wg model list                        # show all models
+wg model add my-model --provider openrouter --model-id deepseek/deepseek-chat-v3
+wg model set-default sonnet          # set default dispatch model
+wg model set --role evaluator opus   # per-role model routing</code></pre>
+
+    <h2>Troubleshooting</h2>
+
+    <p>
+      Daemon logs are written to <code>.workgraph/service/daemon.log</code>
+      (rotates at 10 MB). Recent errors also show in <code>wg service status</code>.
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Issue</th><th>Solution</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Socket already exists</td>
+          <td>Check <code>wg service status</code>, then <code>wg service stop</code></td>
+        </tr>
+        <tr>
+          <td>Agents not spawning</td>
+          <td>Check <code>wg service status</code> for coordinator state. Verify <code>max_agents</code> with <code>wg agents --alive</code>. Check <code>wg ready</code>.</td>
+        </tr>
+        <tr>
+          <td>Agent marked dead early</td>
+          <td>Increase <code>heartbeat_timeout</code> in config.toml</td>
+        </tr>
+        <tr>
+          <td>Config changes ignored</td>
+          <td>Run <code>wg service reload</code> after editing config.toml</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</DocsLayout>

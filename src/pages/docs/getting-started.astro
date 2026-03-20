@@ -1,0 +1,177 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="Getting Started — Workgraph"
+  description="Install workgraph, initialize a project, create tasks with dependencies, and start the coordinator service."
+>
+
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">Getting Started</h1>
+    <p class="text-lg text-text-secondary">
+      From zero to agents working on your project.
+    </p>
+  </header>
+
+  <hr class="gradient-divider" />
+
+  <div class="prose prose-lg prose-invert mt-10">
+
+    <h2>Install</h2>
+
+    <p>
+      Workgraph is a single Rust binary. Install it with
+      <a href="https://rustup.rs">Cargo</a>:
+    </p>
+
+    <pre><code>cargo install --git https://github.com/graphwork/workgraph</code></pre>
+
+    <p>Or clone and build from source:</p>
+
+    <pre><code>git clone https://github.com/graphwork/workgraph
+cd workgraph
+cargo install --path .</code></pre>
+
+    <p>Verify the installation:</p>
+
+    <pre><code>wg --version</code></pre>
+
+    <h2>Global setup</h2>
+
+    <p>Run the interactive setup wizard once after install:</p>
+
+    <pre><code>wg setup</code></pre>
+
+    <p>
+      This writes <code>~/.workgraph/config.toml</code> and configures your
+      executor (claude or amplifier), default model, agency settings, and which
+      lightweight model to use for assignment and evaluation (haiku is recommended).
+    </p>
+
+    <h2>Initialize a project</h2>
+
+    <p>In any project directory:</p>
+
+    <pre><code>cd my-project
+wg init</code></pre>
+
+    <p>
+      This creates a <code>.workgraph/</code> directory containing your task graph.
+      No server, no account — everything lives next to your code. The directory
+      is automatically added to <code>.gitignore</code>.
+    </p>
+
+    <p>
+      <code>wg init</code> also seeds starter roles and tradeoffs for the agency
+      system and creates a default agent, so the service can start dispatching
+      work immediately.
+    </p>
+
+    <h2>Create tasks</h2>
+
+    <p>Add tasks with <code>wg add</code>. Use <code>--after</code> to declare dependencies:</p>
+
+    <pre><code># Simple task
+wg add "Design the API"
+
+# Task that depends on another
+wg add "Build the backend" --after design-the-api
+
+# Multiple dependencies
+wg add "Deploy to staging" --after build-the-backend,write-tests</code></pre>
+
+    <p>Task IDs are auto-generated from the title (kebab-case). You can also set one explicitly with <code>--id</code>.</p>
+
+    <p>Tasks support rich metadata:</p>
+
+    <pre><code># Estimated effort and skills
+wg add "Implement auth" --hours 8 --skill rust --skill security
+
+# Model override — use a cheaper model for simple work
+wg add "Quick formatting fix" --model haiku
+
+# Verification gate — must pass before the task can complete
+wg add "Security audit" --verify "All findings documented"
+
+# Deliverables
+wg add "Build auth module" --deliverable src/auth.rs</code></pre>
+
+    <h2>Visualize the graph</h2>
+
+    <p>See your dependency graph as ASCII art:</p>
+
+    <pre class="doc-term"><span class="prompt">$</span> wg viz
+
+<span class="c-open">design-the-api  (open)</span>
+<span class="c-dim">└→</span> <span class="c-open">build-the-backend  (open)</span>
+<span class="c-dim">  ├→</span> <span class="c-open">write-tests  (open)</span> <span class="c-dim">────────┐</span>
+<span class="c-dim">  └→</span> <span class="c-open">deploy-to-staging  (open)</span> <span class="c-dim">←─┘</span></pre>
+
+    <p>Check which tasks are ready (no unfinished blockers):</p>
+
+    <pre><code>wg ready</code></pre>
+
+    <h2>Start the service</h2>
+
+    <p>
+      The coordinator daemon watches the graph and automatically spawns AI agents
+      on ready tasks:
+    </p>
+
+    <pre><code>wg service start --max-agents 3</code></pre>
+
+    <p>
+      When a task completes and unblocks downstream work, the coordinator picks
+      those up too. The cascade continues until all tasks are done.
+    </p>
+
+    <h2>Monitor progress</h2>
+
+    <p>Several ways to see what's happening:</p>
+
+    <pre><code># Interactive terminal dashboard
+wg tui
+
+# Agent status
+wg agents
+
+# Task list with status
+wg list
+
+# Full service status
+wg service status</code></pre>
+
+    <h2>What's next</h2>
+
+    <ul>
+      <li><a href="/docs/workflow-patterns/">Workflow Patterns</a> — four ways to structure agentic work</li>
+      <li><a href="/docs/verification/">Verification</a> — automated quality gates with FLIP scoring</li>
+      <li><a href="/docs/service/">Service Management</a> — configure the coordinator, models, and agents</li>
+      <li><a href="/docs/agency/">Agency System</a> — roles, tradeoffs, evaluation, and evolution</li>
+    </ul>
+
+  </div>
+
+</DocsLayout>
+
+<style>
+  .doc-term {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-variant-ligatures: none;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 1.5em 0;
+  }
+
+  .prompt { color: var(--color-text-tertiary); user-select: none; }
+  .c-done { color: #22c55e; }
+  .c-ip { color: #eab308; }
+  .c-open { color: #e5e7eb; }
+  .c-dim { color: #6b7280; }
+</style>

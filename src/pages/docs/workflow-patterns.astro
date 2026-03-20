@@ -1,0 +1,162 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="Workflow Patterns — Workgraph"
+  description="Four patterns for organizing agentic work: service-driven, agent plans, mixed human+AI, and manual mode."
+>
+
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">Workflow Patterns</h1>
+    <p class="text-lg text-text-secondary">
+      Four ways to coordinate humans and AI agents on a task graph.
+    </p>
+  </header>
+
+  <hr class="gradient-divider" />
+
+  <div class="prose prose-lg prose-invert mt-10">
+
+    <h2>Pattern 1: Service mode</h2>
+
+    <p>
+      The recommended default. Define your tasks, start the service, and let the
+      coordinator handle everything — claiming, spawning, dead agent detection,
+      and cascading unblocked work.
+    </p>
+
+    <pre><code># Define the work
+wg add "Refactor auth module" --skill rust
+wg add "Update tests" --after refactor-auth-module --skill testing
+wg add "Update docs" --after refactor-auth-module --skill docs
+
+# Start the service
+wg service start --max-agents 4
+
+# Monitor
+wg agents     # who's working on what
+wg list       # task status
+wg tui        # interactive dashboard</code></pre>
+
+    <p>
+      The coordinator continuously polls the graph, picks up ready tasks, and
+      spawns agents. When one task finishes, its dependents become ready and the
+      coordinator picks them up immediately. No manual intervention needed.
+    </p>
+
+    <h2>Pattern 2: Agent plans, service executes</h2>
+
+    <p>
+      A top-level AI agent (or human) designs the task graph, then the service
+      handles execution. This separates planning from doing.
+    </p>
+
+    <pre><code># In your CLAUDE.md or system prompt:
+#
+# Break down this goal into tasks using workgraph:
+# 1. Analyze what needs to be done
+# 2. Create tasks with `wg add`, linking dependencies with --after
+# 3. Start `wg service start` to dispatch work
+# 4. Monitor with `wg list` and `wg agents`
+# 5. If you discover more work, add it — the service picks it up</code></pre>
+
+    <p>
+      The orchestrating agent acts as a thin coordinator — it creates tasks with
+      descriptions, dependencies, and validation criteria, then delegates
+      execution to the service. It never writes code itself.
+    </p>
+
+    <h2>Pattern 3: Mixed human + AI</h2>
+
+    <p>
+      Humans claim the tasks that need judgment. The service handles the rest.
+    </p>
+
+    <pre><code># Human claims the design work
+wg claim design-api --actor erik
+
+# Start the service — it waits for design to complete
+wg service start
+
+# When Erik marks design-api as done, the service
+# spawns agents on all downstream tasks automatically
+wg done design-api</code></pre>
+
+    <p>
+      This works because the dependency graph doesn't distinguish between human
+      and AI actors. A task is either done or it isn't. When it completes,
+      dependents unblock regardless of who did the work.
+    </p>
+
+    <p>
+      Human agents can also receive notifications via Matrix, email, or Slack
+      when their tasks become ready.
+    </p>
+
+    <h2>Pattern 4: Manual mode</h2>
+
+    <p>
+      For simple cases where you don't need parallel execution or a background
+      service. Work through tasks one at a time:
+    </p>
+
+    <pre><code># See what's available
+wg ready
+
+# Claim and work on a task
+wg claim set-up-ci-pipeline --actor claude
+# ... do the work ...
+wg done set-up-ci-pipeline    # unblocks dependents
+
+# Next task
+wg ready</code></pre>
+
+    <p>
+      Manual mode is useful for solo work, debugging, or when you want full
+      control over task ordering.
+    </p>
+
+    <h2>Choosing a pattern</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Pattern</th>
+          <th>Best for</th>
+          <th>Parallelism</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Service mode</strong></td>
+          <td>Fully automated projects, CI/CD-like workflows</td>
+          <td>Up to <code>max_agents</code></td>
+        </tr>
+        <tr>
+          <td><strong>Agent plans</strong></td>
+          <td>Complex projects where planning requires reasoning</td>
+          <td>Up to <code>max_agents</code></td>
+        </tr>
+        <tr>
+          <td><strong>Mixed</strong></td>
+          <td>Human judgment + AI execution</td>
+          <td>Up to <code>max_agents</code></td>
+        </tr>
+        <tr>
+          <td><strong>Manual</strong></td>
+          <td>Solo work, debugging, learning</td>
+          <td>Sequential</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Patterns can be combined. Start in manual mode to prototype a graph, then
+      switch to service mode when the structure is right. Mix human-claimed tasks
+      with service-dispatched agents in the same graph.
+    </p>
+
+  </div>
+
+</DocsLayout>

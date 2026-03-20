@@ -1,0 +1,196 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="Command Reference — Workgraph"
+  description="Complete reference for all wg commands — task management, service, agency, monitoring, and utilities."
+>
+
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">Command Reference</h1>
+    <p class="text-lg text-text-secondary">
+      Every <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">wg</code> command at a glance. All commands support <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">--json</code> for machine-readable output and <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">--dir &lt;path&gt;</code> for custom workgraph directories.
+    </p>
+  </header>
+
+  <hr class="gradient-divider" />
+
+  <div class="prose prose-lg prose-invert mt-10">
+
+    <h2>Task management</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg add &lt;title&gt;</code></td><td>Create a new task. Supports <code>--after</code>, <code>--verify</code>, <code>--model</code>, <code>--skill</code>, <code>--hours</code>, <code>--deliverable</code>, and more.</td></tr>
+        <tr><td><code>wg edit &lt;id&gt;</code></td><td>Modify an existing task's fields — title, description, tags, skills, model, verify criteria, etc.</td></tr>
+        <tr><td><code>wg done &lt;id&gt;</code></td><td>Mark task complete. Use <code>--converged</code> to stop a cycle.</td></tr>
+        <tr><td><code>wg fail &lt;id&gt;</code></td><td>Mark task as failed with <code>--reason</code>.</td></tr>
+        <tr><td><code>wg abandon &lt;id&gt;</code></td><td>Mark task as abandoned (terminal state).</td></tr>
+        <tr><td><code>wg retry &lt;id&gt;</code></td><td>Reset a failed task back to open.</td></tr>
+        <tr><td><code>wg claim &lt;id&gt;</code></td><td>Claim a task for work (sets in-progress).</td></tr>
+        <tr><td><code>wg unclaim &lt;id&gt;</code></td><td>Release a claimed task back to open.</td></tr>
+        <tr><td><code>wg reclaim &lt;id&gt;</code></td><td>Transfer a task from one agent to another.</td></tr>
+        <tr><td><code>wg pause &lt;id&gt;</code></td><td>Pause a task — coordinator skips it.</td></tr>
+        <tr><td><code>wg resume &lt;id&gt;</code></td><td>Resume a paused task.</td></tr>
+        <tr><td><code>wg approve &lt;id&gt;</code></td><td>Approve a task pending validation.</td></tr>
+        <tr><td><code>wg reject &lt;id&gt;</code></td><td>Reject a task pending validation with feedback.</td></tr>
+        <tr><td><code>wg assign &lt;task&gt; &lt;agent&gt;</code></td><td>Assign an agent identity to a task.</td></tr>
+        <tr><td><code>wg add-dep &lt;task&gt; &lt;dep&gt;</code></td><td>Add a dependency edge.</td></tr>
+        <tr><td><code>wg rm-dep &lt;task&gt; &lt;dep&gt;</code></td><td>Remove a dependency edge.</td></tr>
+        <tr><td><code>wg wait &lt;id&gt;</code></td><td>Park a task until a condition is met.</td></tr>
+        <tr><td><code>wg publish &lt;id&gt;</code></td><td>Publish a draft task (validates deps, resumes subgraph).</td></tr>
+        <tr><td><code>wg log &lt;id&gt; "msg"</code></td><td>Add a progress note. Use <code>--list</code> to view.</td></tr>
+        <tr><td><code>wg artifact &lt;id&gt; &lt;path&gt;</code></td><td>Record a file artifact on a task.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Query commands</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg show &lt;id&gt;</code></td><td>Full task details — description, logs, timestamps, deps, model.</td></tr>
+        <tr><td><code>wg list</code></td><td>List tasks. Filter with <code>--status</code>, <code>--tag</code>, <code>--skill</code>.</td></tr>
+        <tr><td><code>wg ready</code></td><td>Tasks with no unfinished blockers.</td></tr>
+        <tr><td><code>wg viz</code></td><td>ASCII dependency graph. Use <code>wg viz &lt;id&gt;</code> to show a subtree.</td></tr>
+        <tr><td><code>wg status</code></td><td>Summary statistics — counts by status.</td></tr>
+        <tr><td><code>wg cycles</code></td><td>Inspect detected cycles with iteration counts.</td></tr>
+        <tr><td><code>wg context</code></td><td>View the current task's full context.</td></tr>
+        <tr><td><code>wg quickstart</code></td><td>Session orientation — shows project state and next steps.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Service commands</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg service start</code></td><td>Start the background daemon.</td></tr>
+        <tr><td><code>wg service stop</code></td><td>Stop daemon. <code>--kill-agents</code> to also kill agents.</td></tr>
+        <tr><td><code>wg service status</code></td><td>Daemon PID, uptime, agent summary.</td></tr>
+        <tr><td><code>wg service reload</code></td><td>Re-read config.toml without restarting.</td></tr>
+        <tr><td><code>wg service restart</code></td><td>Graceful stop then start.</td></tr>
+        <tr><td><code>wg service pause</code></td><td>Pause coordinator (no new spawns).</td></tr>
+        <tr><td><code>wg service resume</code></td><td>Resume coordinator.</td></tr>
+        <tr><td><code>wg service install</code></td><td>Generate systemd user service file.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Agent commands</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg agents</code></td><td>List agents. <code>--alive</code>, <code>--dead</code>, <code>--working</code>, <code>--idle</code>.</td></tr>
+        <tr><td><code>wg spawn &lt;task&gt;</code></td><td>Manually spawn an agent for a task.</td></tr>
+        <tr><td><code>wg kill &lt;agent&gt;</code></td><td>Kill an agent (unclaims its task). <code>--force</code> for SIGKILL.</td></tr>
+        <tr><td><code>wg dead-agents</code></td><td>Check for dead agents. <code>--cleanup</code>, <code>--purge</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Agency commands</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg agency init</code></td><td>Seed starter roles and tradeoffs.</td></tr>
+        <tr><td><code>wg agency stats</code></td><td>Performance leaderboard, synergy matrix.</td></tr>
+        <tr><td><code>wg role add &lt;name&gt;</code></td><td>Create a role with <code>--outcome</code>, <code>--skill</code>.</td></tr>
+        <tr><td><code>wg role list</code></td><td>List all roles.</td></tr>
+        <tr><td><code>wg role show &lt;id&gt;</code></td><td>Show role details.</td></tr>
+        <tr><td><code>wg tradeoff add &lt;name&gt;</code></td><td>Create a tradeoff with <code>--accept</code>, <code>--reject</code>.</td></tr>
+        <tr><td><code>wg tradeoff list</code></td><td>List all tradeoffs.</td></tr>
+        <tr><td><code>wg agent create &lt;name&gt;</code></td><td>Create an agent with <code>--role</code>, <code>--tradeoff</code>.</td></tr>
+        <tr><td><code>wg agent list</code></td><td>List all agents.</td></tr>
+        <tr><td><code>wg evaluate run &lt;task&gt;</code></td><td>LLM-based evaluation of completed task.</td></tr>
+        <tr><td><code>wg evaluate show</code></td><td>View evaluation history.</td></tr>
+        <tr><td><code>wg evolve run</code></td><td>Evolve agency using performance data.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Configuration</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg config --list</code></td><td>Show merged config (source: global, local, or default).</td></tr>
+        <tr><td><code>wg config --max-agents &lt;n&gt;</code></td><td>Set max parallel agents.</td></tr>
+        <tr><td><code>wg config --model &lt;m&gt;</code></td><td>Set default model.</td></tr>
+        <tr><td><code>wg config --executor &lt;e&gt;</code></td><td>Set executor type.</td></tr>
+        <tr><td><code>wg config --auto-assign true</code></td><td>Enable automatic agent assignment.</td></tr>
+        <tr><td><code>wg config --auto-evaluate true</code></td><td>Enable automatic evaluation.</td></tr>
+        <tr><td><code>wg config --flip-enabled true</code></td><td>Enable FLIP scoring.</td></tr>
+        <tr><td><code>wg config --global</code></td><td>Show/set global config only.</td></tr>
+        <tr><td><code>wg config --local</code></td><td>Show/set project config only.</td></tr>
+        <tr><td><code>wg setup</code></td><td>Interactive setup wizard (run once after install).</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Model management</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg model list</code></td><td>Show all models (built-in + user-defined).</td></tr>
+        <tr><td><code>wg model add &lt;name&gt;</code></td><td>Add a model with <code>--provider</code>, <code>--model-id</code>.</td></tr>
+        <tr><td><code>wg model set-default &lt;m&gt;</code></td><td>Set default dispatch model.</td></tr>
+        <tr><td><code>wg model set --role &lt;r&gt; &lt;m&gt;</code></td><td>Per-role model routing.</td></tr>
+        <tr><td><code>wg key set &lt;provider&gt;</code></td><td>Configure a provider's API key.</td></tr>
+        <tr><td><code>wg key check</code></td><td>Validate key availability.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Communication</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg msg send &lt;task&gt; "text"</code></td><td>Send a message on a task.</td></tr>
+        <tr><td><code>wg msg read &lt;task&gt;</code></td><td>Read messages for a task.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Utilities</h2>
+
+    <table>
+      <thead>
+        <tr><th>Command</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>wg init</code></td><td>Initialize a workgraph in the current directory.</td></tr>
+        <tr><td><code>wg tui</code></td><td>Interactive terminal dashboard.</td></tr>
+        <tr><td><code>wg watch</code></td><td>Watch task graph for changes.</td></tr>
+        <tr><td><code>wg gc</code></td><td>Garbage collect completed/abandoned tasks.</td></tr>
+        <tr><td><code>wg sweep</code></td><td>Clean up orphaned tasks.</td></tr>
+        <tr><td><code>wg skill install</code></td><td>Install the Claude Code skill.</td></tr>
+        <tr><td><code>wg skill list</code></td><td>List available skills.</td></tr>
+        <tr><td><code>wg func list</code></td><td>List reusable workflow functions.</td></tr>
+        <tr><td><code>wg func apply &lt;id&gt;</code></td><td>Instantiate a workflow function.</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Run <code>wg --help</code> or <code>wg &lt;command&gt; --help</code> for full details on any command.
+    </p>
+
+  </div>
+
+</DocsLayout>

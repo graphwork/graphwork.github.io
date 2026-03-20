@@ -1,0 +1,153 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="TUI Guide — Workgraph"
+  description="Interactive terminal dashboard — views, keybindings, inspector panel, and navigation."
+>
+
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">TUI Guide</h1>
+    <p class="text-lg text-text-secondary">
+      The interactive terminal dashboard for monitoring and managing your task graph.
+    </p>
+  </header>
+
+  <hr class="gradient-divider" />
+
+  <div class="prose prose-lg prose-invert mt-10">
+
+    <h2>Launching</h2>
+
+    <pre><code>wg tui                     # default 2s refresh
+wg tui --refresh-rate 1000 # 1s refresh</code></pre>
+
+    <h2>Views</h2>
+
+    <p>The TUI has three main views:</p>
+
+    <h3>Dashboard</h3>
+    <p>
+      Split-pane view showing tasks (left) and agents (right) with status bars.
+      Use <code>Tab</code> to switch between panels, <code>j</code>/<code>k</code> to scroll,
+      and <code>Enter</code> to drill into a selected item.
+    </p>
+
+    <h3>Graph Explorer</h3>
+    <p>
+      Tree view of the dependency graph showing task status and active agent
+      indicators. Press <code>g</code> from the dashboard to open it. Supports
+      tree and graph view modes (toggle with <code>d</code>), search
+      (<code>/</code>), and subtree collapse/expand (<code>h</code>/<code>l</code>).
+    </p>
+
+    <h3>Log Viewer</h3>
+    <p>
+      Real-time tailing of agent output with auto-scroll. Jump to top with
+      <code>g</code> (disables auto-scroll) and back to bottom with
+      <code>G</code> (re-enables auto-scroll).
+    </p>
+
+    <h2>Inspector panel</h2>
+
+    <p>
+      Nine tabbed views accessible via <code>Alt+Left</code> / <code>Alt+Right</code>
+      (with slide animation):
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Tab</th><th>Content</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Chat</td><td>Conversation with agents</td></tr>
+        <tr><td>Detail</td><td>Full task details with markdown rendering</td></tr>
+        <tr><td>Log</td><td>Task log entries</td></tr>
+        <tr><td>Messages</td><td>Inter-agent messages</td></tr>
+        <tr><td>Agency</td><td>Agent identity and performance</td></tr>
+        <tr><td>Config</td><td>Service configuration</td></tr>
+        <tr><td>Files</td><td>Task artifacts</td></tr>
+        <tr><td>Coordinator Log</td><td>Coordinator activity</td></tr>
+        <tr><td>Firehose</td><td>Combined live stream of all agent activity</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Resize the inspector with <code>i</code> (cycle: 1/3 → 1/2 → 2/3 → full)
+      and <code>I</code> (shrink back).
+    </p>
+
+    <h2>Status bar</h2>
+
+    <ul>
+      <li><strong>Service health badge</strong> — colored dot (green/yellow/red) with tap-to-inspect</li>
+      <li><strong>Token display</strong> — novel vs cached input split per task</li>
+      <li><strong>Lifecycle indicators</strong> — Unicode symbols for agency phases (assigning, evaluating, validating, verifying)</li>
+    </ul>
+
+    <h2>Keybindings</h2>
+
+    <h3>Global</h3>
+
+    <table>
+      <thead>
+        <tr><th>Key</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>q</code></td><td>Quit</td></tr>
+        <tr><td><code>?</code></td><td>Show help overlay</td></tr>
+        <tr><td><code>Esc</code></td><td>Back / close overlay</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Dashboard</h3>
+
+    <table>
+      <thead>
+        <tr><th>Key</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>Tab</code> / <code>Shift+Tab</code></td><td>Switch panel (Tasks / Agents)</td></tr>
+        <tr><td><code>j</code>/<code>k</code> or arrows</td><td>Scroll up / down</td></tr>
+        <tr><td><code>Enter</code></td><td>Drill into selected item</td></tr>
+        <tr><td><code>g</code></td><td>Open graph explorer</td></tr>
+        <tr><td><code>r</code></td><td>Refresh data</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Graph Explorer</h3>
+
+    <table>
+      <thead>
+        <tr><th>Key</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>j</code>/<code>k</code> or arrows</td><td>Navigate up / down</td></tr>
+        <tr><td><code>h</code>/<code>l</code> or arrows</td><td>Collapse / expand subtree</td></tr>
+        <tr><td><code>d</code></td><td>Toggle tree / graph view</td></tr>
+        <tr><td><code>Enter</code></td><td>View details or jump to agent log</td></tr>
+        <tr><td><code>a</code></td><td>Cycle to next active agent task</td></tr>
+        <tr><td><code>/</code></td><td>Open search</td></tr>
+        <tr><td><code>n</code> / <code>N</code></td><td>Next / previous match</td></tr>
+        <tr><td><code>r</code></td><td>Refresh graph</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Log Viewer</h3>
+
+    <table>
+      <thead>
+        <tr><th>Key</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>j</code>/<code>k</code> or arrows</td><td>Scroll one line</td></tr>
+        <tr><td><code>PageDown</code> / <code>PageUp</code></td><td>Scroll half viewport</td></tr>
+        <tr><td><code>g</code></td><td>Jump to top (disable auto-scroll)</td></tr>
+        <tr><td><code>G</code></td><td>Jump to bottom (enable auto-scroll)</td></tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</DocsLayout>
