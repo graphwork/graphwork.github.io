@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const docs = [
+  {
+    href: '/docs/verification/',
+    title: 'Verification Workflow',
+    description: 'Automated quality assurance with FLIP scoring — how workgraph verifies agent work without human review.',
+  },
+];
+---
+
+<BaseLayout title="Docs — Workgraph" description="Workgraph documentation — guides, concepts, and reference for task coordination with humans and AI agents.">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
+    <header class="mb-10">
+      <h1 class="text-3xl md:text-5xl font-bold text-zinc-50 leading-tight mb-4">Docs</h1>
+      <p class="text-lg text-text-secondary">
+        Guides, concepts, and reference for task coordination with humans and AI agents.
+      </p>
+    </header>
+
+    <hr class="gradient-divider" />
+
+    <div class="mt-8 space-y-6">
+      {docs.map(({ href, title, description }) => (
+        <a href={href} class="block border-b border-border-primary pb-6 group">
+          <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+            {title}
+          </h2>
+          <p class="text-text-secondary">{description}</p>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

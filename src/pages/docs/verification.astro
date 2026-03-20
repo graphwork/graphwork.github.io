@@ -1,0 +1,351 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Verification Workflow — Workgraph"
+  description="How workgraph verifies agent work automatically using FLIP scoring — a closed feedback loop for quality assurance without human review."
+>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
+
+    <!-- Back link -->
+    <a href="/docs/" class="back-link mb-8 inline-flex">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to docs
+    </a>
+
+    <header class="mb-10">
+      <h1 class="text-3xl md:text-5xl font-bold text-zinc-50 leading-tight mb-4">
+        Verification Workflow
+      </h1>
+      <p class="text-lg text-text-secondary">
+        Automated quality assurance with FLIP scoring — how workgraph closes the loop
+        between task completion and proven correctness.
+      </p>
+    </header>
+
+    <hr class="gradient-divider" />
+
+    <div class="prose prose-lg prose-invert mt-10">
+
+      <h2>The problem</h2>
+      <p>
+        When AI agents complete tasks, how do you know the work is actually correct?
+        Manual review doesn't scale. Trusting the agent's self-report is unreliable.
+        You need an independent verification step that runs automatically and feeds
+        results back into the system.
+      </p>
+      <p>
+        Workgraph solves this with a three-stage verification pipeline:
+        a machine-checkable gate, an independent quality evaluation, and a
+        feedback loop that evolves agent assignments based on measured performance.
+      </p>
+
+      <h2>The pipeline</h2>
+
+      <p>Here's the full verification flow, from task creation to agent evolution:</p>
+
+      <pre class="pipeline-diagram">
+  <span class="c-accent">wg add</span> --verify "cargo test"    <span class="c-dim">Task created with verify gate</span>
+          │
+          ▼
+  <span class="c-ip">Agent works on task</span>              <span class="c-dim">Dispatched by coordinator</span>
+          │
+          ▼
+  <span class="c-accent">wg done</span> <span class="c-dim">────────────────────┐</span>
+          │                     │
+          ▼                     ▼
+  <span class="c-open">Run verify command</span>       <span class="c-fail">Fail? → task stays open</span>
+  <span class="c-done">cargo test passes</span>        <span class="c-dim">Agent must fix and retry</span>
+          │
+          ▼
+  <span class="c-pv">pending-validation</span>               <span class="c-dim">Task enters review queue</span>
+          │
+          ▼
+  <span class="c-accent">.flip-*</span> <span class="c-dim">auto-created</span>                <span class="c-dim">FLIP evaluation task</span>
+          │
+          ├─ <span class="c-open">Phase 1: Inference</span>         <span class="c-dim">LLM reconstructs prompt</span>
+          │    <span class="c-dim">"What was this agent asked to do?"</span>
+          │
+          ├─ <span class="c-open">Phase 2: Comparison</span>        <span class="c-dim">LLM scores alignment</span>
+          │    <span class="c-dim">"Does the output match the intent?"</span>
+          │
+          ▼
+  <span class="c-done">FLIP score</span> 0.0 – 1.0             <span class="c-dim">Intent fidelity measurement</span>
+          │
+          ├─ <span class="c-done">≥ threshold → done</span>         <span class="c-dim">Work verified, move on</span>
+          │
+          └─ <span class="c-fail">&lt; threshold → .verify-*</span>    <span class="c-dim">Repair task created</span>
+               │
+               ▼
+          <span class="c-accent">Scores feed evolution</span>        <span class="c-dim">Low scores → re-evaluate agents</span>
+          <span class="c-dim">wg evolve run</span>                <span class="c-dim">Recombine top performers</span></pre>
+
+      <h2>Stage 1: The <code>--verify</code> gate</h2>
+
+      <p>
+        When you create a task with <code>--verify</code>, you attach a shell command
+        that must pass before the task can be marked done. This is a hard gate — agents
+        cannot bypass it.
+      </p>
+
+      <pre><code><span class="c-dim">$</span> wg add "Implement user auth" \
+    --verify "cargo test test_auth_ passes" \
+    -d "Add JWT-based authentication endpoint"</code></pre>
+
+      <p>When an agent runs <code>wg done</code>, the verify command executes automatically:</p>
+
+      <ul>
+        <li><strong>Pass:</strong> Task moves to <code>pending-validation</code> status</li>
+        <li><strong>Fail:</strong> Task stays <code>in-progress</code> — the agent must fix the issue and retry</li>
+        <li><strong>Timeout:</strong> Treated as failure (configurable timeout, default 60s)</li>
+      </ul>
+
+      <p>
+        Agents cannot use <code>--skip-verify</code>. Only humans can override the gate.
+        This ensures that every agent-completed task passes its acceptance criteria before
+        entering the review pipeline.
+      </p>
+
+      <h2>Stage 2: FLIP scoring</h2>
+
+      <p>
+        FLIP — <strong>Fidelity via Latent Intent Probing</strong> — is a two-phase
+        evaluation that measures whether the agent's output actually matches what was
+        asked for. It works by round-tripping the intent:
+      </p>
+
+      <h3>Phase 1: Inference</h3>
+      <p>
+        An LLM receives <em>only</em> the task's output — artifacts, logs, diffs — and
+        reconstructs what the original prompt must have been. It has no access to the
+        actual task description.
+      </p>
+
+      <pre><code><span class="c-dim"># What the inference LLM sees:</span>
+Artifacts: src/auth.rs, src/auth_test.rs
+Log: "Added JWT validation middleware"
+Diff: +147 lines across 2 files
+
+<span class="c-dim"># What it produces:</span>
+"Implement JWT-based authentication with
+ token validation and test coverage"</code></pre>
+
+      <h3>Phase 2: Comparison</h3>
+      <p>
+        A second LLM compares the inferred prompt to the actual task description and
+        scores the alignment on a 0.0–1.0 scale. High fidelity means the output clearly
+        reflects the original intent; low fidelity means something was lost in translation.
+      </p>
+
+      <pre><code><span class="c-dim"># Actual prompt:</span>
+"Add JWT-based authentication endpoint"
+
+<span class="c-dim"># Inferred prompt:</span>
+"Implement JWT-based authentication with
+ token validation and test coverage"
+
+<span class="c-dim"># Score:</span> <span class="c-done">0.94</span> — high fidelity</code></pre>
+
+      <p>
+        Using two separate LLM calls — one blind to the input, one blind to the output —
+        prevents the evaluation from rubber-stamping its own reasoning. The round-trip
+        creates a meaningful signal about whether the work actually addressed the request.
+      </p>
+
+      <h2>Stage 3: Automated repair</h2>
+
+      <p>
+        When a FLIP score falls below the configured threshold, the coordinator
+        automatically creates a <code>.verify-*</code> repair task. This task receives:
+      </p>
+
+      <ul>
+        <li>The original task description</li>
+        <li>The FLIP score and why it was flagged</li>
+        <li>All artifacts and logs from the original task</li>
+        <li>Full authority to edit files, run tests, and commit fixes</li>
+      </ul>
+
+      <p>
+        The repair agent acts as a senior engineer reviewing a junior's work. The
+        instruction is <strong>"fix first, fail last"</strong> — repair the work
+        if possible, only reject it if the approach is fundamentally wrong.
+      </p>
+
+      <pre class="pipeline-diagram"><span class="c-done">auth-module  (done)</span>              <span class="c-dim">FLIP: 0.62</span>
+└→ <span class="c-ip">.verify-auth-module  (in-progress)</span>
+   <span class="c-dim">"FLIP score 0.62 below threshold 0.70 —</span>
+   <span class="c-dim"> verify and fix this task's work"</span></pre>
+
+      <h2>The feedback loop</h2>
+
+      <p>
+        FLIP scores don't just gate individual tasks — they feed back into the
+        agency system to improve future assignments:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Evaluation records:</strong> Every FLIP score is stored as an evaluation
+          in <code>.workgraph/agency/evaluations/</code>, tied to the agent that performed
+          the work.
+        </li>
+        <li>
+          <strong>Four-dimensional scoring:</strong> FLIP's intent fidelity score joins
+          three other evaluation dimensions (correctness, completeness, quality) to build
+          a comprehensive performance profile.
+        </li>
+        <li>
+          <strong>Evolution:</strong> <code>wg evolve run</code> uses accumulated evaluation
+          data to recombine the best-performing agent configurations (role + tradeoff pairs)
+          and retire underperformers.
+        </li>
+        <li>
+          <strong>Assignment:</strong> Future tasks are assigned to agents whose role and
+          tradeoff profile best match the task requirements, informed by historical
+          FLIP scores.
+        </li>
+      </ol>
+
+      <pre class="pipeline-diagram"><span class="c-dim">Evaluation data accumulates:</span>
+
+  Agent       Role        Tradeoff    Avg FLIP   Tasks
+  ─────────────────────────────────────────────────────
+  agent-4a2   Programmer  Thorough    <span class="c-done">0.93</span>        63
+  agent-8b1   Writer      Balanced    <span class="c-done">0.88</span>        19
+  agent-c03   Programmer  Fast        <span class="c-ip">0.71</span>        12
+  agent-f19   Analyst     Cautious    <span class="c-fail">0.54</span>         8  <span class="c-dim">← candidate for retirement</span>
+
+<span class="c-dim">Evolution recombines top performers:</span>
+
+  <span class="c-done">Programmer + Thorough</span>  → kept (high scores)
+  <span class="c-ip">Programmer + Fast</span>     → mutated (borderline)
+  <span class="c-fail">Analyst + Cautious</span>    → retired (low scores)</pre>
+
+      <p>
+        This creates a closed loop: tasks are verified, scores accumulate, agents evolve,
+        and the system gets better at matching the right agent to each task. No human needs
+        to review every task — the system self-corrects.
+      </p>
+
+      <h2>Concrete example</h2>
+
+      <p>Here's a full walkthrough of the verification workflow in action:</p>
+
+      <pre><code><span class="c-dim"># 1. Create a task with a verify gate</span>
+<span class="c-dim">$</span> wg add "Add rate limiting to API" \
+    --verify "cargo test test_rate_limit" \
+    -d "Implement token-bucket rate limiter on /api/* endpoints.
+
+## Validation
+- [ ] Failing test: test_rate_limit_rejects_over_threshold
+- [ ] Implementation passes the test
+- [ ] cargo test passes with no regressions"
+
+<span class="c-dim"># 2. Coordinator dispatches an agent</span>
+<span class="c-dim">$</span> wg service start
+<span class="c-done">  [coordinator] Dispatched agent-4a2 to 'add-rate-limiting-to-api'</span>
+
+<span class="c-dim"># 3. Agent completes and runs wg done</span>
+<span class="c-done">  Running verify command: cargo test test_rate_limit</span>
+<span class="c-done">  Verify command passed</span>
+<span class="c-done">  Task 'add-rate-limiting-to-api' → pending-validation</span>
+
+<span class="c-dim"># 4. Coordinator creates FLIP evaluation task</span>
+<span class="c-done">  [coordinator] Created '.flip-add-rate-limiting-to-api'</span>
+
+<span class="c-dim"># 5. FLIP agent evaluates</span>
+<span class="c-done">  FLIP Phase 1: Inferring prompt from output...</span>
+<span class="c-done">  FLIP Phase 2: Comparing prompts...</span>
+<span class="c-done">  Score: 0.91 (threshold: 0.70) — passed</span>
+
+<span class="c-dim"># 6. Task marked done, score recorded for evolution</span>
+<span class="c-done">  Task 'add-rate-limiting-to-api' → done</span></code></pre>
+
+      <p>If the FLIP score had been below threshold:</p>
+
+      <pre><code><span class="c-fail">  Score: 0.58 (threshold: 0.70) — below threshold</span>
+<span class="c-ip">  [coordinator] Created '.verify-add-rate-limiting-to-api'</span>
+<span class="c-dim">  Repair agent dispatched to fix the work...</span></code></pre>
+
+      <h2>Configuration</h2>
+
+      <p>The verification pipeline is configured in <code>.workgraph/config.toml</code>:</p>
+
+      <pre><code><span class="c-dim">[agency]</span>
+<span class="c-dim"># Enable FLIP evaluation globally</span>
+flip_enabled = true
+
+<span class="c-dim"># FLIP score below this triggers a .verify-* repair task</span>
+flip_verification_threshold = 0.70
+
+<span class="c-dim"># Auto-evaluate completed tasks</span>
+auto_evaluate = true</code></pre>
+
+      <p>
+        You can also enable FLIP for individual tasks by adding the <code>flip-eval</code>
+        tag, without enabling it globally.
+      </p>
+
+      <h2>Why this matters</h2>
+
+      <p>
+        Most agent frameworks trust the agent's self-report: if it says "done," it's done.
+        Workgraph doesn't. Every completed task goes through an independent verification
+        pipeline that measures whether the output actually matches the intent.
+      </p>
+
+      <p>This gives you three things traditional approaches can't:</p>
+
+      <ol>
+        <li>
+          <strong>Quality assurance at scale.</strong> You can run dozens of agents in
+          parallel without reviewing every task yourself. The verification pipeline catches
+          drift, misinterpretation, and incomplete work automatically.
+        </li>
+        <li>
+          <strong>Measurable fidelity.</strong> FLIP scores are numbers, not vibes. You can
+          track quality trends over time, compare agent configurations, and make data-driven
+          decisions about which agents to assign to which tasks.
+        </li>
+        <li>
+          <strong>Self-improving coordination.</strong> The feedback loop from FLIP scores
+          into agent evolution means the system gets better at assigning the right agent to
+          each task. Poor performers get retired. Good configurations get amplified.
+        </li>
+      </ol>
+
+      <p>
+        The result is a system that you can trust to run autonomously — not because you've
+        given up control, but because verification is built into the workflow itself.
+      </p>
+
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .pipeline-diagram {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    font-variant-ligatures: none;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    margin: 1.5em 0;
+  }
+
+  .c-done { color: #22c55e; }
+  .c-ip { color: #eab308; }
+  .c-fail { color: #ef4444; }
+  .c-open { color: #e5e7eb; }
+  .c-dim { color: #6b7280; }
+  .c-accent { color: #8b5cf6; }
+  .c-pv { color: #f59e0b; }
+</style>
