@@ -1,0 +1,380 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Organizational Patterns — workgraph"
+  description="A mathematics of organizations mapped onto task graph primitives. Formal models from organizational theory, cybernetics, and workflow science."
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
+
+    <!-- Header -->
+    <header class="mb-12">
+      <a href="/" class="back-link mb-6">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Home
+      </a>
+      <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-3 font-mono mt-6">
+        Organizational Patterns & Formal Models
+      </h1>
+      <p class="text-text-secondary font-mono text-sm">
+        A mathematics of organizations mapped onto task graph primitives
+      </p>
+    </header>
+
+    <!-- Abstract -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">abstract</h2>
+      <div class="text-text-secondary leading-relaxed space-y-4">
+        <p>
+          Workgraph's primitives — tasks, dependency edges, roles, motivations, agents, a coordinator,
+          evaluations, and an evolve loop — are not arbitrary design choices. They map precisely onto
+          well-established concepts from organizational theory, cybernetics, workflow science, and
+          distributed systems.
+        </p>
+        <p>
+          This paper develops a vocabulary and framework — a "mathematics of organizations" — that helps
+          users think rigorously about how to structure work in workgraph. It connects the system's
+          concrete primitives to the theoretical traditions that explain <em>why</em> they work.
+        </p>
+      </div>
+    </section>
+
+    <!-- Download links -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">read the full paper</h2>
+      <div class="flex flex-wrap gap-4">
+        <a href="/organizational-patterns.html" class="doc-link">
+          <span class="doc-link-icon">HTML</span>
+          <span>Read in browser</span>
+        </a>
+        <a href="/organizational-patterns.pdf" class="doc-link">
+          <span class="doc-link-icon">PDF</span>
+          <span>Download PDF</span>
+        </a>
+      </div>
+    </section>
+
+    <hr class="gradient-divider mb-12" />
+
+    <!-- Key Findings -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-6 font-mono lowercase">key findings</h2>
+      <div class="findings-grid">
+
+        <div class="finding-card">
+          <h3 class="finding-title">The task graph is a stigmergic medium</h3>
+          <p class="finding-desc">
+            Agents coordinate indirectly by reading and writing task state, exactly as ants coordinate
+            via pheromone trails. No agent-to-agent communication is needed — the graph <em>is</em> the
+            communication channel.
+          </p>
+        </div>
+
+        <div class="finding-card">
+          <h3 class="finding-title">The execute-evaluate-evolve loop is autopoietic</h3>
+          <p class="finding-desc">
+            The system literally produces the components (agent definitions) that produce the system
+            (task completions that trigger evaluations that trigger evolution). This is Maturana & Varela's
+            self-producing network and Argyris & Sch&ouml;n's double-loop learning — at once.
+          </p>
+        </div>
+
+        <div class="finding-card">
+          <h3 class="finding-title">The coordinator is a cybernetic regulator</h3>
+          <p class="finding-desc">
+            Operating an OODA loop, subject to Ashby's Law of Requisite Variety: the number of distinct
+            roles must match or exceed the variety of task types, or the system becomes under-regulated.
+          </p>
+        </div>
+
+        <div class="finding-card">
+          <h3 class="finding-title">Evaluations solve the principal-agent problem</h3>
+          <p class="finding-desc">
+            The human principal delegates to autonomous agents under information asymmetry. Evaluations
+            are the monitoring mechanism; motivations are the bonding mechanism; evolution is the
+            incentive-alignment mechanism.
+          </p>
+        </div>
+
+        <div class="finding-card">
+          <h3 class="finding-title">Role design is an Inverse Conway Maneuver</h3>
+          <p class="finding-desc">
+            Conway's Law predicts that system architecture mirrors org structure. In workgraph,
+            deliberately designing roles shapes the task decomposition and therefore the output architecture.
+          </p>
+        </div>
+
+        <div class="finding-card">
+          <h3 class="finding-title">The provenance log is organizational memory</h3>
+          <p class="finding-desc">
+            <code>wg trace</code> records the full causal chain of every workflow — not just current state
+            (stigmergy) but how it got there. This is Luhmann's structural memory: the system's capacity
+            to selectively remember and forget its own history.
+          </p>
+        </div>
+
+        <div class="finding-card">
+          <h3 class="finding-title">Replay transforms memory into learning</h3>
+          <p class="finding-desc">
+            <code>wg replay</code> re-executes past workflows with different parameters, enabling
+            double-loop learning and counterfactual reasoning. Successful patterns become organizational
+            routines — reusable functions extracted from traces.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="gradient-divider mb-12" />
+
+    <!-- Theoretical Frameworks -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-6 font-mono lowercase">theoretical frameworks</h2>
+      <nav class="toc-nav">
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Stigmergy</h3>
+          <p class="toc-desc">The task graph as coordination medium — indirect coordination through traces left in a shared environment. How <code>after</code> edges and task status changes create the pheromone trails that guide downstream agents.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Workflow Patterns</h3>
+          <p class="toc-desc">Van der Aalst's 43 control-flow patterns mapped to workgraph. What <code>after</code> edges and structural cycles can natively express, and what requires coordinator logic.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Fork-Join, MapReduce & Scatter-Gather</h3>
+          <p class="toc-desc">The three parallel decomposition patterns. The planner &rarr; N workers &rarr; synthesizer topology as workgraph's fundamental parallel structure.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Pipeline & Assembly Line</h3>
+          <p class="toc-desc">Sequential processing patterns, throughput vs. latency trade-offs, and the Theory of Constraints applied to task graph bottlenecks.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Autopoiesis</h3>
+          <p class="toc-desc">The self-producing agency. Maturana & Varela's biological concept applied to how the evolve loop creates the agent definitions that create the task completions that trigger the evolve loop.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Trace as Organizational Memory</h3>
+          <p class="toc-desc">Luhmann's structural memory realized in <code>wg trace</code>. The three layers of memory: stigmergic (graph state), provenance (operation log), and functional (extracted routines).</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Cybernetics & Control Theory</h3>
+          <p class="toc-desc">The coordinator as a cybernetic regulator. Ashby's Law of Requisite Variety applied to role design. Single-loop vs. double-loop learning.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">The Viable System Model</h3>
+          <p class="toc-desc">Beer's five systems mapped to workgraph. The S3-S4 balance between operational management and intelligence/adaptation.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Principal-Agent Theory & Conway's Law</h3>
+          <p class="toc-desc">Information asymmetry in autonomous agent delegation. The Inverse Conway Maneuver: shaping output architecture through deliberate role design.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Team Topologies & Organizational Primitives</h3>
+          <p class="toc-desc">Stream-aligned, enabling, platform, and complicated-subsystem teams mapped to workgraph roles. Division of labor, span of control, and coordination costs.</p>
+        </div>
+
+      </nav>
+    </section>
+
+    <!-- Primitives table -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-6 font-mono lowercase">primitive &harr; theory mapping</h2>
+      <div class="table-wrapper">
+        <table class="mapping-table">
+          <thead>
+            <tr>
+              <th>Primitive</th>
+              <th>Theoretical Load</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>Tasks</code></td><td>The universal unit of work — mapped by all 10 frameworks</td></tr>
+            <tr><td><code>after</code> edges</td><td>Workflow Patterns, Fork-Join, Stigmergy, Conway's Law, Coordination Costs</td></tr>
+            <tr><td><code>Structural cycles</code></td><td>Workflow Patterns (loops), Cybernetics (feedback), Autopoiesis, Agency Theory (repeated games)</td></tr>
+            <tr><td><code>Roles</code></td><td>Team Topologies, Conway's Law, VSM (S1), Requisite Variety, Division of Labor</td></tr>
+            <tr><td><code>Motivations</code></td><td>Agency Theory (bonding), VSM (S5 policy), Cybernetics (constraints)</td></tr>
+            <tr><td><code>Coordinator</code></td><td>Cybernetics (regulator), VSM (S3), OODA Loop, Agency Theory (principal's delegate)</td></tr>
+            <tr><td><code>Evaluations</code></td><td>Agency Theory (monitoring), Cybernetics (feedback), VSM (S3* audit)</td></tr>
+            <tr><td><code>Evolve</code></td><td>Autopoiesis (self-production), Cybernetics (double-loop), VSM (S4), Agency Theory (incentive alignment)</td></tr>
+            <tr><td><code>Trace</code></td><td>Org Learning (memory), Autopoiesis (structural memory), Stigmergy (persistent traces)</td></tr>
+            <tr><td><code>Replay</code></td><td>Org Learning (double-loop), Autopoiesis (reproduction with variation), Evolutionary Theory</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .gradient-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--color-border-highlight) 50%, transparent 100%);
+    border: none;
+  }
+
+  .doc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+    text-decoration: none;
+  }
+
+  .doc-link:hover {
+    border-color: var(--color-accent-primary);
+    background: var(--color-bg-tertiary);
+  }
+
+  .doc-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 1.5rem;
+    border-radius: 0.25rem;
+    background: var(--color-bg-tertiary);
+    color: var(--color-accent-primary);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .findings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .finding-card {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    background: var(--color-bg-secondary);
+  }
+
+  .finding-title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .finding-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .finding-desc code {
+    background: var(--color-bg-tertiary);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+    font-size: 0.8125rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--color-text-primary);
+  }
+
+  .toc-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .toc-section {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    background: var(--color-bg-secondary);
+  }
+
+  .toc-heading {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .toc-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .toc-desc code {
+    background: var(--color-bg-tertiary);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+    font-size: 0.8125rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--color-text-primary);
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+  }
+
+  .mapping-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+
+  .mapping-table th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--color-border-primary);
+  }
+
+  .mapping-table td {
+    padding: 0.625rem 1rem;
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border-primary);
+    line-height: 1.5;
+  }
+
+  .mapping-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .mapping-table code {
+    background: var(--color-bg-tertiary);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: var(--color-text-primary);
+    font-size: 0.8125rem;
+  }
+</style>
