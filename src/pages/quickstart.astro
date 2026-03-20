@@ -1,0 +1,297 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Quickstart — workgraph"
+  description="From zero to agents working in 5 minutes. Install workgraph, create tasks, and watch AI agents coordinate."
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
+
+    <header class="mb-16">
+      <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4 font-mono">
+        your first 5 minutes
+      </h1>
+      <p class="text-lg text-text-secondary font-mono">
+        install &rarr; init &rarr; tasks &rarr; agents &rarr; watch
+      </p>
+    </header>
+
+    <!-- Step 1: Install -->
+    <section class="mb-14">
+      <div class="step-header">
+        <span class="step-number">1</span>
+        <h2 class="step-title">install</h2>
+      </div>
+      <p class="text-text-secondary mb-4">
+        Workgraph is a single binary. Install it with
+        <a href="https://rustup.rs" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Rust</a>:
+      </p>
+      <pre class="term"><span class="prompt">$</span> cargo install --git https://github.com/graphwork/workgraph
+
+<span class="out">    Compiling workgraph v0.1.0
+    Finished `release` profile [optimized] target(s)
+  Installing /home/you/.cargo/bin/wg
+   Installed package `workgraph v0.1.0`</span></pre>
+      <p class="text-text-secondary mt-4">
+        Verify:
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg --version
+
+<span class="out">workgraph 0.1.0</span></pre>
+    </section>
+
+    <!-- Step 2: Init -->
+    <section class="mb-14">
+      <div class="step-header">
+        <span class="step-number">2</span>
+        <h2 class="step-title">initialize a project</h2>
+      </div>
+      <p class="text-text-secondary mb-4">
+        Navigate to any project directory and run <code class="inline-code">wg init</code>.
+        This creates a <code class="inline-code">.workgraph/</code> directory —
+        your task graph lives here, right next to your code.
+      </p>
+      <pre class="term"><span class="prompt">$</span> cd my-project
+<span class="prompt">$</span> wg init
+
+<span class="out">Added .workgraph to .gitignore
+Initialized workgraph at .workgraph
+Seeded 8 roles and 11 tradeoffs.
+Created default agent: Careful Programmer (f5143935).
+Enabled auto_assign and auto_evaluate in config.
+
+Agency is ready. The service will now auto-assign agents to tasks.
+  Next: wg service start</span></pre>
+      <p class="text-text-secondary mt-4">
+        No server. No account. Just a directory in your repo.
+      </p>
+    </section>
+
+    <!-- Step 3: Add Tasks -->
+    <section class="mb-14">
+      <div class="step-header">
+        <span class="step-number">3</span>
+        <h2 class="step-title">create tasks</h2>
+      </div>
+      <p class="text-text-secondary mb-4">
+        Add tasks with <code class="inline-code">wg add</code>.
+        Use <code class="inline-code">--after</code> to declare dependencies.
+        Task IDs are auto-generated from the title.
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg add "Design the API"
+
+<span class="out">Added task: Design the API (design-the-api)
+  Use --after design-the-api to depend on this task</span>
+
+<span class="prompt">$</span> wg add "Build the backend" --after design-the-api
+
+<span class="out">Added task: Build the backend (build-the-backend)
+  Use --after build-the-backend to depend on this task</span>
+
+<span class="prompt">$</span> wg add "Write tests" --after build-the-backend
+
+<span class="out">Added task: Write tests (write-tests)
+  Use --after write-tests to depend on this task</span>
+
+<span class="prompt">$</span> wg add "Deploy to staging" --after build-the-backend,write-tests
+
+<span class="out">Added task: Deploy to staging (deploy-to-staging)
+  Use --after deploy-to-staging to depend on this task</span></pre>
+      <p class="text-text-secondary mt-4">
+        See what you built:
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg viz
+
+<span class="c-open">design-the-api  (open)</span>
+<span class="c-dim">└→</span> <span class="c-open">build-the-backend  (open)</span>
+<span class="c-dim">  ├→</span> <span class="c-open">write-tests  (open)</span> <span class="c-dim">────────┐</span>
+<span class="c-dim">  └→</span> <span class="c-open">deploy-to-staging  (open)</span> <span class="c-dim">←─┘</span></pre>
+      <p class="text-text-secondary mt-4">
+        <code class="inline-code">deploy-to-staging</code> waits for both
+        <code class="inline-code">build-the-backend</code> and
+        <code class="inline-code">write-tests</code>.
+        Only <code class="inline-code">design-the-api</code> is ready to start — it has no blockers:
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg ready
+
+<span class="out">Ready tasks:
+  design-the-api - Design the API</span></pre>
+    </section>
+
+    <!-- Step 4: Start the Service -->
+    <section class="mb-14">
+      <div class="step-header">
+        <span class="step-number">4</span>
+        <h2 class="step-title">start the service</h2>
+      </div>
+      <p class="text-text-secondary mb-4">
+        The coordinator watches the graph, claims ready tasks, and spawns AI agents to work on them.
+        When an agent finishes, downstream tasks become ready and new agents spin up.
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg service start --max-agents 3
+
+<span class="out">Coordinator started (pid 42851)
+  Max parallel agents: 3
+  Executor: claude
+  Watching for ready tasks...</span></pre>
+      <p class="text-text-secondary mt-4">
+        That's it. The service runs in the background. It picks up
+        <code class="inline-code">design-the-api</code> immediately — the only task with no blockers.
+      </p>
+    </section>
+
+    <!-- Step 5: Watch -->
+    <section class="mb-14">
+      <div class="step-header">
+        <span class="step-number">5</span>
+        <h2 class="step-title">watch agents work</h2>
+      </div>
+      <p class="text-text-secondary mb-4">
+        Open the terminal UI to see what's happening in real time:
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg tui</pre>
+      <p class="text-text-secondary mt-4 mb-4">
+        The TUI shows the task graph, agent activity, and logs updating live.
+        Or check status from the command line:
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg agents
+
+<span class="out">PID    TASK               STATUS   ELAPSED
+42903  design-the-api     running  2m 14s</span>
+
+<span class="prompt">$</span> wg list
+
+<span class="c-ip">[~] design-the-api - Design the API</span>
+<span class="c-open">[ ] build-the-backend - Build the backend</span>
+<span class="c-open">[ ] write-tests - Write tests</span>
+<span class="c-open">[ ] deploy-to-staging - Deploy to staging</span></pre>
+    </section>
+
+    <!-- Step 6: The aha moment -->
+    <section class="mb-14">
+      <div class="step-header">
+        <span class="step-number">6</span>
+        <h2 class="step-title">tasks complete &mdash; the cascade</h2>
+      </div>
+      <p class="text-text-secondary mb-4">
+        When <code class="inline-code">design-the-api</code> finishes,
+        the coordinator immediately spawns an agent for
+        <code class="inline-code">build-the-backend</code>. When that completes,
+        <code class="inline-code">write-tests</code> becomes ready. Once both are done,
+        <code class="inline-code">deploy-to-staging</code> unblocks.
+      </p>
+      <pre class="term"><span class="prompt">$</span> wg viz
+
+<span class="c-done">design-the-api  (done)</span>
+<span class="c-dim">└→</span> <span class="c-done">build-the-backend  (done)</span>
+<span class="c-dim">  ├→</span> <span class="c-done">write-tests  (done)</span> <span class="c-dim">────────┐</span>
+<span class="c-dim">  └→</span> <span class="c-ip">deploy-to-staging  (in-progress)</span> <span class="c-dim">←─┘</span></pre>
+      <p class="text-text-secondary mt-4">
+        You defined the structure. The graph did the rest.
+      </p>
+    </section>
+
+    <!-- What's next -->
+    <section class="mb-8 border-t border-border-primary pt-14">
+      <h2 class="text-xl font-bold text-zinc-50 mb-6 font-mono lowercase">what's next</h2>
+      <div class="space-y-4 text-text-secondary">
+        <p>
+          <strong class="text-zinc-50">Add validation gates</strong> &mdash;
+          <code class="inline-code">wg add "Security audit" --verify "All findings documented"</code>
+          &mdash; tasks enter <code class="inline-code">pending-validation</code> before completing.
+        </p>
+        <p>
+          <strong class="text-zinc-50">Create cycles</strong> &mdash;
+          repeating processes like CI or convergence loops. Agents pick up where previous iterations left off.
+        </p>
+        <p>
+          <strong class="text-zinc-50">Fan out work</strong> &mdash;
+          decompose into parallel subtasks. The coordinator runs them simultaneously up to
+          <code class="inline-code">--max-agents</code>.
+        </p>
+        <p>
+          <strong class="text-zinc-50">Evolve agents</strong> &mdash;
+          <code class="inline-code">wg agency init</code> seeds roles and tradeoffs.
+          After evaluations, an evolver mutates the best performers.
+        </p>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  /* Step headers */
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-accent-primary);
+    color: var(--color-accent-primary);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f4f4f5;
+    text-transform: lowercase;
+  }
+
+  /* Terminal blocks */
+  .term {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-variant-ligatures: none;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 0;
+    color: var(--color-text-primary);
+  }
+
+  /* Prompt character */
+  .prompt {
+    color: var(--color-text-tertiary);
+    user-select: none;
+  }
+
+  /* Command output (slightly dimmer) */
+  .out {
+    color: var(--color-text-secondary);
+  }
+
+  /* Inline code */
+  .inline-code {
+    background: var(--color-bg-tertiary);
+    padding: 0.15rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: #f4f4f5;
+  }
+
+  /* Status colors */
+  .c-done { color: #22c55e; }
+  .c-ip { color: #eab308; }
+  .c-open { color: #e5e7eb; }
+  .c-dim { color: #6b7280; }
+</style>
