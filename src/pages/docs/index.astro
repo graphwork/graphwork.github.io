@@ -1,35 +1,76 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-
-const docs = [
-  {
-    href: '/docs/verification/',
-    title: 'Verification Workflow',
-    description: 'Automated quality assurance with FLIP scoring — how workgraph verifies agent work without human review.',
-  },
-];
+import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
-<BaseLayout title="Docs — Workgraph" description="Workgraph documentation — guides, concepts, and reference for task coordination with humans and AI agents.">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16">
-    <header class="mb-10">
-      <h1 class="text-3xl md:text-5xl font-bold text-zinc-50 leading-tight mb-4">Docs</h1>
-      <p class="text-lg text-text-secondary">
-        Guides, concepts, and reference for task coordination with humans and AI agents.
-      </p>
-    </header>
+<DocsLayout title="Docs — Workgraph" description="Workgraph documentation — guides, concepts, and reference for task coordination with humans and AI agents.">
 
-    <hr class="gradient-divider" />
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">Documentation</h1>
+    <p class="text-lg text-text-secondary">
+      Guides, concepts, and reference for coordinating humans and AI agents with task graphs.
+    </p>
+  </header>
 
-    <div class="mt-8 space-y-6">
-      {docs.map(({ href, title, description }) => (
-        <a href={href} class="block border-b border-border-primary pb-6 group">
-          <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
-            {title}
-          </h2>
-          <p class="text-text-secondary">{description}</p>
-        </a>
-      ))}
-    </div>
+  <hr class="gradient-divider" />
+
+  <div class="mt-8 space-y-6">
+
+    <a href="/docs/getting-started/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        Getting Started
+      </h2>
+      <p class="text-text-secondary">Install workgraph, initialize a project, create tasks, and start the service.</p>
+    </a>
+
+    <a href="/docs/workflow-patterns/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        Workflow Patterns
+      </h2>
+      <p class="text-text-secondary">Four patterns for agentic work: service mode, agent plans, mixed human+AI, and manual.</p>
+    </a>
+
+    <a href="/docs/verification/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        Verification Workflow
+      </h2>
+      <p class="text-text-secondary">Automated quality assurance with FLIP scoring — verify agent work without human review.</p>
+    </a>
+
+    <a href="/docs/service/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        Service Management
+      </h2>
+      <p class="text-text-secondary">Configure and manage the coordinator daemon, agents, model selection, and runtime settings.</p>
+    </a>
+
+    <a href="/docs/agency/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        Agency System
+      </h2>
+      <p class="text-text-secondary">Composable identities — roles, tradeoffs, evaluation, and evolution.</p>
+    </a>
+
+    <a href="/docs/tui/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        TUI Guide
+      </h2>
+      <p class="text-text-secondary">Interactive terminal dashboard — views, keybindings, and navigation.</p>
+    </a>
+
+    <a href="/docs/commands/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        Command Reference
+      </h2>
+      <p class="text-text-secondary">Every wg command at a glance — task management, service, agency, and utilities.</p>
+    </a>
+
+    <a href="/docs/ai-integration/" class="block border-b border-border-primary pb-6 group">
+      <h2 class="text-xl font-bold text-zinc-50 group-hover:text-accent-primary transition-colors mb-2">
+        AI Assistant Integration
+      </h2>
+      <p class="text-text-secondary">Set up Claude Code, OpenCode, Codex, and other AI assistants with workgraph.</p>
+    </a>
+
   </div>
-</BaseLayout>
+
+</DocsLayout>

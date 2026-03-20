@@ -1,0 +1,258 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout
+  title="Agency System — Workgraph"
+  description="Composable agent identities — roles, tradeoffs, evaluation, evolution, and FLIP scoring."
+>
+
+  <header class="mb-10">
+    <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4">Agency System</h1>
+    <p class="text-lg text-text-secondary">
+      Composable identities that shape how agents work — and evolve based on results.
+    </p>
+  </header>
+
+  <hr class="gradient-divider" />
+
+  <div class="prose prose-lg prose-invert mt-10">
+
+    <h2>Core concepts</h2>
+
+    <p>
+      Instead of every agent being a generic assistant, workgraph gives agents
+      composable identities built from three primitives:
+    </p>
+
+    <h3>Roles</h3>
+    <p>
+      A role defines <strong>what</strong> an agent does — its skills and desired outcome.
+      Example: a "Programmer" role has skills in code-writing and testing, with
+      a desired outcome of "working, tested code."
+    </p>
+
+    <h3>Tradeoffs</h3>
+    <p>
+      A tradeoff defines <strong>how</strong> an agent prioritizes — what compromises
+      are acceptable and what constraints are non-negotiable.
+      Example: a "Careful" tradeoff accepts being slow or verbose, but
+      rejects producing unreliable or untested output.
+    </p>
+
+    <h3>Agents</h3>
+    <p>
+      An agent pairs a role with a tradeoff to form a complete identity.
+      The same role with different tradeoffs produces different behavior:
+      a "Careful Programmer" works differently than a "Fast Programmer."
+    </p>
+
+    <p>
+      Agents can be <strong>human or AI</strong>. AI agents require a role and tradeoff
+      (injected into the prompt). Human agents use their own judgment — role and
+      tradeoff are optional.
+    </p>
+
+    <h2>The agency loop</h2>
+
+    <p>The agency system runs as a four-stage loop:</p>
+
+    <pre class="pipeline-diagram">  <span class="c-accent">1. Assign</span>         <span class="c-accent">2. Execute</span>         <span class="c-accent">3. Evaluate</span>        <span class="c-accent">4. Evolve</span>
+  identity          task               results            agency
+  to task           (agent runs)       (score agent)      (recombine)
+       │                 │                  │                  │
+       └────────────────>└─────────────────>└─────────────────>┘
+                                                               │
+       ┌───────────────────────────────────────────────────────┘
+       │             performance data feeds back
+       ▼</pre>
+
+    <h2>Getting started</h2>
+
+    <p>Seed the built-in starter roles and tradeoffs:</p>
+
+    <pre><code>wg agency init</code></pre>
+
+    <p>
+      This creates four starter roles (Programmer, Reviewer, Documenter, Architect)
+      and four tradeoffs (Careful, Fast, Thorough, Balanced), then pairs them into
+      a default agent.
+    </p>
+
+    <p>Or create your own:</p>
+
+    <pre><code># Create a role
+wg role add "Programmer" \
+  --outcome "Working, tested code" \
+  --skill code-writing \
+  --skill testing \
+  --description "Writes, tests, and debugs code"
+
+# Create a tradeoff
+wg tradeoff add "Careful" \
+  --accept "Slow" \
+  --accept "Verbose" \
+  --reject "Unreliable" \
+  --reject "Untested" \
+  --description "Prioritizes reliability over speed"
+
+# Pair them into an agent
+wg agent create "Careful Programmer" \
+  --role &lt;role-hash&gt; \
+  --tradeoff &lt;tradeoff-hash&gt;</code></pre>
+
+    <h2>Assigning agents to tasks</h2>
+
+    <pre><code>wg assign &lt;task-id&gt; &lt;agent-hash&gt;</code></pre>
+
+    <p>
+      When the service spawns that task, the agent's role and tradeoff are
+      rendered into the prompt as an identity section. The agent sees its skills,
+      desired outcome, acceptable tradeoffs, and non-negotiable constraints.
+    </p>
+
+    <p>Enable automatic assignment:</p>
+
+    <pre><code>wg config --auto-assign true</code></pre>
+
+    <p>
+      The coordinator creates <code>.assign-*</code> meta-tasks that use an LLM
+      to match the best agent to each task based on required skills and agent capabilities.
+    </p>
+
+    <h2>Evaluation</h2>
+
+    <p>
+      After a task completes, evaluate the agent's work across four dimensions:
+    </p>
+
+    <table>
+      <thead>
+        <tr><th>Dimension</th><th>Weight</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Correctness</td><td>40%</td><td>Does the output match the desired outcome?</td></tr>
+        <tr><td>Completeness</td><td>30%</td><td>Were all aspects of the task addressed?</td></tr>
+        <tr><td>Efficiency</td><td>15%</td><td>Was work done without unnecessary steps?</td></tr>
+        <tr><td>Style adherence</td><td>15%</td><td>Were conventions and constraints followed?</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code># LLM-based evaluation
+wg evaluate run &lt;task-id&gt;
+
+# Record from external sources
+wg evaluate record --task &lt;task-id&gt; --score 0.9 --source "manual"
+
+# View evaluation history
+wg evaluate show --agent &lt;agent-id&gt;</code></pre>
+
+    <p>
+      Scores propagate to three levels: the agent's performance record, the role's
+      record, and the tradeoff's record. This builds a comprehensive picture of
+      which combinations work best.
+    </p>
+
+    <p>Enable automatic evaluation:</p>
+
+    <pre><code>wg config --auto-evaluate true</code></pre>
+
+    <h2>Evolution</h2>
+
+    <p>
+      Once you have enough evaluations, use the evolver to improve the agency:
+    </p>
+
+    <pre><code>wg evolve run</code></pre>
+
+    <p>
+      The evolver uses accumulated performance data to recombine the best-performing
+      role+tradeoff pairs and retire underperformers. It supports multiple strategies:
+    </p>
+
+    <pre><code># Targeted mutations
+wg evolve run --strategy mutation --budget 3
+
+# Preview without applying
+wg evolve run --dry-run
+
+# Autopoietic cycle — evolution as a recurring process
+wg evolve run --autopoietic --max-iterations 5</code></pre>
+
+    <h2>Agency stats</h2>
+
+    <p>View aggregate performance data:</p>
+
+    <pre class="pipeline-diagram"><span class="prompt">$</span> wg agency stats
+
+  Role        Tradeoff    Avg Score  Tasks  Rating
+  ─────────────────────────────────────────────────
+  Programmer  Thorough    <span class="c-done">0.93</span>        63     <span class="c-done">HIGH</span>
+  Writer      Balanced    <span class="c-done">0.88</span>        19     <span class="c-done">HIGH</span>
+  Analyst     Balanced    <span class="c-done">0.88</span>        22     <span class="c-done">HIGH</span>
+  Programmer  Fast        <span class="c-ip">0.71</span>        12     <span class="c-ip">MED</span>
+  Analyst     Cautious    <span class="c-fail">0.54</span>         8     <span class="c-fail">LOW</span></pre>
+
+    <p>
+      Stats include role and tradeoff leaderboards, a synergy matrix showing
+      which combinations perform best, and under-explored pairings.
+    </p>
+
+    <h2>Content-hash IDs</h2>
+
+    <p>
+      Every role, tradeoff, and agent is identified by a SHA-256 content hash
+      of its identity-defining fields. This gives you:
+    </p>
+
+    <ul>
+      <li><strong>Deterministic identity:</strong> Same content always produces the same ID</li>
+      <li><strong>Automatic deduplication:</strong> Can't create two identical entities</li>
+      <li><strong>Immutable identity:</strong> Changing identity fields creates a new entity — the old one stays</li>
+    </ul>
+
+    <p>
+      IDs are displayed as 8-character prefixes (e.g. <code>a3f7c21d</code>).
+      All commands accept unique prefixes for convenience.
+    </p>
+
+    <h2>Human agents</h2>
+
+    <p>
+      Agents with human executors (<code>matrix</code>, <code>email</code>,
+      <code>shell</code>) don't need a role or tradeoff — real people bring
+      their own judgment. But they share the same identity model for capabilities,
+      trust levels, and performance tracking.
+    </p>
+
+    <pre><code>wg agent create "Erik" \
+  --executor matrix \
+  --contact "@erik:server" \
+  --capabilities rust,python,architecture \
+  --trust-level verified</code></pre>
+
+  </div>
+
+</DocsLayout>
+
+<style>
+  .pipeline-diagram {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    font-variant-ligatures: none;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    margin: 1.5em 0;
+  }
+
+  .prompt { color: var(--color-text-tertiary); user-select: none; }
+  .c-done { color: #22c55e; }
+  .c-ip { color: #eab308; }
+  .c-fail { color: #ef4444; }
+  .c-accent { color: #8b5cf6; }
+  .c-dim { color: #6b7280; }
+</style>
