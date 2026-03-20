@@ -1,0 +1,258 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Manual — workgraph"
+  description="The complete workgraph manual: task graphs, agency model, coordination, execution, and evolution."
+>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
+
+    <!-- Header -->
+    <header class="mb-12">
+      <a href="/" class="back-link mb-6">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Home
+      </a>
+      <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-3 font-mono mt-6">
+        Workgraph: A Manual
+      </h1>
+      <p class="text-text-secondary font-mono text-sm">
+        Task coordination for humans and AI agents
+      </p>
+    </header>
+
+    <!-- Abstract -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">abstract</h2>
+      <div class="text-text-secondary leading-relaxed space-y-4">
+        <p>
+          Workgraph models work as a directed graph: tasks are nodes, dependency edges connect them,
+          and a scheduler moves through the structure by finding what is ready and dispatching agents
+          to do it. Everything — the graph, the agent identities, the configuration — lives in plain files
+          under version control. There is no database. There is no mandatory server.
+        </p>
+        <p>
+          Dependencies create ordering, parallelism emerges from independence, and structural cycles
+          introduce intentional iteration where work revisits earlier stages. Layered on top of this
+          graph is an <em>agency</em> — a system of composable identities that gives each agent a declared
+          purpose and a set of constraints. Together, the graph and the agency form a coordination system
+          where the work is precisely defined, the workers are explicitly characterized, and improvement
+          is built into the process.
+        </p>
+        <p>
+          This manual covers the complete system: task graph structure, the agency model, coordination
+          and execution, and the evolution loop that improves agents over time.
+        </p>
+      </div>
+    </section>
+
+    <!-- Download links -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">read the full manual</h2>
+      <div class="flex flex-wrap gap-4">
+        <a href="/workgraph-manual.html" class="doc-link">
+          <span class="doc-link-icon">HTML</span>
+          <span>Read in browser</span>
+        </a>
+        <a href="/workgraph-manual.pdf" class="doc-link">
+          <span class="doc-link-icon">PDF</span>
+          <span>Download PDF</span>
+        </a>
+      </div>
+    </section>
+
+    <hr class="gradient-divider mb-12" />
+
+    <!-- Table of Contents -->
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-zinc-50 mb-6 font-mono lowercase">table of contents</h2>
+      <nav class="toc-nav">
+
+        <div class="toc-section">
+          <h3 class="toc-heading">Glossary</h3>
+          <p class="toc-desc">Precise definitions for every term used in the manual — tasks, statuses, dependencies, cycles, roles, motivations, agents, and more.</p>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">1. System Overview</h3>
+          <p class="toc-desc">The big picture: how graph structure, agency identities, and the coordinator work together.</p>
+          <ul class="toc-sub">
+            <li>The Graph Is the Work</li>
+            <li>The Agency Is Who Does It</li>
+            <li>The Core Loop</li>
+            <li>The Agency Loop</li>
+            <li>How They Relate</li>
+          </ul>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">2. The Task Graph</h3>
+          <p class="toc-desc">Tasks as nodes, dependencies as edges, statuses, readiness, structural cycles, and emergent patterns.</p>
+          <ul class="toc-sub">
+            <li>Tasks as Nodes</li>
+            <li>Status and Lifecycle</li>
+            <li>Terminal Statuses Unblock: A Design Choice</li>
+            <li>Dependencies: <code>after</code> and <code>before</code></li>
+            <li>Readiness</li>
+            <li>Structural Cycles: Intentional Iteration</li>
+            <li>Pause and Resume</li>
+            <li>Emergent Patterns — Fan-Out, Fan-In, Pipelines, Review Cycles</li>
+            <li>Graph Analysis</li>
+            <li>Storage</li>
+          </ul>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">3. The Agency Model</h3>
+          <p class="toc-desc">Composable identities: roles define <em>what</em>, motivations define <em>why</em>, agents are the pairing.</p>
+          <ul class="toc-sub">
+            <li>Roles</li>
+            <li>Motivations</li>
+            <li>Agents: The Pairing</li>
+            <li>Content-Hash IDs</li>
+            <li>The Skill System</li>
+            <li>Trust Levels</li>
+            <li>Human and AI Agents</li>
+            <li>Composition in Practice</li>
+            <li>Lineage and Deduplication</li>
+            <li>Federation: Sharing Across Projects</li>
+          </ul>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">4. Coordination & Execution</h3>
+          <p class="toc-desc">The service daemon, coordinator tick, dispatch cycle, parallelism, auto-assign, dead agent detection, IPC, and observability.</p>
+          <ul class="toc-sub">
+            <li>The Service Daemon</li>
+            <li>The Coordinator Tick</li>
+            <li>The Dispatch Cycle</li>
+            <li>The Wrapper Script</li>
+            <li>Parallelism Control</li>
+            <li>Auto-Assign & Auto-Evaluate</li>
+            <li>Dead Agent Detection and Triage</li>
+            <li>IPC Protocol</li>
+            <li>Observing the System — Adapters, Trace, Events</li>
+            <li>Custom Executors</li>
+          </ul>
+        </div>
+
+        <div class="toc-section">
+          <h3 class="toc-heading">5. Evolution & Improvement</h3>
+          <p class="toc-desc">Evaluation scoring, performance records, evolution strategies, safety guardrails, lineage tracking, and the autopoietic loop.</p>
+          <ul class="toc-sub">
+            <li>Evaluation — Dimensions, Propagation, External Sources</li>
+            <li>Performance Records and the Synergy Matrix</li>
+            <li>Evolution — Strategies, Mechanics, Safety</li>
+            <li>Lineage</li>
+            <li>The Autopoietic Loop</li>
+            <li>Federation & Functions: Cross-Organizational Learning</li>
+            <li>Practical Guidance</li>
+          </ul>
+        </div>
+
+      </nav>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .gradient-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--color-border-highlight) 50%, transparent 100%);
+    border: none;
+  }
+
+  .doc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    background: var(--color-bg-secondary);
+    color: var(--color-text-primary);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+    text-decoration: none;
+  }
+
+  .doc-link:hover {
+    border-color: var(--color-accent-primary);
+    background: var(--color-bg-tertiary);
+  }
+
+  .doc-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 1.5rem;
+    border-radius: 0.25rem;
+    background: var(--color-bg-tertiary);
+    color: var(--color-accent-primary);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .toc-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .toc-section {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    background: var(--color-bg-secondary);
+  }
+
+  .toc-heading {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .toc-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .toc-sub {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 1rem;
+  }
+
+  .toc-sub li {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .toc-sub li::before {
+    content: '·';
+    margin-right: 0.375rem;
+    color: var(--color-border-highlight);
+  }
+
+  .toc-sub code {
+    background: var(--color-bg-tertiary);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+    font-size: 0.75rem;
+  }
+</style>
