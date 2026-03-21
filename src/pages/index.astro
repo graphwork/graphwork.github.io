@@ -6,6 +6,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="workgraph — task graphs for humans and agents"
   description="Work fast. Task graphs for humans and agents. Self-organizing, git-friendly, no server, no account."
 >
+  <link slot="head" rel="stylesheet" href="/asciinema-player.css" />
+
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
 
     <!-- Hero -->
@@ -20,26 +22,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <span class="text-text-tertiary">cybernetic autopoietic stigmergic medium</span>
       </p>
       <div class="hero-screencast">
-        <div id="hero-terminal">
-          <pre class="hero-fallback"><span class="tf-dim">$</span> wg status
-Service: <span class="tf-green">running</span> (2h uptime)
-Coordinator: max=<span class="tf-white">8</span>, executor=<span class="tf-cyan">claude</span>, model=<span class="tf-cyan">opus</span>
-
-Tasks: <span class="tf-white">1,742</span> total
-  <span class="tf-green">1,698 done</span>  <span class="tf-yellow">5 in-progress</span>  <span class="tf-white">12 ready</span>  <span class="tf-dim">27 blocked</span>
-
-<span class="tf-dim">$</span> wg viz --show-internal
-<span class="tf-green">design-auth-api</span>  <span class="tf-green">(done)</span>
-├→ <span class="tf-green">implement-auth</span>  <span class="tf-green">(done)</span> <span class="tf-dim">──────┐</span>
-│  └→ <span class="tf-green">write-auth-tests</span>  <span class="tf-green">(done)</span>     │
-├→ <span class="tf-yellow">implement-users</span>  <span class="tf-yellow">(ip)</span> <span class="tf-dim">────────┤</span>
-├→ <span class="tf-white">implement-billing</span>  <span class="tf-white">(ready)</span> <span class="tf-dim">────┤</span>
-└→ <span class="tf-dim">integration-tests</span>  <span class="tf-dim">(blocked)</span> <span class="tf-dim">←─┘</span>
-   └→ <span class="tf-white">deploy-staging</span>  <span class="tf-white">(open)</span>
-
-<span class="tf-dim">$</span> wg service start --max-agents 4
-<span class="tf-green">✓</span> Coordinator started <span class="tf-dim">(4 agents max)</span></pre>
-        </div>
+        <div id="hero-terminal"></div>
       </div>
     </header>
 
@@ -240,20 +223,18 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
           foreground: '#e4e4e7',
         },
       });
-      el.classList.add('player-loaded');
     } catch (e) {
       console.warn('asciinema-player failed to initialize:', e);
     }
   }
 
-  // Defer to next frame so layout is complete before player measures container
-  requestAnimationFrame(() => initPlayer());
+  // Wait for DOM and styles to be fully ready before initializing player
+  if (document.readyState === 'complete') {
+    initPlayer();
+  } else {
+    window.addEventListener('load', initPlayer);
+  }
 </script>
-
-<!-- asciinema-player CSS must be global — player creates DOM dynamically without Astro scoping attributes -->
-<style is:global>
-  @import 'asciinema-player/dist/bundle/asciinema-player.css';
-</style>
 
 <style>
 
@@ -304,32 +285,12 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     }
   }
 
-  /* asciinema-player overrides */
-  .hero-screencast :global(.ap-wrapper) {
+  /* asciinema-player overrides — :global needed because player creates DOM dynamically */
+  #hero-terminal :global(.ap-wrapper) {
     width: 100% !important;
   }
-
-  /* Static fallback — visible until player loads */
-  .hero-fallback {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.8125rem;
-    line-height: 1.5;
-    color: #e4e4e7;
-    background: #0a0a0b;
-    padding: 1rem 1.25rem;
-    margin: 0;
-    white-space: pre;
-    overflow-x: auto;
-  }
-  .tf-green { color: #22c55e; }
-  .tf-yellow { color: #eab308; }
-  .tf-cyan { color: #06b6d4; }
-  .tf-white { color: #fff; font-weight: bold; }
-  .tf-dim { color: #6b7280; }
-
-  /* Hide fallback once player has loaded */
-  #hero-terminal.player-loaded .hero-fallback {
-    display: none;
+  #hero-terminal :global(.ap-player) {
+    width: 100% !important;
   }
 
   /* Feature cards */
