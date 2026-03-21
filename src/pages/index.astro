@@ -6,7 +6,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="workgraph — task graphs for humans and agents"
   description="Work fast. Task graphs for humans and agents. Self-organizing, git-friendly, no server, no account."
 >
-  <link slot="head" rel="stylesheet" href="/asciinema-player.css" />
+  <link slot="head" rel="stylesheet" type="text/css" href="https://unpkg.com/asciinema-player@3/dist/bundle/asciinema-player.css" is:inline />
+  <script slot="head" is:inline src="https://unpkg.com/asciinema-player@3/dist/bundle/asciinema-player.min.js"></script>
 
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
 
@@ -204,74 +205,32 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   </div>
 </BaseLayout>
 
-<script>
-  function showError(el: HTMLElement, error?: unknown) {
-    const loading = document.getElementById('hero-terminal-loading');
-    if (loading) loading.remove();
-
-    const msg = document.createElement('div');
-    msg.className = 'terminal-error';
-    msg.innerHTML = `<pre><span style="color:#22c55e">$</span> wg status\n\n  Tasks       1,724 <span style="color:#22c55e">(1,702 done)</span>\n  Commits       734\n  Evaluations 2,304 <span style="color:#6b7280">(avg 0.79)</span>\n  Agents          8 <span style="color:#eab308">concurrent</span>\n  Roles          24 <span style="color:#6b7280">(33 tradeoffs)</span></pre>`;
-    el.appendChild(msg);
-    if (error) console.error('asciinema-player failed:', error);
-  }
-
-  async function initPlayer() {
-    const el = document.getElementById('hero-terminal');
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    var el = document.getElementById('hero-terminal');
     if (!el) return;
 
     try {
-      const AsciinemaPlayer = await import('asciinema-player');
+      // Remove loading indicator
+      var loading = document.getElementById('hero-terminal-loading');
+      if (loading) loading.remove();
+
       AsciinemaPlayer.create('/wg-demo.cast', el, {
+        cols: 55,
+        rows: 35,
         autoPlay: true,
         loop: true,
         speed: 1.5,
-        cols: 55,
-        rows: 35,
-        terminalFontFamily: "'JetBrains Mono', ui-monospace, monospace",
-        fit: "width",
-        controls: false,
-        idleTimeLimit: 2,
-        poster: "npt:0:5",
-        theme: {
-          background: '#0a0a0b',
-          foreground: '#e4e4e7',
-        },
+        fit: 'width',
+        terminalFontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace",
+        terminalFontSize: '18px',
+        theme: 'monokai'
       });
-
-      // Player created — remove loading indicator
-      const loading = document.getElementById('hero-terminal-loading');
-      if (loading) loading.remove();
-
-      // Verify it actually rendered after a delay (Firefox may create element but not render)
-      setTimeout(() => {
-        const wrapper = el.querySelector('.ap-wrapper');
-        if (!wrapper || wrapper.clientHeight === 0) {
-          showError(el);
-        }
-      }, 3000);
-    } catch (e) {
-      showError(el, e);
+    } catch(e) {
+      console.error('asciinema-player failed:', e);
+      el.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
     }
-  }
-
-  // Wait for DOM and styles to be fully ready before initializing player
-  if (document.readyState === 'complete') {
-    initPlayer();
-  } else {
-    window.addEventListener('load', initPlayer);
-  }
-
-  // Failsafe: if nothing renders after 5 seconds, show error state
-  setTimeout(() => {
-    const el = document.getElementById('hero-terminal');
-    if (!el) return;
-    const hasPlayer = el.querySelector('.ap-wrapper');
-    const hasError = el.querySelector('.terminal-error');
-    if (!hasPlayer && !hasError) {
-      showError(el);
-    }
-  }, 5000);
+  });
 </script>
 
 <style>
@@ -354,22 +313,6 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   }
   @keyframes blink {
     50% { opacity: 0; }
-  }
-
-  /* Error/fallback state */
-  :global(.terminal-error) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 500px;
-    padding: 2rem;
-  }
-  :global(.terminal-error pre) {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.875rem;
-    line-height: 1.8;
-    color: #e4e4e7;
-    margin: 0;
   }
 
   /* Feature cards */
