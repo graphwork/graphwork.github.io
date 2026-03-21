@@ -115,10 +115,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <span class="c-done">design-api  (done)</span>
 ├→ <span class="c-done">auth-module  (done)</span>
-│ └→ <span class="c-open">integration  (open)</span> <span class="c-dim">←───────┐</span>
-│   └→ <span class="c-open">deploy  (open)</span>            <span class="c-dim">│</span>
-├→ <span class="c-ip">data-layer  (in-progress)</span> <span class="c-dim">────┤</span>
-└→ <span class="c-ip">search-index  (in-progress)</span> <span class="c-dim">──┘</span></pre>
+│ └→ <span class="c-open">integration</span> <span class="c-dim">←──┐</span>
+│   └→ <span class="c-open">deploy</span>       <span class="c-dim">│</span>
+├→ <span class="c-ip">data-layer</span>  <span class="c-dim">────┤</span>
+└→ <span class="c-ip">search-index</span> <span class="c-dim">──┘</span></pre>
       <p class="text-text-secondary mt-4">
         Fan-out decomposes. Fan-in synchronizes. Arcs show convergence.
         Stored in <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/graph.jsonl</code> — git-friendly, no server, no account.
@@ -133,9 +133,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         are cycles in the graph. Each has a bound. Agents pick up
         where previous iterations left off.
       </p>
-      <pre class="viz-block"><span class="c-open">run-tests  (open)</span> <span class="c-dim">↺ (iter 0/5) ←─┐</span>
-└→ <span class="c-open">fix-failures  (open)</span>          <span class="c-dim">│</span>
-  └→ <span class="c-open">push-check  (open)</span> <span class="c-dim">─────────┘</span></pre>
+      <pre class="viz-block"><span class="c-open">run-tests</span> <span class="c-dim">↺ iter 0/5 ←──┐</span>
+└→ <span class="c-open">fix-failures</span>          <span class="c-dim">│</span>
+  └→ <span class="c-open">push-check</span> <span class="c-dim">────────┘</span></pre>
     </section>
 
     <!-- Organizational Synthesis -->
@@ -148,11 +148,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </p>
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg agency stats
 
-  Role        Tradeoff     Avg  Count  Rating
-  -------------------------------------------
-  Programmer  Thorough    0.93     63    <span class="c-done">HIGH</span>
-  Writer      Balanced    0.88     19    <span class="c-done">HIGH</span>
-  Analyst     Balanced    0.88     22    <span class="c-done">HIGH</span></pre>
+  Role        Tradeoff   Avg  Rating
+  ------------------------------------
+  Programmer  Thorough  0.93  <span class="c-done">HIGH</span>
+  Writer      Balanced  0.88  <span class="c-done">HIGH</span>
+  Analyst     Balanced  0.88  <span class="c-done">HIGH</span></pre>
     </section>
 
     <!-- Built With Itself -->
@@ -170,11 +170,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <!-- Update these numbers from wg status / wg agency stats -->
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg status
 
-  Tasks        1,724  <span class="c-done">(1,702 done)</span>
-  Commits        734
-  Evaluations  2,304  <span class="c-dim">(avg 0.79)</span>
-  Agents           8  <span class="c-ip">concurrent</span>
-  Roles           24  <span class="c-dim">evolved over 33 tradeoff configs</span></pre>
+  Tasks       1,724 <span class="c-done">(1,702 done)</span>
+  Commits       734
+  Evaluations 2,304 <span class="c-dim">(avg 0.79)</span>
+  Agents          8 <span class="c-ip">concurrent</span>
+  Roles          24 <span class="c-dim">(33 tradeoffs)</span></pre>
       <p class="text-text-secondary mt-4">
         This page was written by a workgraph agent, reviewed by another,
         and deployed through the same dependency graph it describes.
@@ -191,11 +191,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="text-text-secondary mt-6 mb-4">Then start a project:</p>
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg init
 <span class="text-text-tertiary">$</span> wg add "Design auth API"
-<span class="text-text-tertiary">$</span> wg add "Implement endpoints" --after design-auth-api \
-    --verify "cargo test test_auth passes"
-<span class="text-text-tertiary">$</span> wg add "Integration tests" --after implement-endpoints
+<span class="text-text-tertiary">$</span> wg add "Implement endpoints" \
+    --after design-auth-api \
+    --verify "cargo test passes"
+<span class="text-text-tertiary">$</span> wg add "Integration tests" \
+    --after implement-endpoints
 <span class="text-text-tertiary">$</span> wg service start --max-agents 4
-<span class="text-text-tertiary">$</span> wg chat "What's blocking the auth work?"</pre>
+<span class="text-text-tertiary">$</span> wg chat "What's blocking auth?"</pre>
       <p class="text-text-secondary mt-4">
         The service dispatches agents, verifies results, evolves
         the agent population, and loops. You define structure. It does the rest.
@@ -206,32 +208,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <style>
-  /* Viz blocks - terminal aesthetic */
+  /* Viz blocks - terminal aesthetic, phone-sized: narrow, tall, big text */
   .viz-block {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.875rem;
-    line-height: 1.5;
+    font-size: 1.125rem;
+    line-height: 1.7;
     font-variant-ligatures: none;
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border-primary);
     border-radius: 0.5rem;
-    padding: 1rem 1.25rem;
+    padding: 1.25rem 1.5rem;
     overflow-x: auto;
     margin: 0;
+    max-width: 52ch;
   }
 
   /* Install command - prominent */
   .install-cmd {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.9375rem;
-    line-height: 1.5;
+    font-size: 1.125rem;
+    line-height: 1.7;
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-accent-primary);
     border-radius: 0.5rem;
-    padding: 0.875rem 1.25rem;
+    padding: 1.25rem 1.5rem;
     overflow-x: auto;
     margin: 0;
     color: var(--color-text-primary);
+    max-width: 52ch;
   }
 
   /* Screencast */
