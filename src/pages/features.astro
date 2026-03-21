@@ -1,0 +1,235 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Features — workgraph"
+  description="Explore workgraph's key capabilities: TUI dashboard, graph explorer, inspector, agent coordination, evaluation, cycles, and chat."
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
+
+    <!-- Header -->
+    <header class="mb-16">
+      <h1 class="text-4xl md:text-5xl font-bold text-zinc-50 leading-tight mb-4 font-mono">
+        features
+      </h1>
+      <p class="text-lg text-text-secondary font-mono leading-relaxed">
+        everything you need to coordinate humans and AI agents on complex projects
+      </p>
+    </header>
+
+    <!-- Feature: Dashboard -->
+    <section class="feature-section">
+      <div class="feature-header">
+        <h2 class="feature-title">dashboard</h2>
+        <p class="feature-badge">TUI</p>
+      </div>
+      <p class="feature-description">
+        A split-pane terminal dashboard shows your task graph alongside a detail inspector.
+        Status bars display real-time counts of open, in-progress, and completed tasks.
+        Navigate with keyboard shortcuts — no mouse required.
+      </p>
+      <div class="feature-screenshot">
+        <img src="/features/dashboard.png" alt="Workgraph TUI dashboard showing split-pane view with task graph and detail inspector" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Feature: Graph Explorer -->
+    <section class="feature-section">
+      <div class="feature-header">
+        <h2 class="feature-title">graph explorer</h2>
+        <p class="feature-badge">TUI</p>
+      </div>
+      <p class="feature-description">
+        Visualize your entire dependency graph as a tree with Unicode arrows showing
+        relationships between tasks. Cycle indicators mark iterative workflows.
+        Resize the view or go fullscreen for complex graphs.
+      </p>
+      <div class="feature-screenshot">
+        <img src="/features/graph-explorer.png" alt="Workgraph graph explorer showing full dependency tree with arrows and status colors" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Feature: Inspector -->
+    <section class="feature-section">
+      <div class="feature-header">
+        <h2 class="feature-title">inspector panel</h2>
+        <p class="feature-badge">TUI</p>
+      </div>
+      <p class="feature-description">
+        Nine tabs of context for any selected task: Detail, Log, Messages, Agency,
+        Config, Files, Coordinator Log, Chat, and Firehose. Switch tabs with number keys.
+        The inspector renders markdown descriptions and shows live-updating logs.
+      </p>
+      <div class="feature-screenshot">
+        <img src="/features/inspector.png" alt="Workgraph inspector panel showing task detail with multiple tabs" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Feature: Agent Coordination -->
+    <section class="feature-section">
+      <div class="feature-header">
+        <h2 class="feature-title">agent coordination</h2>
+        <p class="feature-badge">CLI</p>
+      </div>
+      <p class="feature-description">
+        A coordinator service dispatches AI agents to ready tasks automatically.
+        Each agent gets its own git worktree for isolation — no merge conflicts between
+        parallel workers. Monitor agent status, token usage, and task assignments in real time.
+      </p>
+      <div class="feature-screenshot">
+        <img src="/features/agents.png" alt="Workgraph agent coordination showing task visualization and agent status" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Feature: Evaluation System -->
+    <section class="feature-section">
+      <div class="feature-header">
+        <h2 class="feature-title">evaluation system</h2>
+        <p class="feature-badge">CLI</p>
+      </div>
+      <p class="feature-description">
+        Every completed task can be evaluated with FLIP scoring (fidelity via latent intent
+        probing). Verification gates ensure work meets acceptance criteria before marking done.
+        Performance data drives an evolution cycle that creates and retires agent roles.
+      </p>
+      <div class="feature-screenshot">
+        <img src="/features/evaluation.png" alt="Workgraph evaluation system showing agency stats and agent performance" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Feature: Cycles -->
+    <section class="feature-section">
+      <div class="feature-header">
+        <h2 class="feature-title">cycles</h2>
+        <p class="feature-badge">CLI</p>
+      </div>
+      <p class="feature-description">
+        Workgraph is a directed graph, not a DAG — it supports dependency cycles with
+        bounded iterations. CI pipelines, convergence loops, and review workflows
+        are first-class. Use <code>--converged</code> to signal when work has stabilized.
+      </p>
+      <div class="feature-screenshot">
+        <img src="/features/cycles.png" alt="Workgraph cycle detection showing iteration-bounded dependency cycles" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- Feature: Chat -->
+    <section class="feature-section">
+      <div class="feature-header">
+        <h2 class="feature-title">messaging</h2>
+        <p class="feature-badge">TUI</p>
+      </div>
+      <p class="feature-description">
+        Send messages between tasks, agents, and the coordinator directly from the TUI.
+        Chat with the coordinator agent for real-time guidance. Task-scoped messages
+        provide context that flows through the dependency graph.
+      </p>
+      <div class="feature-screenshot">
+        <img src="/features/chat.png" alt="Workgraph messaging panel showing task messages and coordinator chat" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="mt-20 text-center">
+      <h2 class="text-2xl font-bold text-zinc-50 mb-4 font-mono lowercase">get started</h2>
+      <p class="text-text-secondary mb-6">
+        Install workgraph and start coordinating in minutes.
+      </p>
+      <pre class="install-cmd mx-auto max-w-lg">cargo install --git https://github.com/graphwork/workgraph</pre>
+      <div class="mt-8 flex justify-center gap-6">
+        <a href="/quickstart/" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors font-mono">
+          quickstart guide
+        </a>
+        <a href="/docs/" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors font-mono">
+          documentation
+        </a>
+      </div>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .feature-section {
+    margin-bottom: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid var(--color-border-primary);
+  }
+
+  .feature-section:last-of-type {
+    border-bottom: none;
+  }
+
+  .feature-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .feature-title {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f4f4f5;
+    text-transform: lowercase;
+    margin: 0;
+  }
+
+  .feature-badge {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-primary);
+    background: rgba(139, 92, 246, 0.12);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    margin: 0;
+  }
+
+  .feature-description {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    max-width: 48rem;
+  }
+
+  .feature-description code {
+    background: var(--color-bg-tertiary);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    color: #f4f4f5;
+  }
+
+  .feature-screenshot {
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+  }
+
+  .feature-screenshot img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .install-cmd {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-accent-primary);
+    border-radius: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    overflow-x: auto;
+    margin: 0;
+    color: var(--color-text-primary);
+  }
+</style>
