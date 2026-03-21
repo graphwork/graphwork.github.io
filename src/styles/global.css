@@ -62,6 +62,7 @@ body {
 /* Ensure main grows to push footer down */
 main {
   flex: 1;
+  overflow-x: hidden;
 }
 
 /* Selection */

@@ -13,12 +13,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <h1 class="text-6xl md:text-8xl font-bold text-zinc-50 leading-none mb-6 font-mono">
         workgraph
       </h1>
-      <p class="text-xl md:text-2xl text-text-secondary font-mono leading-relaxed">
+      <p class="text-xl md:text-2xl text-text-secondary font-mono leading-relaxed mb-8">
         work fast<br />
         task graphs for humans and agents<br />
         self-organizing process flowgraphs<br />
         <span class="text-text-tertiary">cybernetic autopoietic stigmergic medium</span>
       </p>
+      <div class="hero-screencast">
+        <video
+          autoplay
+          loop
+          muted
+          playsinline
+          aria-label="Workgraph TUI demo showing task graph coordination"
+          poster="/demo.gif"
+        >
+          <source src="/demo.webm" type="video/webm" />
+          <img src="/demo.gif" alt="Workgraph TUI demo" />
+        </video>
+      </div>
     </header>
 
     <!-- Positioning Statement -->
@@ -33,25 +46,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         For teams and individuals who coordinate humans and AI agents on complex projects.
         No server, no account — just a <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/</code> directory in your repo.
       </p>
-    </section>
-
-    <!-- Screencast -->
-    <section class="mb-16">
-      <div class="screencast-container">
-        <video
-          autoplay
-          loop
-          muted
-          playsinline
-          aria-label="Workgraph TUI demo showing task graph coordination"
-          class="screencast-video"
-          poster="/demo.gif"
-        >
-          <source src="/demo.webm" type="video/webm" />
-          <!-- Fallback for browsers without webm support -->
-          <img src="/demo.gif" alt="Workgraph TUI demo" class="screencast-video" />
-        </video>
-      </div>
     </section>
 
     <!-- Features -->
@@ -239,15 +233,26 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     word-break: break-all;
   }
 
-  /* Screencast */
-  .screencast-container {
+  /* Hero screencast — breaks out of max-w-3xl to fill viewport */
+  .hero-screencast {
+    width: 90vw;
+    max-width: 1400px;
+    margin-left: 50%;
+    transform: translateX(-50%);
     border: 1px solid var(--color-border-primary);
     border-radius: 0.5rem;
     overflow: hidden;
     background: var(--color-bg-secondary);
   }
 
-  .screencast-video {
+  @media (max-width: 640px) {
+    .hero-screencast {
+      width: calc(100vw - 2rem);
+    }
+  }
+
+  .hero-screencast video,
+  .hero-screencast img {
     width: 100%;
     height: auto;
     display: block;
