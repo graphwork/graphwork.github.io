@@ -9,7 +9,7 @@ Require wg
 Require bash
 
 Set Shell "bash"
-Set FontSize 16
+Set FontSize 20
 Set FontFamily "JetBrains Mono"
 Set Width 1400
 Set Height 800
