@@ -34,6 +34,7 @@ This runs the VHS tape file (`screencasts/demo.tape`) which:
 2. Shows the ASCII dependency graph (`wg viz`)
 3. Launches the TUI and navigates through task list, graph view, inspector, search, and help
 4. Outputs `screencasts/demo.gif` and `screencasts/demo.webm`
+5. Copies outputs to `public/` so Astro can serve them on the landing page
 
 ### Editing the demo
 

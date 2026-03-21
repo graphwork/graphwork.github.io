@@ -35,12 +35,55 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </p>
     </section>
 
-    <!-- Screencast Placeholder -->
+    <!-- Screencast -->
     <section class="mb-16">
-      <div class="border border-border-primary rounded-lg bg-bg-secondary p-8 flex items-center justify-center min-h-[320px]">
-        <p class="text-text-tertiary font-mono text-sm" id="screencast-placeholder">
-          [ TUI screencast coming soon ]
-        </p>
+      <div class="screencast-container">
+        <video
+          autoplay
+          loop
+          muted
+          playsinline
+          class="screencast-video"
+          poster="/demo.gif"
+        >
+          <source src="/demo.webm" type="video/webm" />
+          <!-- Fallback for browsers without webm support -->
+          <img src="/demo.gif" alt="Workgraph TUI demo" class="screencast-video" />
+        </video>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="mb-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div class="feature-card">
+          <h3 class="text-sm font-bold text-zinc-50 mb-2 font-mono lowercase">dependency graphs</h3>
+          <p class="text-sm text-text-secondary">
+            Define tasks and their dependencies. Completing one unblocks the next.
+            Supports cycles for iterative workflows.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3 class="text-sm font-bold text-zinc-50 mb-2 font-mono lowercase">agent isolation</h3>
+          <p class="text-sm text-text-secondary">
+            Each agent gets its own git worktree. Parallel execution without merge conflicts.
+            Commit, push, and report back independently.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3 class="text-sm font-bold text-zinc-50 mb-2 font-mono lowercase">TUI dashboard</h3>
+          <p class="text-sm text-text-secondary">
+            Monitor the entire graph in real time. Inspect tasks, view agent logs,
+            navigate dependencies — all from the terminal.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3 class="text-sm font-bold text-zinc-50 mb-2 font-mono lowercase">evaluation &amp; evolution</h3>
+          <p class="text-sm text-text-secondary">
+            Agents are scored after each task. An evolver mutates and recombines
+            the best performers. The organization improves itself.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -155,6 +198,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     overflow-x: auto;
     margin: 0;
     color: var(--color-text-primary);
+  }
+
+  /* Screencast */
+  .screencast-container {
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+  }
+
+  .screencast-video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Feature cards */
+  .feature-card {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
   }
 
   /* Status colors matching the original */
