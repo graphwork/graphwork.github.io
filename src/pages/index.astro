@@ -22,7 +22,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <span class="text-text-tertiary">cybernetic autopoietic stigmergic medium</span>
       </p>
       <div class="hero-screencast">
-        <div id="hero-terminal"></div>
+        <div id="hero-terminal">
+          <div id="hero-terminal-loading" class="terminal-loading">
+            <span class="terminal-loading-cursor">_</span>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -201,6 +205,17 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
 </BaseLayout>
 
 <script>
+  function showError(el: HTMLElement, error?: unknown) {
+    const loading = document.getElementById('hero-terminal-loading');
+    if (loading) loading.remove();
+
+    const msg = document.createElement('div');
+    msg.className = 'terminal-error';
+    msg.innerHTML = `<pre><span style="color:#22c55e">$</span> wg status\n\n  Tasks       1,724 <span style="color:#22c55e">(1,702 done)</span>\n  Commits       734\n  Evaluations 2,304 <span style="color:#6b7280">(avg 0.79)</span>\n  Agents          8 <span style="color:#eab308">concurrent</span>\n  Roles          24 <span style="color:#6b7280">(33 tradeoffs)</span></pre>`;
+    el.appendChild(msg);
+    if (error) console.error('asciinema-player failed:', error);
+  }
+
   async function initPlayer() {
     const el = document.getElementById('hero-terminal');
     if (!el) return;
@@ -223,8 +238,20 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
           foreground: '#e4e4e7',
         },
       });
+
+      // Player created — remove loading indicator
+      const loading = document.getElementById('hero-terminal-loading');
+      if (loading) loading.remove();
+
+      // Verify it actually rendered after a delay (Firefox may create element but not render)
+      setTimeout(() => {
+        const wrapper = el.querySelector('.ap-wrapper');
+        if (!wrapper || wrapper.clientHeight === 0) {
+          showError(el);
+        }
+      }, 3000);
     } catch (e) {
-      console.warn('asciinema-player failed to initialize:', e);
+      showError(el, e);
     }
   }
 
@@ -234,6 +261,17 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   } else {
     window.addEventListener('load', initPlayer);
   }
+
+  // Failsafe: if nothing renders after 5 seconds, show error state
+  setTimeout(() => {
+    const el = document.getElementById('hero-terminal');
+    if (!el) return;
+    const hasPlayer = el.querySelector('.ap-wrapper');
+    const hasError = el.querySelector('.terminal-error');
+    if (!hasPlayer && !hasError) {
+      showError(el);
+    }
+  }, 5000);
 </script>
 
 <style>
@@ -276,7 +314,14 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     border-radius: 0.5rem;
     overflow: hidden;
     background: #0a0a0b;
-    min-height: 200px;
+    min-height: 500px;
+  }
+
+  /* Explicit height so Firefox gives the player space */
+  #hero-terminal {
+    min-height: 500px;
+    width: 100%;
+    position: relative;
   }
 
   @media (max-width: 640px) {
@@ -288,9 +333,43 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   /* asciinema-player overrides — :global needed because player creates DOM dynamically */
   #hero-terminal :global(.ap-wrapper) {
     width: 100% !important;
+    min-height: 500px !important;
   }
   #hero-terminal :global(.ap-player) {
     width: 100% !important;
+  }
+
+  /* Loading indicator */
+  .terminal-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    color: #6b7280;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.25rem;
+  }
+  .terminal-loading-cursor {
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  /* Error/fallback state */
+  :global(.terminal-error) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    padding: 2rem;
+  }
+  :global(.terminal-error pre) {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
+    line-height: 1.8;
+    color: #e4e4e7;
+    margin: 0;
   }
 
   /* Feature cards */
