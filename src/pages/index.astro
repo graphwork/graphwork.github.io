@@ -20,17 +20,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <span class="text-text-tertiary">cybernetic autopoietic stigmergic medium</span>
       </p>
       <div class="hero-screencast">
-        <video
-          autoplay
-          loop
-          muted
-          playsinline
-          aria-label="Workgraph TUI demo showing task graph coordination"
-          poster="/demo.gif"
-        >
-          <source src="/demo.webm" type="video/webm" />
-          <img src="/demo.gif" alt="Workgraph TUI demo" />
-        </video>
+        <div id="hero-terminal"></div>
       </div>
     </header>
 
@@ -208,7 +198,33 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   </div>
 </BaseLayout>
 
+<script>
+  import * as AsciinemaPlayer from 'asciinema-player';
+
+  const el = document.getElementById('hero-terminal');
+  if (el) {
+    AsciinemaPlayer.create('/demo.cast', el, {
+      autoPlay: true,
+      loop: true,
+      speed: 1.5,
+      cols: 55,
+      rows: 35,
+      terminalFontFamily: "'JetBrains Mono', ui-monospace, monospace",
+      fit: "width",
+      controls: false,
+      idleTimeLimit: 2,
+      poster: "npt:0:5",
+      theme: {
+        background: '#0a0a0b',
+        foreground: '#e4e4e7',
+      },
+    });
+  }
+</script>
+
 <style>
+  @import 'asciinema-player/dist/bundle/asciinema-player.css';
+
   /* Viz blocks - terminal aesthetic */
   .viz-block {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
@@ -255,11 +271,9 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     }
   }
 
-  .hero-screencast video,
-  .hero-screencast img {
-    width: 100%;
-    height: auto;
-    display: block;
+  /* asciinema-player overrides */
+  .hero-screencast :global(.ap-wrapper) {
+    width: 100% !important;
   }
 
   /* Feature cards */
