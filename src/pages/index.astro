@@ -84,6 +84,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             the best performers. The organization improves itself.
           </p>
         </div>
+        <div class="feature-card">
+          <h3 class="text-sm font-bold text-zinc-50 mb-2 font-mono lowercase">verification &amp; FLIP</h3>
+          <p class="text-sm text-text-secondary">
+            <code class="text-xs bg-bg-tertiary px-1 py-0.5 rounded">--verify</code> attaches machine-checkable gates to tasks.
+            FLIP probes latent intent fidelity. Failed checks auto-generate repair tasks.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3 class="text-sm font-bold text-zinc-50 mb-2 font-mono lowercase">communication</h3>
+          <p class="text-sm text-text-secondary">
+            <code class="text-xs bg-bg-tertiary px-1 py-0.5 rounded">wg chat</code> for interactive coordinator conversations.
+            <code class="text-xs bg-bg-tertiary px-1 py-0.5 rounded">wg msg</code> for inter-agent messaging. Matrix, Telegram, Slack, email notifications.
+          </p>
+        </div>
+        <div class="feature-card">
+          <h3 class="text-sm font-bold text-zinc-50 mb-2 font-mono lowercase">analysis &amp; planning</h3>
+          <p class="text-sm text-text-secondary">
+            Bottlenecks, critical path, velocity, forecasts, workload balance.
+            The graph knows what's blocking you and when you'll finish.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -98,7 +119,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ├→ <span class="c-ip">data-layer  (in-progress)</span> <span class="c-dim">────┤</span>
 └→ <span class="c-ip">search-index  (in-progress)</span> <span class="c-dim">──┘</span></pre>
       <p class="text-text-secondary mt-4">
-        <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/graph.jsonl</code> — git-friendly, no server, no account.
+        Fan-out decomposes. Fan-in synchronizes. Arcs show convergence.
+        Stored in <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/graph.jsonl</code> — git-friendly, no server, no account.
       </p>
     </section>
 
@@ -119,14 +141,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="mb-16">
       <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">organizational synthesis</h2>
       <p class="text-text-secondary mb-4">
-        Agents have roles (what they do) and motivations (constraints
-        on how). After each task, agents are evaluated. An evolver
-        mutates and recombines the best performers. The organization
-        restructures itself based on what works.
+        Agents have roles (what they do) and tradeoffs (how they prioritize).
+        Each task gets scored. An evolver recombines the best performers.
+        The organization restructures itself.
       </p>
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg agency stats
 
-  Role        Motivation   Avg  Count  Rating
+  Role        Tradeoff     Avg  Count  Rating
   -------------------------------------------
   Programmer  Thorough    0.93     63    <span class="c-done">HIGH</span>
   Writer      Balanced    0.88     19    <span class="c-done">HIGH</span>
@@ -145,32 +166,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="self-hosting-screenshot mb-6">
         <img src="/features/dashboard.png" alt="Workgraph TUI showing its own task graph during development" loading="lazy" />
       </div>
+      <!-- Update these numbers from wg status / wg agency stats -->
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg status
 
-  Tasks        2,043  <span class="c-done">(1,655 done)</span>
-  Commits        721
-  Evaluations  2,288  <span class="c-dim">(avg 0.79)</span>
+  Tasks        1,724  <span class="c-done">(1,702 done)</span>
+  Commits        734
+  Evaluations  2,304  <span class="c-dim">(avg 0.79)</span>
   Agents           8  <span class="c-ip">concurrent</span>
   Roles           24  <span class="c-dim">evolved over 33 tradeoff configs</span></pre>
       <p class="text-text-secondary mt-4">
         This page was written by a workgraph agent, reviewed by another,
         and deployed through the same dependency graph it describes.
       </p>
-    </section>
-
-    <!-- Graph Structure -->
-    <section class="mb-16">
-      <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">graph structure</h2>
-      <p class="text-text-secondary mb-4">
-        Fan-out decomposes work. Fan-in synchronizes it.
-        Arcs on the right show convergence.
-      </p>
-      <pre class="viz-block"><span class="c-open">hub  (open)</span>
-├→ <span class="c-open">spoke-1  (open)</span>
-│ └→ <span class="c-open">collector  (open)</span> <span class="c-dim">←─┐</span>
-├→ <span class="c-open">spoke-2  (open)</span> <span class="c-dim">──────┤</span>
-├→ <span class="c-open">spoke-3  (open)</span> <span class="c-dim">──────┤</span>
-└→ <span class="c-open">spoke-4  (open)</span> <span class="c-dim">──────┘</span></pre>
     </section>
 
     <!-- Install -->
@@ -182,14 +189,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <pre class="install-cmd">cargo install --git https://github.com/graphwork/workgraph</pre>
       <p class="text-text-secondary mt-6 mb-4">Then start a project:</p>
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg init
-<span class="text-text-tertiary">$</span> wg add "Design the API"
-<span class="text-text-tertiary">$</span> wg add "Build backend" --after design-the-api
-<span class="text-text-tertiary">$</span> wg add "Write tests" --after build-backend
-<span class="text-text-tertiary">$</span> wg service start --max-agents 3</pre>
+<span class="text-text-tertiary">$</span> wg add "Design auth API"
+<span class="text-text-tertiary">$</span> wg add "Implement endpoints" --after design-auth-api \
+    --verify "cargo test test_auth passes"
+<span class="text-text-tertiary">$</span> wg add "Integration tests" --after implement-endpoints
+<span class="text-text-tertiary">$</span> wg service start --max-agents 4
+<span class="text-text-tertiary">$</span> wg chat "What's blocking the auth work?"</pre>
       <p class="text-text-secondary mt-4">
-        The service dispatches agents to ready tasks, evaluates
-        results, evolves the agent population, and loops.
-        You define structure. It does the rest.
+        The service dispatches agents, verifies results, evolves
+        the agent population, and loops. You define structure. It does the rest.
       </p>
     </section>
 
