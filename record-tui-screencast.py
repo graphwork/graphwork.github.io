@@ -47,7 +47,14 @@ class Recorder:
         if self.start_time is None:
             self.start_time = time.time()
         elapsed = time.time() - self.start_time
-        output = "\x1b[H\x1b[2J" + content
+        # Use explicit cursor positioning per line to avoid CR/LF issues.
+        # Bare \n (LF) without \r (CR) causes lines to render at wrong columns
+        # in asciinema-player's VT100 emulator.
+        lines = content.split('\n')
+        parts = ["\x1b[H\x1b[2J"]
+        for i, line in enumerate(lines[:ROWS]):
+            parts.append(f"\x1b[{i+1};1H{line}")
+        output = "".join(parts)
         self.frames.append([round(elapsed, 3), "o", output])
 
     def setup(self):

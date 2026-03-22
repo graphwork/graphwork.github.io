@@ -39,16 +39,25 @@ class CastBuilder:
         self.t += dt
 
     def frame(self, content):
-        """Add a frame: clear screen + content."""
-        output = "\x1b[H\x1b[2J" + content
+        """Add a frame: clear screen + content.
+        Uses cursor positioning per line to avoid bare-LF rendering issues."""
+        lines = content.split('\n')
+        parts = ["\x1b[H\x1b[2J"]
+        for i, line in enumerate(lines[:ROWS]):
+            parts.append(f"\x1b[{i+1};1H{line}")
+        output = "".join(parts)
         self.frames.append([round(self.t, 3), "o", output])
 
     def build_screen(self, lines):
-        """Build a full screen from lines (pad to ROWS height). Does not mutate input."""
+        """Build a full screen from lines (pad to ROWS height). Does not mutate input.
+        Uses explicit cursor positioning to avoid CR/LF issues in asciinema-player."""
         padded = list(lines)  # copy to avoid mutation
         while len(padded) < ROWS:
             padded.append("")
-        return "\n".join(padded[:ROWS])
+        parts = []
+        for i, line in enumerate(padded[:ROWS]):
+            parts.append(f"\x1b[{i+1};1H{line}")
+        return "".join(parts)
 
     def type_command(self, cmd, existing_lines, typing_speed=0.04):
         """Animate typing a command after existing output lines."""
