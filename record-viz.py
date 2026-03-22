@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Build a short wg viz screencast as an asciicast v2 file."""
+"""Build a short wg viz screencast as an asciicast v2 file.
+
+Uses explicit cursor positioning (\x1b[row;1H) to place each line,
+avoiding the asciinema player's glyph-width-based text flow which
+causes box-drawing characters to wrap incorrectly.
+"""
 
 import json
 import random
@@ -16,6 +21,11 @@ DIM = "\x1b[38;5;240m"
 RST = "\x1b[0m"
 
 
+def cursor_pos(row, col=1):
+    """ANSI escape to position cursor at (row, col). 1-indexed."""
+    return f"\x1b[{row};{col}H"
+
+
 class CastBuilder:
     def __init__(self):
         self.frames = []
@@ -29,10 +39,15 @@ class CastBuilder:
         self.frames.append([round(self.t, 3), "o", output])
 
     def build_screen(self, lines):
-        padded = list(lines)
-        while len(padded) < ROWS:
-            padded.append("")
-        return "\n".join(padded[:ROWS])
+        """Build screen using cursor positioning for each line.
+
+        This avoids relying on the player's text-flow wrapping, which
+        mishandles box-drawing character widths.
+        """
+        parts = []
+        for i, line in enumerate(lines[:ROWS]):
+            parts.append(cursor_pos(i + 1) + line)
+        return "".join(parts)
 
     def type_command(self, cmd, existing_lines, typing_speed=0.04):
         prompt = f"{DIM}${RST} "
@@ -82,6 +97,15 @@ def capture_cmd(cmd):
     return result
 
 
+def capture_lines(cmd):
+    """Capture command output and return as a list of lines (no trailing blanks)."""
+    raw = capture_cmd(cmd)
+    lines = raw.split("\n")
+    while lines and not lines[-1].strip():
+        lines.pop()
+    return lines
+
+
 def build_cast():
     random.seed(42)
     cast = CastBuilder()
@@ -96,26 +120,22 @@ def build_cast():
     cast.advance(0.15)
 
     print("Capturing wg status...")
-    status_raw = capture_cmd("wg status")
-    cast.frame(status_raw)
+    status_lines = capture_lines("wg status")
+    cast.frame(cast.build_screen(status_lines))
     cast.advance(3.0)
-
-    # Extract lines for context
-    status_lines = status_raw.split("\n")
-    while status_lines and not status_lines[-1].strip():
-        status_lines.pop()
 
     # Type and run "wg viz"
     cast.type_command("wg viz", status_lines, typing_speed=0.04)
     cast.advance(0.15)
 
     print("Capturing wg viz...")
-    viz_raw = capture_cmd("wg viz")
-    cast.frame(viz_raw)
+    viz_lines = capture_lines("wg viz")
+    viz_screen = cast.build_screen(viz_lines)
+    cast.frame(viz_screen)
     cast.advance(5.0)
 
     # Hold the viz output on screen before looping
-    cast.frame(viz_raw)
+    cast.frame(viz_screen)
     cast.advance(2.0)
 
     cast.save()
