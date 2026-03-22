@@ -12,7 +12,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
 
     <!-- Hero -->
-    <header class="mb-20 min-h-[80vh] flex flex-col justify-center">
+    <header class="mb-20 flex flex-col justify-center pt-12">
       <h1 class="text-6xl md:text-8xl font-bold text-zinc-50 leading-none mb-6 font-mono">
         workgraph
       </h1>
@@ -30,15 +30,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
       </div>
     </header>
-
-    <!-- Viz Screencast -->
-    <section class="viz-screencast-section">
-      <div id="viz-terminal">
-        <div id="viz-terminal-loading" class="terminal-loading">
-          <span class="terminal-loading-cursor">_</span>
-        </div>
-      </div>
-    </section>
 
     <!-- Positioning Statement -->
     <section class="mb-16">
@@ -224,44 +215,20 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
       var loading = document.getElementById('hero-terminal-loading');
       if (loading) loading.remove();
 
-      AsciinemaPlayer.create('/wg-demo.cast', el, {
-        cols: 55,
-        rows: 35,
+      AsciinemaPlayer.create('/wg-tui.cast', el, {
+        cols: 120,
+        rows: 38,
         autoPlay: true,
         loop: true,
         speed: 1.5,
         fit: 'width',
         terminalFontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace",
-        terminalFontSize: '18px',
+        terminalFontSize: '14px',
         theme: 'monokai'
       });
     } catch(e) {
       console.error('asciinema-player failed:', e);
       el.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
-    }
-
-    // Viz screencast player
-    var vizEl = document.getElementById('viz-terminal');
-    if (vizEl) {
-      try {
-        var vizLoading = document.getElementById('viz-terminal-loading');
-        if (vizLoading) vizLoading.remove();
-
-        AsciinemaPlayer.create('/wg-viz.cast', vizEl, {
-          cols: 70,
-          rows: 20,
-          autoPlay: true,
-          loop: true,
-          speed: 1.5,
-          fit: 'width',
-          terminalFontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace",
-          terminalFontSize: '18px',
-          theme: 'monokai'
-        });
-      } catch(e) {
-        console.error('Viz asciinema-player failed:', e);
-        vizEl.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
-      }
     }
   });
 </script>
@@ -306,12 +273,9 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     border-radius: 0.5rem;
     overflow: hidden;
     background: #0a0a0b;
-    min-height: 500px;
   }
 
-  /* Explicit height so Firefox gives the player space */
   #hero-terminal {
-    min-height: 500px;
     width: 100%;
     position: relative;
   }
@@ -325,7 +289,6 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   /* asciinema-player overrides — :global needed because player creates DOM dynamically */
   #hero-terminal :global(.ap-wrapper) {
     width: 100% !important;
-    min-height: 500px !important;
   }
   #hero-terminal :global(.ap-player) {
     width: 100% !important;
@@ -336,7 +299,7 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 500px;
+    min-height: 200px;
     color: #6b7280;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
     font-size: 1.25rem;
@@ -346,39 +309,6 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   }
   @keyframes blink {
     50% { opacity: 0; }
-  }
-
-  /* Viz screencast — full-bleed below hero */
-  .viz-screencast-section {
-    width: 90vw;
-    max-width: 1400px;
-    margin-left: 50%;
-    transform: translateX(-50%);
-    border: 1px solid var(--color-border-primary);
-    border-radius: 0.5rem;
-    overflow: hidden;
-    background: #0a0a0b;
-    margin-bottom: 3rem;
-  }
-
-  #viz-terminal {
-    width: 100%;
-    min-height: 350px;
-    position: relative;
-  }
-
-  #viz-terminal :global(.ap-wrapper) {
-    width: 100% !important;
-    min-height: 350px !important;
-  }
-  #viz-terminal :global(.ap-player) {
-    width: 100% !important;
-  }
-
-  @media (max-width: 640px) {
-    .viz-screencast-section {
-      width: calc(100vw - 2rem);
-    }
   }
 
   /* Feature cards */
