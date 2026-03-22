@@ -123,7 +123,7 @@ class Recorder:
         self.frame()
 
         # ── Act 2: TUI showcase (~35s, the main event) ───────
-        self.type_text("wg tui --no-mouse")
+        self.type_text("wg tui --recording")
         time.sleep(0.15)
         self.send("Enter")
         time.sleep(3.0)  # TUI startup
