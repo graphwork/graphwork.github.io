@@ -31,10 +31,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </header>
 
-    <!-- TUI Screencast -->
-    <section class="tui-screencast-section">
-      <div id="tui-terminal">
-        <div id="tui-terminal-loading" class="terminal-loading">
+    <!-- Viz Screencast -->
+    <section class="viz-screencast-section">
+      <div id="viz-terminal">
+        <div id="viz-terminal-loading" class="terminal-loading">
           <span class="terminal-loading-cursor">_</span>
         </div>
       </div>
@@ -240,27 +240,27 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
       el.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
     }
 
-    // TUI screencast player
-    var tuiEl = document.getElementById('tui-terminal');
-    if (tuiEl) {
+    // Viz screencast player
+    var vizEl = document.getElementById('viz-terminal');
+    if (vizEl) {
       try {
-        var tuiLoading = document.getElementById('tui-terminal-loading');
-        if (tuiLoading) tuiLoading.remove();
+        var vizLoading = document.getElementById('viz-terminal-loading');
+        if (vizLoading) vizLoading.remove();
 
-        AsciinemaPlayer.create('/wg-tui.cast', tuiEl, {
-          cols: 120,
-          rows: 38,
+        AsciinemaPlayer.create('/wg-viz.cast', vizEl, {
+          cols: 70,
+          rows: 20,
           autoPlay: true,
           loop: true,
           speed: 1.5,
           fit: 'width',
           terminalFontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace",
-          terminalFontSize: '14px',
+          terminalFontSize: '18px',
           theme: 'monokai'
         });
       } catch(e) {
-        console.error('TUI asciinema-player failed:', e);
-        tuiEl.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
+        console.error('Viz asciinema-player failed:', e);
+        vizEl.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
       }
     }
   });
@@ -348,35 +348,36 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     50% { opacity: 0; }
   }
 
-  /* TUI screencast — full-bleed below hero */
-  .tui-screencast-section {
-    width: 100vw;
+  /* Viz screencast — full-bleed below hero */
+  .viz-screencast-section {
+    width: 90vw;
+    max-width: 1400px;
     margin-left: 50%;
     transform: translateX(-50%);
-    border-top: 1px solid var(--color-border-primary);
-    border-bottom: 1px solid var(--color-border-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem;
     overflow: hidden;
     background: #0a0a0b;
     margin-bottom: 3rem;
   }
 
-  #tui-terminal {
+  #viz-terminal {
     width: 100%;
-    min-height: 400px;
+    min-height: 350px;
     position: relative;
   }
 
-  #tui-terminal :global(.ap-wrapper) {
+  #viz-terminal :global(.ap-wrapper) {
     width: 100% !important;
-    min-height: 400px !important;
+    min-height: 350px !important;
   }
-  #tui-terminal :global(.ap-player) {
+  #viz-terminal :global(.ap-player) {
     width: 100% !important;
   }
 
   @media (max-width: 640px) {
-    .tui-screencast-section {
-      overflow-x: auto;
+    .viz-screencast-section {
+      width: calc(100vw - 2rem);
     }
   }
 
