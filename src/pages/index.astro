@@ -31,12 +31,85 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
     </header>
 
-    <!-- Viz Screencast -->
-    <section class="viz-screencast-section">
-      <div id="viz-terminal">
-        <div id="viz-terminal-loading" class="terminal-loading">
-          <span class="terminal-loading-cursor">_</span>
-        </div>
+    <!-- Graph Visualization -->
+    <section class="graph-viz-section">
+      <div class="graph-viz-header">
+        <span class="text-text-tertiary">$ </span><span class="text-zinc-50">wg viz</span>
+      </div>
+      <div class="graph-viz-container">
+        <svg viewBox="0 0 850 470" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#4b5563" />
+            </marker>
+          </defs>
+
+          <!-- Edges -->
+          <g fill="none" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.7">
+            <!-- design-api → setup-db -->
+            <path d="M425,74 C425,103 250,103 250,131" />
+            <!-- design-api → build-auth -->
+            <path d="M425,74 C425,103 600,103 600,131" />
+            <!-- setup-db → recipe-crud -->
+            <path d="M250,169 C250,198 200,198 200,226" />
+            <!-- setup-db → search -->
+            <path d="M250,169 C250,198 450,198 450,226" />
+            <!-- build-auth → int-tests -->
+            <path d="M600,169 C600,245 540,245 540,321" />
+            <!-- recipe-crud → api-docs -->
+            <path d="M200,264 C200,293 310,293 310,321" />
+            <!-- recipe-crud → int-tests -->
+            <path d="M200,264 C200,300 540,300 540,321" />
+            <!-- search → api-docs -->
+            <path d="M450,264 C450,293 310,293 310,321" />
+            <!-- search → int-tests -->
+            <path d="M450,264 C450,293 540,293 540,321" />
+            <!-- api-docs → deploy -->
+            <path d="M310,359 C310,388 425,388 425,416" />
+            <!-- int-tests → deploy -->
+            <path d="M540,359 C540,388 425,388 425,416" />
+          </g>
+
+          <!-- Nodes -->
+          <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="12" text-anchor="middle">
+            <!-- Design API schema (done) -->
+            <rect x="340" y="36" width="170" height="38" rx="6" fill="#141420" stroke="#22c55e" stroke-width="1.5" />
+            <text x="425" y="60" fill="#e5e7eb">Design API schema</text>
+
+            <!-- Set up database (done) -->
+            <rect x="165" y="131" width="170" height="38" rx="6" fill="#141420" stroke="#22c55e" stroke-width="1.5" />
+            <text x="250" y="155" fill="#e5e7eb">Set up database</text>
+
+            <!-- Build auth module (done) -->
+            <rect x="515" y="131" width="170" height="38" rx="6" fill="#141420" stroke="#22c55e" stroke-width="1.5" />
+            <text x="600" y="155" fill="#e5e7eb">Build auth module</text>
+
+            <!-- Recipe CRUD (in-progress) -->
+            <rect x="115" y="226" width="170" height="38" rx="6" fill="#141420" stroke="#eab308" stroke-width="1.5" />
+            <text x="200" y="250" fill="#e5e7eb">Recipe CRUD</text>
+
+            <!-- Search & filtering (open) -->
+            <rect x="365" y="226" width="170" height="38" rx="6" fill="#141420" stroke="#6b7280" stroke-width="1.5" />
+            <text x="450" y="250" fill="#e5e7eb">Search &amp; filtering</text>
+
+            <!-- Write API docs (open) -->
+            <rect x="225" y="321" width="170" height="38" rx="6" fill="#141420" stroke="#6b7280" stroke-width="1.5" />
+            <text x="310" y="345" fill="#e5e7eb">Write API docs</text>
+
+            <!-- Integration tests (open) -->
+            <rect x="455" y="321" width="170" height="38" rx="6" fill="#141420" stroke="#6b7280" stroke-width="1.5" />
+            <text x="540" y="345" fill="#e5e7eb">Integration tests</text>
+
+            <!-- Deploy to staging (open) -->
+            <rect x="340" y="416" width="170" height="38" rx="6" fill="#141420" stroke="#6b7280" stroke-width="1.5" />
+            <text x="425" y="440" fill="#e5e7eb">Deploy to staging</text>
+          </g>
+        </svg>
+      </div>
+      <div class="graph-viz-legend">
+        <span class="legend-item"><span class="legend-dot done"></span>done</span>
+        <span class="legend-item"><span class="legend-dot ip"></span>in progress</span>
+        <span class="legend-item"><span class="legend-dot open"></span>open</span>
       </div>
     </section>
 
@@ -240,29 +313,6 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
       el.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
     }
 
-    // Viz screencast player
-    var vizEl = document.getElementById('viz-terminal');
-    if (vizEl) {
-      try {
-        var vizLoading = document.getElementById('viz-terminal-loading');
-        if (vizLoading) vizLoading.remove();
-
-        AsciinemaPlayer.create('/wg-viz.cast', vizEl, {
-          cols: 70,
-          rows: 20,
-          autoPlay: true,
-          loop: true,
-          speed: 1.5,
-          fit: 'width',
-          terminalFontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace",
-          terminalFontSize: '18px',
-          theme: 'monokai'
-        });
-      } catch(e) {
-        console.error('Viz asciinema-player failed:', e);
-        vizEl.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
-      }
-    }
   });
 </script>
 
@@ -348,8 +398,8 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     50% { opacity: 0; }
   }
 
-  /* Viz screencast — full-bleed below hero */
-  .viz-screencast-section {
+  /* Graph visualization — full-bleed below hero */
+  .graph-viz-section {
     width: 90vw;
     max-width: 1400px;
     margin-left: 50%;
@@ -361,22 +411,51 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     margin-bottom: 3rem;
   }
 
-  #viz-terminal {
-    width: 100%;
-    min-height: 350px;
-    position: relative;
+  .graph-viz-header {
+    padding: 0.75rem 1rem 0;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.875rem;
   }
 
-  #viz-terminal :global(.ap-wrapper) {
-    width: 100% !important;
-    min-height: 350px !important;
+  .graph-viz-container {
+    padding: 0.5rem 1rem 1rem;
+    overflow-x: auto;
   }
-  #viz-terminal :global(.ap-player) {
-    width: 100% !important;
+
+  .graph-viz-container svg {
+    width: 100%;
+    min-width: 500px;
+    height: auto;
   }
+
+  .graph-viz-legend {
+    display: flex;
+    gap: 1.5rem;
+    padding: 0.5rem 1rem 0.75rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    border-top: 1px solid var(--color-border-primary);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.done { background: #22c55e; }
+  .legend-dot.ip { background: #eab308; }
+  .legend-dot.open { background: #6b7280; }
 
   @media (max-width: 640px) {
-    .viz-screencast-section {
+    .graph-viz-section {
       width: calc(100vw - 2rem);
     }
   }
