@@ -29,6 +29,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           </div>
         </div>
       </div>
+      <div class="time-indicator" id="time-indicator" style="display: none;">
+        <span class="time-indicator-icon">&#9201;</span>
+        <span class="time-indicator-label">Compressed</span>
+        <span class="time-indicator-compressed" id="time-compressed">0s</span>
+        <span class="time-indicator-arrow">&rarr;</span>
+        <span class="time-indicator-label">Real time:</span>
+        <span class="time-indicator-real" id="time-real">0s</span>
+      </div>
     </header>
 
     <!-- Positioning Statement -->
@@ -207,12 +215,13 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     var el = document.getElementById('hero-terminal');
     if (!el) return;
 
+    var player;
     try {
       // Remove loading indicator
       var loading = document.getElementById('hero-terminal-loading');
       if (loading) loading.remove();
 
-      AsciinemaPlayer.create('/wg-demo.cast', el, {
+      player = AsciinemaPlayer.create('/wg-demo.cast', el, {
         cols: 65,
         rows: 38,
         autoPlay: true,
@@ -227,7 +236,61 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     } catch(e) {
       console.error('asciinema-player failed:', e);
       el.innerHTML = '<pre style="color:#ef4444;padding:1rem;">Player failed to load. Error: ' + e.message + '</pre>';
+      return;
     }
+
+    // Time indicator widget
+    var indicator = document.getElementById('time-indicator');
+    if (!indicator || !player) return;
+
+    var timemap = null;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/wg-demo.timemap.json', true);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try { timemap = JSON.parse(xhr.responseText); } catch(e) {}
+      }
+    };
+    xhr.send();
+
+    function interpolateRealTime(map, compressedTime) {
+      if (!map || map.length === 0) return null;
+      if (compressedTime <= map[0].compressed_s) return map[0].real_s;
+      if (compressedTime >= map[map.length - 1].compressed_s) return map[map.length - 1].real_s;
+      for (var i = 1; i < map.length; i++) {
+        if (compressedTime <= map[i].compressed_s) {
+          var prev = map[i - 1];
+          var curr = map[i];
+          var ratio = (compressedTime - prev.compressed_s) / (curr.compressed_s - prev.compressed_s);
+          return prev.real_s + ratio * (curr.real_s - prev.real_s);
+        }
+      }
+      return map[map.length - 1].real_s;
+    }
+
+    function formatTime(seconds) {
+      if (seconds < 60) return Math.floor(seconds) + 's';
+      var m = Math.floor(seconds / 60);
+      var s = Math.floor(seconds % 60);
+      return m + 'm ' + (s < 10 ? '0' : '') + s + 's';
+    }
+
+    var compEl = document.getElementById('time-compressed');
+    var realEl = document.getElementById('time-real');
+
+    setInterval(function() {
+      if (!timemap || !player) return;
+      var compTime;
+      try { compTime = player.getCurrentTime(); } catch(e) { return; }
+      if (compTime === undefined || compTime === null) return;
+
+      indicator.style.display = 'flex';
+      var realTime = interpolateRealTime(timemap, compTime);
+      if (realTime !== null) {
+        compEl.textContent = formatTime(compTime);
+        realEl.textContent = formatTime(realTime);
+      }
+    }, 250);
   });
 </script>
 
@@ -331,6 +394,48 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     width: 100%;
     height: auto;
     display: block;
+  }
+
+  /* Time indicator widget */
+  .time-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    margin-top: 0.5rem;
+    max-width: 800px;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .time-indicator-icon {
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
+
+  .time-indicator-compressed,
+  .time-indicator-real {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8rem;
+  }
+
+  .time-indicator-real {
+    color: var(--color-accent-primary);
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .time-indicator {
+      font-size: 0.7rem;
+      padding: 0.3rem 0.75rem;
+    }
+    .time-indicator-compressed,
+    .time-indicator-real {
+      font-size: 0.75rem;
+    }
   }
 
   /* Status colors matching the original */
