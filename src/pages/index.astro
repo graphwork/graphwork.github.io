@@ -215,15 +215,16 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
       var loading = document.getElementById('hero-terminal-loading');
       if (loading) loading.remove();
 
-      AsciinemaPlayer.create('/wg-tui.cast', el, {
-        cols: 120,
+      AsciinemaPlayer.create('/wg-demo.cast', el, {
+        cols: 65,
         rows: 38,
         autoPlay: true,
         loop: true,
         speed: 1.5,
         fit: 'width',
         terminalFontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace",
-        terminalFontSize: '14px',
+        terminalFontSize: '18px',
+        terminalLineHeight: 1.2,
         theme: 'monokai'
       });
     } catch(e) {
@@ -263,12 +264,10 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     color: var(--color-text-primary);
   }
 
-  /* Hero screencast — breaks out of max-w-3xl to fill viewport */
+  /* Hero screencast — compact squarish terminal */
   .hero-screencast {
-    width: 90vw;
-    max-width: 1400px;
-    margin-left: 50%;
-    transform: translateX(-50%);
+    width: 100%;
+    max-width: 800px;
     border: 1px solid var(--color-border-primary);
     border-radius: 0.5rem;
     overflow: hidden;
@@ -292,6 +291,9 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   }
   #hero-terminal :global(.ap-player) {
     width: 100% !important;
+  }
+  #hero-terminal :global(.ap-terminal) {
+    line-height: 1.2 !important;
   }
 
   /* Loading indicator */

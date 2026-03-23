@@ -3,7 +3,7 @@
 Build the website hero screencast as an asciicast v2 file.
 
 CLI parts are synthesized for clean output (no draft-mode warnings, no agency noise).
-TUI parts are captured from real `wg tui` via tmux at 110x38.
+TUI parts are captured from real `wg tui` via tmux at 65x38.
 """
 
 import json
@@ -12,7 +12,7 @@ import random
 import subprocess
 import time
 
-COLS = 110
+COLS = 65
 ROWS = 38
 CAST_FILE = "/home/erik/graphwork.github.io/public/wg-demo.cast"
 DEMO_REPO = "/home/erik/wg-demo"
