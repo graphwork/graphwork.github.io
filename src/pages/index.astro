@@ -213,14 +213,14 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
       if (loading) loading.remove();
 
       AsciinemaPlayer.create('/wg-demo.cast', el, {
-        cols: 65,
-        rows: 38,
+        cols: 140,
+        rows: 40,
         autoPlay: true,
         loop: true,
         speed: 1.5,
         fit: 'width',
         terminalFontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace",
-        terminalFontSize: '18px',
+        terminalFontSize: '13px',
         terminalLineHeight: 1.2,
         theme: 'monokai'
       });
@@ -261,10 +261,12 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     color: var(--color-text-primary);
   }
 
-  /* Hero screencast — compact squarish terminal */
+  /* Hero screencast — wide terminal, breaks out of text column */
   .hero-screencast {
-    width: 100%;
-    max-width: 800px;
+    width: calc(100vw - 2rem);
+    max-width: 1100px;
+    margin-left: 50%;
+    transform: translateX(-50%);
     border: 1px solid var(--color-border-primary);
     border-radius: 0.5rem;
     overflow: hidden;
@@ -274,12 +276,6 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   #hero-terminal {
     width: 100%;
     position: relative;
-  }
-
-  @media (max-width: 640px) {
-    .hero-screencast {
-      width: calc(100vw - 2rem);
-    }
   }
 
   /* asciinema-player overrides — :global needed because player creates DOM dynamically */
