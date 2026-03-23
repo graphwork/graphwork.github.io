@@ -9,16 +9,11 @@ const VIEWPORTS = [
 
 /** Navigate to homepage and wait for the asciinema player to fully render. */
 async function loadPlayerPage(page: Page) {
-  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-  // Wait for the CDN script to define AsciinemaPlayer
-  await page.waitForFunction(() => typeof (window as any).AsciinemaPlayer !== 'undefined', {
-    timeout: 20_000,
-  });
-
-  // Wait for the player terminal to appear in the DOM
+  // Wait for the player terminal to appear in the DOM (CDN script loads async)
   const term = page.locator('#hero-terminal .ap-term');
-  await expect(term).toBeVisible({ timeout: 20_000 });
+  await expect(term).toBeVisible({ timeout: 30_000 });
 
   return term;
 }
@@ -69,9 +64,29 @@ for (const vp of VIEWPORTS) {
         parseFloat(getComputedStyle(el).fontSize)
       );
 
-      // With fit:'width' and many cols, font may be small on mobile, large on desktop
-      expect(fontSize).toBeGreaterThanOrEqual(3);
-      expect(fontSize).toBeLessThanOrEqual(25);
+      // With 65 cols and fit:'width', expect ~18px on desktop, smaller on mobile
+      if (vp.name === 'mobile') {
+        expect(fontSize).toBeGreaterThanOrEqual(3);
+        expect(fontSize).toBeLessThanOrEqual(25);
+      } else {
+        expect(fontSize).toBeGreaterThanOrEqual(10);
+        expect(fontSize).toBeLessThanOrEqual(25);
+      }
+    });
+
+    test('rendered dimensions match cast file', async ({ page }) => {
+      const term = await loadPlayerPage(page);
+
+      const dims = await term.evaluate((el) => ({
+        cols: parseInt(getComputedStyle(el).getPropertyValue('--term-cols'), 10),
+        rows: parseInt(getComputedStyle(el).getPropertyValue('--term-rows'), 10),
+      }));
+
+      // Cast file is 65x38; player should render at those dimensions
+      expect(dims.cols).toBeGreaterThanOrEqual(60);
+      expect(dims.cols).toBeLessThanOrEqual(70);
+      expect(dims.rows).toBeGreaterThanOrEqual(35);
+      expect(dims.rows).toBeLessThanOrEqual(42);
     });
 
     if (vp.name !== 'mobile') {
