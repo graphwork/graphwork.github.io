@@ -104,15 +104,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="mb-16">
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg viz
 
-<span class="c-done">design-api  (done)</span>
-├→ <span class="c-done">build-auth  (done)</span> <span class="c-dim">───────────────┐</span>
-├→ <span class="c-done">setup-db  (done)</span>                  <span class="c-dim">│</span>
-│ ├→ <span class="c-ip">recipe-crud  (in-progress)</span> <span class="c-dim">──┤ ←─┐ ──┐</span>
-│ │ └→ <span class="c-open">review  (open)</span> <span class="c-dim">↺ (iter 0/3) ──┼ ──┘   │</span>
-│ ├→ <span class="c-open">search  (open)</span> <span class="c-dim">─────────────────┤ ──────┤</span>
-│ │ └→ <span class="c-open">deploy  (open)</span> <span class="c-dim">───────────────┼ ──────┼ ←─┐</span>
-│ └→ <span class="c-open">api-docs  (open)</span> <span class="c-dim">───────────────┼ ←─────┘ ──┤</span>
-└→ <span class="c-open">int-tests  (open)</span> <span class="c-dim">←───────────────┘ ──────────┘</span></pre>
+<span class="c-done">design-api</span>  (done) <span class="c-dim">2d</span>
+<span class="c-dim">├→</span> <span class="c-done">build-auth</span>  (done) <span class="c-dim">2d ──────────────┐</span>
+<span class="c-dim">├→</span> <span class="c-done">setup-db</span>  (done) <span class="c-dim">1d</span>                 <span class="c-dim">│</span>
+<span class="c-dim">│ ├→</span> <span class="c-open">api-docs</span>  (open) <span class="c-dim">1d ───────────────┤</span>
+<span class="c-dim">│ ├→</span> <span class="c-ip">recipe-crud</span>  (in-progress) <span class="c-dim">6h ────┤ ←─┐</span>
+<span class="c-dim">│ │ └→</span> <span class="c-open">review</span>  (open) <span class="c-dim">1d</span> ↺ (iter 0/3) <span class="c-dim">──┼ ──┘</span>
+<span class="c-dim">│ └→</span> <span class="c-open">search</span>  (open) <span class="c-dim">1d ─────────────────┤</span>
+<span class="c-dim">└→</span> <span class="c-open">deploy</span>  (open) <span class="c-dim">1d ←──────────────────┘</span>
+  <span class="c-dim">└→</span> <span class="c-open">int-tests</span>  (open) <span class="c-dim">1d</span></pre>
       <p class="text-text-secondary mt-4">
         Fan-out decomposes. Fan-in synchronizes. Arcs show convergence.
         Cycles with bounded iterations handle repeating workflows.
@@ -128,9 +128,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         are cycles in the graph. Each has a bound. Agents pick up
         where previous iterations left off.
       </p>
-      <pre class="viz-block"><span class="c-open">run-tests</span> <span class="c-dim">↺ iter 0/5 ←──┐</span>
-└→ <span class="c-open">fix-failures</span>          <span class="c-dim">│</span>
-  └→ <span class="c-open">push-check</span> <span class="c-dim">────────┘</span></pre>
+      <pre class="viz-block"><span class="c-ip">run-tests</span>  (in-progress) <span class="c-dim">3h</span> ↺ (iter 0/5) <span class="c-dim">←─┐</span>
+<span class="c-dim">└→</span> <span class="c-open">fix-failures</span>  (open) <span class="c-dim">3h</span>                 <span class="c-dim">│</span>
+  <span class="c-dim">└→</span> <span class="c-open">push-check</span>  (open) <span class="c-dim">3h ────────────────┘</span></pre>
     </section>
 
     <!-- Organizational Synthesis -->
