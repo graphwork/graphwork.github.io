@@ -269,6 +269,7 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     }
 
     function formatTime(seconds) {
+      if (!isFinite(seconds) || seconds < 0) return '0s';
       if (seconds < 60) return Math.floor(seconds) + 's';
       var m = Math.floor(seconds / 60);
       var s = Math.floor(seconds % 60);
@@ -282,7 +283,7 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
       if (!timemap || !player) return;
       var compTime;
       try { compTime = player.getCurrentTime(); } catch(e) { return; }
-      if (compTime === undefined || compTime === null) return;
+      if (compTime === undefined || compTime === null || isNaN(compTime)) return;
 
       indicator.style.display = 'flex';
       var realTime = interpolateRealTime(timemap, compTime);
