@@ -1,15 +1,15 @@
 ---
-title: "Hello, Workgraph"
-description: "Introducing the Workgraph blog — where we'll share project updates, technical deep dives, and the design philosophy behind task coordination for humans and AI agents."
+title: "Hello, wg"
+description: "Introducing the wg blog — where we'll share project updates, technical deep dives, and the design philosophy behind task coordination for humans and AI agents."
 date: 2026-03-17
-author: "Workgraph Team"
+author: "wg Team"
 readTime: "5 min read"
 tags: ["announcement"]
 ---
 
 ## Why a blog?
 
-Workgraph is a task coordination graph for humans and AI agents. We've been building it in the open, but the commit log only tells part of the story. This blog is where we'll share the *why* behind the *what*.
+wg is a task coordination graph for humans and AI agents. We've been building it in the open, but the commit log only tells part of the story. This blog is where we'll share the *why* behind the *what*.
 
 > Building software with AI agents isn't just about writing code faster — it's about coordinating work across multiple minds, both human and artificial, without losing coherence.
 
@@ -64,10 +64,10 @@ We wanted the blog to feel like reading — not like using a web app. That means
 
 ## Get involved
 
-Workgraph is MIT-licensed and open source. If task coordination for humans and AI agents sounds interesting to you:
+wg is MIT-licensed and open source. If task coordination for humans and AI agents sounds interesting to you:
 
-- Check out the [manual](/workgraph-manual.html) for a full walkthrough
+- Check out the [manual](/wg-manual.html) for a full walkthrough
 - Read about [organizational patterns](/organizational-patterns.html) for the theory behind the design
-- Visit the [GitHub repo](https://github.com/graphwork/workgraph) to browse the code
+- Visit the [GitHub repo](https://github.com/graphwork/wg) to browse the code
 
 We're excited to share more here soon.

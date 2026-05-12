@@ -3,8 +3,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
 <DocsLayout
-  title="Service Management — Workgraph"
-  description="Configure and manage the workgraph coordinator daemon — agents, model selection, and runtime settings."
+  title="Service Management — wg"
+  description="Configure and manage the wg coordinator daemon — agents, model selection, and runtime settings."
 >
 
   <header class="mb-10">
@@ -63,7 +63,7 @@ wg service reload --max-agents 8 --model haiku # apply specific overrides</code>
 
     <h2>Configuration</h2>
 
-    <p>The service reads from <code>.workgraph/config.toml</code>:</p>
+    <p>The service reads from <code>.wg/config.toml</code>:</p>
 
     <pre><code>[coordinator]
 max_agents = 4         # max parallel agents (default: 4)
@@ -170,7 +170,7 @@ wg model set --role evaluator opus   # per-role model routing</code></pre>
     <h2>Troubleshooting</h2>
 
     <p>
-      Daemon logs are written to <code>.workgraph/service/daemon.log</code>
+      Daemon logs are written to <code>.wg/service/daemon.log</code>
       (rotates at 10 MB). Recent errors also show in <code>wg service status</code>.
     </p>
 

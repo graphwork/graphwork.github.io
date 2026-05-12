@@ -3,8 +3,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
 <DocsLayout
-  title="Verification Workflow — Workgraph"
-  description="How workgraph verifies agent work automatically using FLIP scoring — a closed feedback loop for quality assurance without human review."
+  title="Verification Workflow — wg"
+  description="How wg verifies agent work automatically using FLIP scoring — a closed feedback loop for quality assurance without human review."
 >
 
     <header class="mb-10">
@@ -12,7 +12,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
         Verification Workflow
       </h1>
       <p class="text-lg text-text-secondary">
-        Automated quality assurance with FLIP scoring — how workgraph closes the loop
+        Automated quality assurance with FLIP scoring — how wg closes the loop
         between task completion and proven correctness.
       </p>
     </header>
@@ -29,7 +29,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
         results back into the system.
       </p>
       <p>
-        Workgraph solves this with a three-stage verification pipeline:
+        wg solves this with a three-stage verification pipeline:
         a machine-checkable gate, an independent quality evaluation, and a
         feedback loop that evolves agent assignments based on measured performance.
       </p>
@@ -181,7 +181,7 @@ Diff: +147 lines across 2 files
       <ol>
         <li>
           <strong>Evaluation records:</strong> Every FLIP score is stored as an evaluation
-          in <code>.workgraph/agency/evaluations/</code>, tied to the agent that performed
+          in <code>.wg/agency/evaluations/</code>, tied to the agent that performed
           the work.
         </li>
         <li>
@@ -264,7 +264,7 @@ Diff: +147 lines across 2 files
 
       <h2>Configuration</h2>
 
-      <p>The verification pipeline is configured in <code>.workgraph/config.toml</code>:</p>
+      <p>The verification pipeline is configured in <code>.wg/config.toml</code>:</p>
 
       <pre><code><span class="c-dim">[agency]</span>
 <span class="c-dim"># Enable FLIP evaluation globally</span>
@@ -285,7 +285,7 @@ auto_evaluate = true</code></pre>
 
       <p>
         Most agent frameworks trust the agent's self-report: if it says "done," it's done.
-        Workgraph doesn't. Every completed task goes through an independent verification
+        wg doesn't. Every completed task goes through an independent verification
         pipeline that measures whether the output actually matches the intent.
       </p>
 

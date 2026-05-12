@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="workgraph — task graphs for humans and agents"
-  description="Work fast. Task graphs for humans and agents. Self-organizing, git-friendly, no server, no account."
+  title="wg — task graphs for humans and agents"
+  description="Works good. Task graphs for humans and agents. Self-organizing, git-friendly, no server, no account."
 >
   <link slot="head" rel="stylesheet" type="text/css" href="https://unpkg.com/asciinema-player@3/dist/bundle/asciinema-player.css" is:inline />
   <script slot="head" is:inline src="https://unpkg.com/asciinema-player@3/dist/bundle/asciinema-player.min.js"></script>
@@ -14,10 +14,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <!-- Hero -->
     <header class="mb-20 flex flex-col justify-center pt-12">
       <h1 class="text-6xl md:text-8xl font-bold text-zinc-50 leading-none mb-6 font-mono">
-        workgraph
+        wg
       </h1>
       <p class="text-xl md:text-2xl font-mono leading-relaxed mb-8">
-        <span style="color: #b8b8c0">work fast</span><br />
+        <span style="color: #b8b8c0">works good</span><br />
         <span style="color: #9c9ca4">task graphs for humans and agents</span><br />
         <span style="color: #838390">self-organizing process flowgraphs</span><br />
         <span style="color: #6b6b78">cybernetic autopoietic stigmergic medium</span>
@@ -43,13 +43,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="mb-16">
       <p class="text-lg text-text-primary leading-relaxed">
         Building complex systems requires coordination at the same scale.
-        Workgraph is a dependency graph of tasks — completing one unblocks the next.
+        wg is a dependency graph of tasks — completing one unblocks the next.
         A coordinator dispatches AI agents to ready work. Each agent receives context
         from upstream, executes autonomously, and reports results back to the graph.
       </p>
       <p class="text-text-secondary mt-4">
         For teams and individuals who coordinate humans and AI agents on complex projects.
-        No server, no account — just a <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/</code> directory in your repo.
+        No server, no account — just a <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.wg/</code> directory in your repo.
       </p>
     </section>
 
@@ -124,7 +124,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p class="text-text-secondary mt-4">
         Fan-out decomposes. Fan-in synchronizes. Arcs show convergence.
         Cycles with bounded iterations handle repeating workflows.
-        Stored in <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.workgraph/graph.jsonl</code> — git-friendly, no server, no account.
+        Stored in <code class="bg-bg-tertiary px-1.5 py-0.5 rounded text-sm font-mono text-zinc-50">.wg/graph.jsonl</code> — git-friendly, no server, no account.
       </p>
     </section>
 
@@ -162,13 +162,13 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     <section class="mb-16">
       <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">built with itself</h2>
       <p class="text-text-secondary mb-4">
-        Workgraph coordinates its own development. Every feature, bug fix,
+        wg coordinates its own development. Every feature, bug fix,
         and documentation page is a task in the graph — dispatched to agents,
         evaluated, and evolved. The tool that builds the organization is built
         by the organization.
       </p>
       <div class="self-hosting-screenshot mb-6">
-        <img src="/features/dashboard.png" alt="Workgraph TUI showing its own task graph during development" loading="lazy" />
+        <img src="/features/dashboard.png" alt="wg TUI showing its own task graph during development" loading="lazy" />
       </div>
       <!-- Update these numbers from wg status / wg agency stats -->
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg status
@@ -179,7 +179,7 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
   Agents          8 <span class="c-ip">concurrent</span>
   Roles          24 <span class="c-dim">(33 tradeoffs)</span></pre>
       <p class="text-text-secondary mt-4">
-        This page was written by a workgraph agent, reviewed by another,
+        This page was written by a wg agent, reviewed by another,
         and deployed through the same dependency graph it describes.
       </p>
     </section>
@@ -190,7 +190,7 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
       <p class="text-text-secondary mb-4">
         Install with <a href="https://rustup.rs" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Rust</a> (Linux, macOS, Windows):
       </p>
-      <pre class="install-cmd">cargo install --git https://github.com/graphwork/workgraph</pre>
+      <pre class="install-cmd">cargo install --git https://github.com/graphwork/wg</pre>
       <p class="text-text-secondary mt-6 mb-4">Then start a project:</p>
       <pre class="viz-block"><span class="text-text-tertiary">$</span> wg init
 <span class="text-text-tertiary">$</span> wg add "Design auth API"

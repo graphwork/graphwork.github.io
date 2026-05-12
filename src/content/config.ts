@@ -6,7 +6,7 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.date(),
-    author: z.string().default('Workgraph Team'),
+    author: z.string().default('wg Team'),
     readTime: z.string().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),

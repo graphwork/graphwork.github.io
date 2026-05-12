@@ -216,7 +216,7 @@ def build_cast():
     cast.advance(0.15)
     init_output = [
         f"{DIM}${RST} wg init",
-        f"Initialized workgraph at {BOLD}.workgraph{RST}",
+        f"Initialized wg at {BOLD}.wg{RST}",
         f"{GREEN}Agency is ready.{RST} The service will now auto-assign agents to tasks.",
         f"  Next: {CYAN}wg service start{RST}",
         "",

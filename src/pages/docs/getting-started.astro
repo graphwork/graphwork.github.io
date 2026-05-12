@@ -3,8 +3,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
 <DocsLayout
-  title="Getting Started — Workgraph"
-  description="Install workgraph, initialize a project, create tasks with dependencies, and start the coordinator service."
+  title="Getting Started — wg"
+  description="Install wg, initialize a project, create tasks with dependencies, and start the coordinator service."
 >
 
   <header class="mb-10">
@@ -21,16 +21,16 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     <h2>Install</h2>
 
     <p>
-      Workgraph is a single Rust binary. Install it with
+      wg is a single Rust binary. Install it with
       <a href="https://rustup.rs">Cargo</a>:
     </p>
 
-    <pre><code>cargo install --git https://github.com/graphwork/workgraph</code></pre>
+    <pre><code>cargo install --git https://github.com/graphwork/wg</code></pre>
 
     <p>Or clone and build from source:</p>
 
-    <pre><code>git clone https://github.com/graphwork/workgraph
-cd workgraph
+    <pre><code>git clone https://github.com/graphwork/wg
+cd wg
 cargo install --path .</code></pre>
 
     <p>Verify the installation:</p>
@@ -44,7 +44,7 @@ cargo install --path .</code></pre>
     <pre><code>wg setup</code></pre>
 
     <p>
-      This writes <code>~/.workgraph/config.toml</code> and configures your
+      This writes <code>~/.wg/config.toml</code> and configures your
       executor (claude or amplifier), default model, agency settings, and which
       lightweight model to use for assignment and evaluation (haiku is recommended).
     </p>
@@ -57,7 +57,7 @@ cargo install --path .</code></pre>
 wg init</code></pre>
 
     <p>
-      This creates a <code>.workgraph/</code> directory containing your task graph.
+      This creates a <code>.wg/</code> directory containing your task graph.
       No server, no account — everything lives next to your code. The directory
       is automatically added to <code>.gitignore</code>.
     </p>

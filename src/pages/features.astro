@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="Features — workgraph"
-  description="Explore workgraph's key capabilities: TUI dashboard, graph explorer, inspector, agent coordination, evaluation, cycles, and chat."
+  title="Features — wg"
+  description="Explore wg's key capabilities: TUI dashboard, graph explorer, inspector, agent coordination, evaluation, cycles, and chat."
 >
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
 
@@ -30,7 +30,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         Navigate with keyboard shortcuts — no mouse required.
       </p>
       <div class="feature-screenshot">
-        <img src="/features/dashboard.png" alt="Workgraph TUI dashboard showing split-pane view with task graph and detail inspector" loading="lazy" />
+        <img src="/features/dashboard.png" alt="wg TUI dashboard showing split-pane view with task graph and detail inspector" loading="lazy" />
       </div>
     </section>
 
@@ -46,7 +46,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         Resize the view or go fullscreen for complex graphs.
       </p>
       <div class="feature-screenshot">
-        <img src="/features/graph-explorer.png" alt="Workgraph graph explorer showing full dependency tree with arrows and status colors" loading="lazy" />
+        <img src="/features/graph-explorer.png" alt="wg graph explorer showing full dependency tree with arrows and status colors" loading="lazy" />
       </div>
     </section>
 
@@ -62,7 +62,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         The inspector renders markdown descriptions and shows live-updating logs.
       </p>
       <div class="feature-screenshot">
-        <img src="/features/inspector.png" alt="Workgraph inspector panel showing task detail with multiple tabs" loading="lazy" />
+        <img src="/features/inspector.png" alt="wg inspector panel showing task detail with multiple tabs" loading="lazy" />
       </div>
     </section>
 
@@ -78,7 +78,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         parallel workers. Monitor agent status, token usage, and task assignments in real time.
       </p>
       <div class="feature-screenshot">
-        <img src="/features/agents.png" alt="Workgraph agent coordination showing task visualization and agent status" loading="lazy" />
+        <img src="/features/agents.png" alt="wg agent coordination showing task visualization and agent status" loading="lazy" />
       </div>
     </section>
 
@@ -94,7 +94,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         Performance data drives an evolution cycle that creates and retires agent roles.
       </p>
       <div class="feature-screenshot">
-        <img src="/features/evaluation.png" alt="Workgraph evaluation system showing agency stats and agent performance" loading="lazy" />
+        <img src="/features/evaluation.png" alt="wg evaluation system showing agency stats and agent performance" loading="lazy" />
       </div>
     </section>
 
@@ -105,12 +105,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <p class="feature-badge">CLI</p>
       </div>
       <p class="feature-description">
-        Workgraph is a directed graph, not a DAG — it supports dependency cycles with
+        wg is a directed graph, not a DAG — it supports dependency cycles with
         bounded iterations. CI pipelines, convergence loops, and review workflows
         are first-class. Use <code>--converged</code> to signal when work has stabilized.
       </p>
       <div class="feature-screenshot">
-        <img src="/features/cycles.png" alt="Workgraph cycle detection showing iteration-bounded dependency cycles" loading="lazy" />
+        <img src="/features/cycles.png" alt="wg cycle detection showing iteration-bounded dependency cycles" loading="lazy" />
       </div>
     </section>
 
@@ -126,7 +126,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         provide context that flows through the dependency graph.
       </p>
       <div class="feature-screenshot">
-        <img src="/features/chat.png" alt="Workgraph messaging panel showing task messages and coordinator chat" loading="lazy" />
+        <img src="/features/chat.png" alt="wg messaging panel showing task messages and coordinator chat" loading="lazy" />
       </div>
     </section>
 
@@ -134,9 +134,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="mt-20 text-center">
       <h2 class="text-2xl font-bold text-zinc-50 mb-4 font-mono lowercase">get started</h2>
       <p class="text-text-secondary mb-6">
-        Install workgraph and start coordinating in minutes.
+        Install wg and start coordinating in minutes.
       </p>
-      <pre class="install-cmd mx-auto max-w-lg">cargo install --git https://github.com/graphwork/workgraph</pre>
+      <pre class="install-cmd mx-auto max-w-lg">cargo install --git https://github.com/graphwork/wg</pre>
       <div class="mt-8 flex justify-center gap-6">
         <a href="/quickstart/" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors font-mono">
           quickstart guide

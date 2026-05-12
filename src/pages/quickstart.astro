@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="Quickstart — workgraph"
-  description="From zero to agents working in 5 minutes. Install workgraph, create tasks, and watch AI agents coordinate."
+  title="Quickstart — wg"
+  description="From zero to agents working in 5 minutes. Install wg, create tasks, and watch AI agents coordinate."
 >
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
 
@@ -24,21 +24,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h2 class="step-title">install</h2>
       </div>
       <p class="text-text-secondary mb-4">
-        Workgraph is a single binary. Install it with
+        wg is a single binary. Install it with
         <a href="https://rustup.rs" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Rust</a>:
       </p>
-      <pre class="term"><span class="prompt">$</span> cargo install --git https://github.com/graphwork/workgraph
+      <pre class="term"><span class="prompt">$</span> cargo install --git https://github.com/graphwork/wg
 
-<span class="out">    Compiling workgraph v0.1.0
+<span class="out">    Compiling wg v0.1.0
     Finished `release` profile [optimized] target(s)
   Installing /home/you/.cargo/bin/wg
-   Installed package `workgraph v0.1.0`</span></pre>
+   Installed package `wg v0.1.0`</span></pre>
       <p class="text-text-secondary mt-4">
         Verify:
       </p>
       <pre class="term"><span class="prompt">$</span> wg --version
 
-<span class="out">workgraph 0.1.0</span></pre>
+<span class="out">wg 0.1.0</span></pre>
     </section>
 
     <!-- Step 2: Init -->
@@ -49,14 +49,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </div>
       <p class="text-text-secondary mb-4">
         Navigate to any project directory and run <code class="inline-code">wg init</code>.
-        This creates a <code class="inline-code">.workgraph/</code> directory —
+        This creates a <code class="inline-code">.wg/</code> directory —
         your task graph lives here, right next to your code.
       </p>
       <pre class="term"><span class="prompt">$</span> cd my-project
 <span class="prompt">$</span> wg init
 
-<span class="out">Added .workgraph to .gitignore
-Initialized workgraph at .workgraph
+<span class="out">Added .wg to .gitignore
+Initialized wg at .wg
 Seeded 8 roles and 11 tradeoffs.
 Created default agent: Careful Programmer (f5143935).
 Enabled auto_assign and auto_evaluate in config.

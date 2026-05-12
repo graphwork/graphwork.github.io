@@ -3,8 +3,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
 <DocsLayout
-  title="AI Assistant Integration — Workgraph"
-  description="Set up Claude Code, OpenCode, Codex, and other AI coding assistants with workgraph."
+  title="AI Assistant Integration — wg"
+  description="Set up Claude Code, OpenCode, Codex, and other AI coding assistants with wg."
 >
 
   <header class="mb-10">
@@ -21,7 +21,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     <h2>How it works</h2>
 
     <p>
-      Workgraph includes a skill definition that teaches AI assistants to use it as
+      wg includes a skill definition that teaches AI assistants to use it as
       a coordinator. The skill teaches agents to:
     </p>
 
@@ -34,7 +34,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 
     <h2>Claude Code</h2>
 
-    <p>Install the skill from the workgraph directory:</p>
+    <p>Install the skill from the wg directory:</p>
 
     <pre><code>wg skill install     # installs to ~/.claude/skills/</code></pre>
 
@@ -45,7 +45,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 
     <p>Add this to your project's <code>CLAUDE.md</code> (or <code>~/.claude/CLAUDE.md</code> for global):</p>
 
-    <pre><code>Use workgraph for task management.
+    <pre><code>Use wg for task management.
 
 At the start of each session, run `wg quickstart` to orient yourself.
 Use `wg service start` to dispatch work — do not manually claim tasks.</code></pre>
@@ -62,7 +62,7 @@ wg skill task &lt;task-id&gt;    # show skills relevant to a task</code></pre>
 
     <pre><code>## Task Management
 
-Use workgraph (`wg`) for task coordination.
+Use wg (`wg`) for task coordination.
 Run `wg quickstart` to orient yourself.
 
 As a top-level agent, use service mode:
