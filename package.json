@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "check:quickstart": "node scripts/check-pi-openrouter-quickstart.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

@@ -1,297 +1,317 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import canonicalQuickstart from '../content/pi-openrouter-canonical.txt?raw';
+
+const install = `cargo install --git https://github.com/graphwork/wg --locked
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+wg --version
+pi --version`;
+
+const catalog = `curl -fsSL 'https://openrouter.ai/api/v1/models?supported_parameters=tools' |
+  jq -r '.data[]
+    | select(.id | endswith(":free"))
+    | select((.architecture.input_modalities // []) | index("text"))
+    | select((.context_length // 0) >= 65536)
+    | select((.supported_parameters // []) | index("tools"))
+    | select((.pricing.prompt | tonumber?) == 0)
+    | select((.pricing.completion | tonumber?) == 0)
+    | [.id, (.context_length | tostring), (.expiration_date // "-")]
+    | @tsv'`;
+
+const probe = `read -r -p 'Paste one current :free model ID: ' MODEL
+pi update --models
+pi --list-models openrouter | grep -F "$MODEL"
+printf 'pi-openrouter-tool-probe\\n' > .pi-model-probe.txt
+pi --provider openrouter --model "$MODEL" -p \\
+  'Use the read tool to read .pi-model-probe.txt, then reply with only its text.'
+rm .pi-model-probe.txt`;
+
+const optionalWeb = `pi install npm:pi-web-access@0.13.0`;
+const optionalBrowserLinux = `npm install -g agent-browser@0.32.2
+agent-browser install --with-deps
+pi install npm:pi-agent-browser-native@0.2.70
+npm exec --yes --package pi-agent-browser-native@0.2.70 -- pi-agent-browser-doctor`;
+const serviceOps = `wg service status
+wg service restart
+wg service status
+wg tui`;
 ---
 
 <BaseLayout
-  title="Quickstart — wg"
-  description="From zero to agents working in 5 minutes. Install wg, create tasks, and watch AI agents coordinate."
+  title="Pi + free OpenRouter quickstart — WorksGood"
+  description="Install WorksGood and Pi, authenticate safely, test a current OpenRouter free model, select the Pi route explicitly, and open the WG TUI."
 >
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-16">
-
-    <header class="mb-16">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20">
+    <header class="mb-12">
+      <p class="eyebrow">verified 2026-07-18 · linux</p>
       <h1 class="text-3xl md:text-4xl font-bold text-zinc-50 leading-tight mb-4 font-mono">
-        your first 5 minutes
+        Pi + free OpenRouter quickstart
       </h1>
-      <p class="text-lg text-text-secondary font-mono">
-        install &rarr; init &rarr; tasks &rarr; agents &rarr; watch
+      <p class="text-lg text-text-secondary">
+        A copy/paste first run for WorksGood <code class="inline-code">wg 0.1.0</code>,
+        Pi 0.80.10, and a free model that is available <em>now</em>.
+      </p>
+      <p class="notice mt-6">
+        This is the current multi-command setup. A proposed one-command configurator is a
+        future design and does not exist yet.
       </p>
     </header>
 
-    <!-- Step 1: Install -->
-    <section class="mb-14">
-      <div class="step-header">
-        <span class="step-number">1</span>
-        <h2 class="step-title">install</h2>
-      </div>
-      <p class="text-text-secondary mb-4">
-        wg is a single binary. Install it with
-        <a href="https://rustup.rs" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Rust</a>:
-      </p>
-      <pre class="term"><span class="prompt">$</span> cargo install --git https://github.com/graphwork/wg
+    <nav class="toc mb-14" aria-label="Quickstart contents">
+      <a href="#names">Names</a>
+      <a href="#install">Install</a>
+      <a href="#login">Login</a>
+      <a href="#model">Find a free model</a>
+      <a href="#project">Initialize + select Pi</a>
+      <a href="#plugin">Plugin</a>
+      <a href="#web-tools">Optional web tools</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+    </nav>
 
-<span class="out">    Compiling wg v0.1.0
-    Finished `release` profile [optimized] target(s)
-  Installing /home/you/.cargo/bin/wg
-   Installed package `wg v0.1.0`</span></pre>
-      <p class="text-text-secondary mt-4">
-        Verify:
-      </p>
-      <pre class="term"><span class="prompt">$</span> wg --version
-
-<span class="out">wg 0.1.0</span></pre>
-    </section>
-
-    <!-- Step 2: Init -->
-    <section class="mb-14">
-      <div class="step-header">
-        <span class="step-number">2</span>
-        <h2 class="step-title">initialize a project</h2>
-      </div>
-      <p class="text-text-secondary mb-4">
-        Navigate to any project directory and run <code class="inline-code">wg init</code>.
-        This creates a <code class="inline-code">.wg/</code> directory —
-        your task graph lives here, right next to your code.
-      </p>
-      <pre class="term"><span class="prompt">$</span> cd my-project
-<span class="prompt">$</span> wg init
-
-<span class="out">Added .wg to .gitignore
-Initialized wg at .wg
-Seeded 8 roles and 11 tradeoffs.
-Created default agent: Careful Programmer (f5143935).
-Enabled auto_assign and auto_evaluate in config.
-
-Agency is ready. The service will now auto-assign agents to tasks.
-  Next: wg service start</span></pre>
-      <p class="text-text-secondary mt-4">
-        No server. No account. Just a directory in your repo.
+    <section id="names" class="step">
+      <h2>Know the four names</h2>
+      <ul>
+        <li><strong>WorksGood</strong> is the product.</li>
+        <li><strong><code>wg</code></strong> is its task-graph, service, and TUI CLI.</li>
+        <li><strong><code>@worksgood/pi</code></strong> is the npm-package identity of the WorksGood Pi integration. Its compatible build is embedded in <code>wg</code>, not fetched separately from npm.</li>
+        <li><strong><code>pi-worksgood</code></strong> is the extension label Pi displays.</li>
+      </ul>
+      <p>
+        Pi itself is the coding-agent runtime installed from
+        <code>@earendil-works/pi-coding-agent</code>. If <code>wg --version</code>
+        prints WireGuard output, stop and resolve the PATH collision below.
       </p>
     </section>
 
-    <!-- Step 3: Add Tasks -->
-    <section class="mb-14">
-      <div class="step-header">
-        <span class="step-number">3</span>
-        <h2 class="step-title">create tasks</h2>
-      </div>
-      <p class="text-text-secondary mb-4">
-        Add tasks with <code class="inline-code">wg add</code>.
-        Use <code class="inline-code">--after</code> to declare dependencies.
-        Task IDs are auto-generated from the title.
-      </p>
-      <pre class="term"><span class="prompt">$</span> wg add "Design the API"
-
-<span class="out">Added task: Design the API (design-the-api)
-  Use --after design-the-api to depend on this task</span>
-
-<span class="prompt">$</span> wg add "Build the backend" --after design-the-api
-
-<span class="out">Added task: Build the backend (build-the-backend)
-  Use --after build-the-backend to depend on this task</span>
-
-<span class="prompt">$</span> wg add "Write tests" --after build-the-backend
-
-<span class="out">Added task: Write tests (write-tests)
-  Use --after write-tests to depend on this task</span>
-
-<span class="prompt">$</span> wg add "Deploy to staging" --after build-the-backend,write-tests
-
-<span class="out">Added task: Deploy to staging (deploy-to-staging)
-  Use --after deploy-to-staging to depend on this task</span></pre>
-      <p class="text-text-secondary mt-4">
-        See what you built:
-      </p>
-      <pre class="term"><span class="prompt">$</span> wg viz
-
-<span class="c-open">design-the-api  (open)</span>
-<span class="c-dim">└→</span> <span class="c-open">build-the-backend  (open)</span>
-<span class="c-dim">  ├→</span> <span class="c-open">write-tests  (open)</span> <span class="c-dim">────────┐</span>
-<span class="c-dim">  └→</span> <span class="c-open">deploy-to-staging  (open)</span> <span class="c-dim">←─┘</span></pre>
-      <p class="text-text-secondary mt-4">
-        <code class="inline-code">deploy-to-staging</code> waits for both
-        <code class="inline-code">build-the-backend</code> and
-        <code class="inline-code">write-tests</code>.
-        Only <code class="inline-code">design-the-api</code> is ready to start — it has no blockers:
-      </p>
-      <pre class="term"><span class="prompt">$</span> wg ready
-
-<span class="out">Ready tasks:
-  design-the-api - Design the API</span></pre>
-    </section>
-
-    <!-- Step 4: Start the Service -->
-    <section class="mb-14">
-      <div class="step-header">
-        <span class="step-number">4</span>
-        <h2 class="step-title">start the service</h2>
-      </div>
-      <p class="text-text-secondary mb-4">
-        The coordinator watches the graph, claims ready tasks, and spawns AI agents to work on them.
-        When an agent finishes, downstream tasks become ready and new agents spin up.
-      </p>
-      <pre class="term"><span class="prompt">$</span> wg service start --max-agents 3
-
-<span class="out">Coordinator started (pid 42851)
-  Max parallel agents: 3
-  Executor: claude
-  Watching for ready tasks...</span></pre>
-      <p class="text-text-secondary mt-4">
-        That's it. The service runs in the background. It picks up
-        <code class="inline-code">design-the-api</code> immediately — the only task with no blockers.
+    <section id="install" class="step">
+      <h2>1. Install WorksGood and Pi</h2>
+      <p>Install Rust/Cargo and Node.js 22.19 or newer, then run:</p>
+      <pre class="term"><code>{install}</code></pre>
+      <p>
+        Pi's documented <code>--ignore-scripts</code> install disables dependency lifecycle
+        scripts; Pi does not need them for a normal install.
       </p>
     </section>
 
-    <!-- Step 5: Watch -->
-    <section class="mb-14">
-      <div class="step-header">
-        <span class="step-number">5</span>
-        <h2 class="step-title">watch agents work</h2>
-      </div>
-      <p class="text-text-secondary mb-4">
-        Open the terminal UI to see what's happening in real time:
+    <section id="login" class="step">
+      <h2>2. Authenticate Pi safely</h2>
+      <p>
+        Create a key on OpenRouter's <a href="https://openrouter.ai/settings/keys">Keys page</a>.
+        Start <code>pi</code>, enter <code>/login</code>, choose <strong>Sign in with an API
+        key</strong>, choose <strong>OpenRouter</strong>, and paste the key only into Pi's
+        <strong>Enter OpenRouter API key</strong> secret prompt.
       </p>
-      <pre class="term"><span class="prompt">$</span> wg tui</pre>
-      <p class="text-text-secondary mt-4 mb-4">
-        The TUI shows the task graph, agent activity, and logs updating live.
-        Or check status from the command line:
+      <p class="warning">
+        Never put the key in a command, environment assignment, project file, or shell
+        history. Use a private, unrecorded terminal. Pi stores the login at
+        <code>~/.pi/agent/auth.json</code> with mode <code>0600</code>; never print or commit it.
       </p>
-      <pre class="term"><span class="prompt">$</span> wg agents
-
-<span class="out">PID    TASK               STATUS   ELAPSED
-42903  design-the-api     running  2m 14s</span>
-
-<span class="prompt">$</span> wg list
-
-<span class="c-ip">[~] design-the-api - Design the API</span>
-<span class="c-open">[ ] build-the-backend - Build the backend</span>
-<span class="c-open">[ ] write-tests - Write tests</span>
-<span class="c-open">[ ] deploy-to-staging - Deploy to staging</span></pre>
+      <p>The first model probe in the next step is the exact point that requires this login.</p>
     </section>
 
-    <!-- Step 6: The aha moment -->
-    <section class="mb-14">
-      <div class="step-header">
-        <span class="step-number">6</span>
-        <h2 class="step-title">tasks complete &mdash; the cascade</h2>
-      </div>
-      <p class="text-text-secondary mb-4">
-        When <code class="inline-code">design-the-api</code> finishes,
-        the coordinator immediately spawns an agent for
-        <code class="inline-code">build-the-backend</code>. When that completes,
-        <code class="inline-code">write-tests</code> becomes ready. Once both are done,
-        <code class="inline-code">deploy-to-staging</code> unblocks.
+    <section id="model" class="step">
+      <h2>3. Discover a current free model, then prove it works</h2>
+      <p>
+        OpenRouter's live public catalog is authoritative. Free-model availability, limits,
+        expiration, context, provider capacity, and actual tool support all change. No model
+        on this page is a permanent default.
       </p>
-      <pre class="term"><span class="prompt">$</span> wg viz
-
-<span class="c-done">design-the-api  (done)</span>
-<span class="c-dim">└→</span> <span class="c-done">build-the-backend  (done)</span>
-<span class="c-dim">  ├→</span> <span class="c-done">write-tests  (done)</span> <span class="c-dim">────────┐</span>
-<span class="c-dim">  └→</span> <span class="c-ip">deploy-to-staging  (in-progress)</span> <span class="c-dim">←─┘</span></pre>
-      <p class="text-text-secondary mt-4">
-        You defined the structure. The graph did the rest.
+      <pre class="term"><code>{catalog}</code></pre>
+      <p>
+        The output is model ID, context length, and expiration. Install <code>jq</code> with
+        your package manager, or use <a href="https://openrouter.ai/models">OpenRouter Models</a>
+        and its Free/tool filters. Catalog metadata is advisory, so validate the exact choice
+        through Pi before persisting it:
+      </p>
+      <pre class="term"><code>{probe}</code></pre>
+      <p>
+        Expected final text: <code>pi-openrouter-tool-probe</code>. If listing, auth, limits,
+        availability, or the read-tool call fails, choose another current candidate. For
+        example, <code>nvidia/nemotron-3-ultra-550b-a55b:free</code> matched on 2026-07-18;
+        that is a dated example, not an eternal default. The random
+        <code>openrouter/free</code> router is not a pinned, reproducible WG route.
       </p>
     </section>
 
-    <!-- What's next -->
-    <section class="mb-8 border-t border-border-primary pt-14">
-      <h2 class="text-xl font-bold text-zinc-50 mb-6 font-mono lowercase">what's next</h2>
-      <div class="space-y-4 text-text-secondary">
-        <p>
-          <strong class="text-zinc-50">Add validation gates</strong> &mdash;
-          <code class="inline-code">wg add "Security audit" --verify "All findings documented"</code>
-          &mdash; tasks enter <code class="inline-code">pending-validation</code> before completing.
-        </p>
-        <p>
-          <strong class="text-zinc-50">Create cycles</strong> &mdash;
-          repeating processes like CI or convergence loops. Agents pick up where previous iterations left off.
-        </p>
-        <p>
-          <strong class="text-zinc-50">Fan out work</strong> &mdash;
-          decompose into parallel subtasks. The coordinator runs them simultaneously up to
-          <code class="inline-code">--max-agents</code>.
-        </p>
-        <p>
-          <strong class="text-zinc-50">Evolve agents</strong> &mdash;
-          <code class="inline-code">wg agency init</code> seeds roles and tradeoffs.
-          After evaluations, an evolver mutates the best performers.
-        </p>
-      </div>
+    <section id="project" class="step">
+      <h2>4. Initialize a fresh project and select Pi explicitly</h2>
+      <p>
+        Run this in the same shell where <code>MODEL</code> was set. It deliberately keeps
+        both strong worker work and weak agency/meta work on the execution system you chose.
+      </p>
+      <!-- PI_OPENROUTER_CANONICAL_START -->
+      <pre class="term"><code>{canonicalQuickstart.trim()}</code></pre>
+      <!-- PI_OPENROUTER_CANONICAL_END -->
+      <p>Expected readiness signals:</p>
+      <pre class="term"><code>{`console wired:    yes
+Active named profile: pi *
+MODEL ... pi:openrouter:<the model you tested>   HANDLER pi
+Service: running`}</code></pre>
+      <p class="notice">
+        <code>wg init</code> is graph-only until the profile commands explicitly select Pi.
+        <code>wg tui</code> is also only a graph viewer: opening it does not initialize,
+        authenticate, select OpenRouter, change a profile/model, or start the service.
+      </p>
+      <h3>Already configured?</h3>
+      <p>Do not run the fresh-profile block blindly. Inspect first:</p>
+      <pre class="term"><code>{`wg profile show
+wg config --list
+wg config --models
+wg config lint`}</code></pre>
+      <p>
+        Then use <code>wg setup</code> to review scope and changes, or deliberately edit your
+        named profile. <code>wg profile use</code> is an authoritative global activation and
+        may back up/clear project-local routing pins that would shadow it.
+      </p>
     </section>
 
+    <section id="plugin" class="step">
+      <h2>5. Verify <code>pi-worksgood</code></h2>
+      <p>
+        <code>wg pi-plugin install</code> materializes the compatibility-locked
+        <code>@worksgood/pi</code> build embedded in your installed <code>wg</code> and adds its
+        absolute path to Pi settings. It is idempotent. <code>wg pi-plugin status</code> should
+        report <code>build ready: yes</code> and <code>console wired: yes</code>. Restart Pi or
+        use <code>/reload</code>; its extension list should show exactly
+        <code>pi-worksgood</code>.
+      </p>
+      <p>
+        Standalone Pi uses that settings entry. WG-spawned Pi workers are hermetic instead:
+        WG passes the exact embedded/cache extension by absolute <code>pi -e</code> path with
+        ordinary discovery disabled. Hermetic workers do not depend on a global npm package
+        or the standalone-console entry.
+      </p>
+      <p>
+        Legacy <code>@worksgood/wg-pi-plugin</code> or old
+        <code>.../wg/pi-plugin/.../dist/index.js</code> settings are migrated by
+        <code>wg pi-plugin install</code>. After Pi visibly loads one
+        <code>pi-worksgood</code>, follow the one-time removal notice (normally
+        <code>pi remove npm:@worksgood/wg-pi-plugin</code>).
+      </p>
+    </section>
+
+    <section id="web-tools" class="step">
+      <h2>6. Optional web capabilities</h2>
+      <p>Pi packages run with your full user permissions. Review third-party source first.</p>
+      <h3>Search and readable content</h3>
+      <pre class="term"><code>{optionalWeb}</code></pre>
+      <p>
+        <code>pi-web-access</code> provides web search, readable page/PDF content extraction,
+        GitHub cloning, and optional video analysis. Use it when you need sources or content,
+        not control of a rendered UI.
+      </p>
+      <h3>Interactive browser automation</h3>
+      <pre class="term"><code>{optionalBrowserLinux}</code></pre>
+      <p>
+        On macOS use <code>agent-browser install</code> without
+        <code>--with-deps</code>. This tested pairing is pinned because wrapper 0.2.70 audits
+        <code>agent-browser</code> 0.32.2 exactly and its doctor rejects version drift;
+        <code>agent-browser</code>'s npm engine requires Node.js 24+. Consult the wrapper's
+        current README/support matrix before upgrading either side.
+      </p>
+      <p>
+        Browser automation is for DOM inspection, clicks, forms, screenshots, downloads,
+        authenticated profiles, and live UI QA. It is heavier and exposes visible
+        page/profile content to the model. Neither package bypasses CAPTCHAs or site policy.
+      </p>
+    </section>
+
+    <section id="operations" class="step">
+      <h2>Service operations</h2>
+      <pre class="term"><code>{serviceOps}</code></pre>
+      <p>
+        Restart preserves the selected profile/model but does not log Pi in. Existing workers
+        keep their model; newly spawned workers receive a newly activated profile. Stop with
+        <code>wg service stop</code>.
+      </p>
+      <h3>Platform notes</h3>
+      <ul>
+        <li><strong>Linux:</strong> the full graph/plugin/profile/service sequence was tested in isolated HOME/project directories. Browser <code>--with-deps</code> may invoke the system package manager.</li>
+        <li><strong>macOS:</strong> WG, Pi, OpenRouter, and <code>pi install</code> commands are the same. Use <code>brew install jq</code>; omit browser <code>--with-deps</code>.</li>
+        <li><strong>Termux:</strong> Pi documents GitHub/F-Droid Termux + Termux:API, then <code>pkg install nodejs termux-api git</code> and the same Pi npm install. Use <code>pkg install jq</code>. Pi has no image clipboard there. WorksGood does not currently publish an Android/Termux release target, and this page does not claim the desktop Chromium add-on works there.</li>
+      </ul>
+    </section>
+
+    <section id="troubleshooting" class="step">
+      <h2>Troubleshooting</h2>
+
+      <h3 id="path-or-the-wrong-wg-command">PATH or the wrong <code>wg</code></h3>
+      <pre class="term"><code>{`command -v wg pi node npm
+wg --version
+pi --version`}</code></pre>
+      <p>
+        Cargo normally installs to <code>~/.cargo/bin</code>. npm reports its prefix with
+        <code>npm prefix -g</code>. Put the corresponding executable directories on PATH and
+        open a new shell. If <code>wg</code> is WireGuard, do not overwrite it with
+        <code>--force</code>; invoke WorksGood by a verified absolute Cargo path or use a
+        private bin directory and resolve the collision deliberately.
+      </p>
+
+      <h3 id="failed-to-run-wg-no-such-file-or-directory"><code>Failed to run wg: No such file or directory</code></h3>
+      <pre class="term"><code>{`cargo install --git https://github.com/graphwork/wg --locked
+wg --version
+wg dev-check
+wg service restart
+wg tui`}</code></pre>
+      <p>Close the old TUI and start the newly installed binary. If it persists, preserve <code>command -v wg</code>, version output, and <code>.wg/service/</code> logs for diagnosis.</p>
+
+      <h3 id="pi-is-missing">Pi is missing</h3>
+      <pre class="term"><code>{`command -v pi
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+pi --version`}</code></pre>
+      <p>Confirm Node.js 22.19+ and npm's global executable directory on PATH, then restart WG.</p>
+
+      <h3 id="plugin-is-missing-stale-or-duplicated">Plugin missing, stale, or duplicated</h3>
+      <pre class="term"><code>{`wg pi-plugin status
+wg pi-plugin install
+wg pi-plugin status`}</code></pre>
+      <p>Restart Pi and look for exactly one <code>pi-worksgood</code>. Do not install <code>npm:@worksgood/pi</code>; WG carries its matching build.</p>
+
+      <h3 id="model-is-absent-or-no-longer-free">Model absent, limited, or no longer free</h3>
+      <p>Repeat the live catalog filter and Pi tool probe, then deliberately update both profile tiers. <code>:free</code> never promises permanent availability, unlimited use, fixed context, or reliable tools.</p>
+
+      <h3 id="openrouter-authentication-fails">OpenRouter authentication fails</h3>
+      <p>
+        In Pi, repeat <code>/login</code> → API key → OpenRouter. Do not pass the key on a
+        command line. “No models available” or “No API key found for openrouter” means login
+        did not succeed in that HOME. Check permissions without printing the file:
+      </p>
+      <pre class="term"><code>ls -l ~/.pi/agent/auth.json</code></pre>
+      <p>If a key was exposed, revoke it in OpenRouter and create a replacement. Pi's OpenRouter login is separate from WG-native endpoint secrets; <code>pi:openrouter:...</code> intentionally uses Pi-owned authentication.</p>
+    </section>
+
+    <footer class="source-note">
+      Canonical repository guide:
+      <a href="https://github.com/graphwork/wg/blob/main/docs/guides/pi-openrouter-quickstart.md">
+        docs/guides/pi-openrouter-quickstart.md
+      </a>
+    </footer>
   </div>
 </BaseLayout>
 
 <style>
-  /* Step headers */
-  .step-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+  .step { margin-bottom: 3.5rem; scroll-margin-top: 5rem; }
+  .step h2 {
+    color: #f4f4f5; font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem;
   }
-
-  .step-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: 9999px;
-    border: 1px solid var(--color-accent-primary);
-    color: var(--color-accent-primary);
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    flex-shrink: 0;
+  .step h3 {
+    color: #f4f4f5; font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 1rem; font-weight: 700; margin: 1.75rem 0 .75rem;
+    scroll-margin-top: 5rem;
   }
-
-  .step-title {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #f4f4f5;
-    text-transform: lowercase;
-  }
-
-  /* Terminal blocks */
-  .term {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.875rem;
-    line-height: 1.6;
-    font-variant-ligatures: none;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-primary);
-    border-radius: 0.5rem;
-    padding: 1rem 1.25rem;
-    overflow-x: auto;
-    margin: 0;
-    color: var(--color-text-primary);
-  }
-
-  /* Prompt character */
-  .prompt {
-    color: var(--color-text-tertiary);
-    user-select: none;
-  }
-
-  /* Command output (slightly dimmer) */
-  .out {
-    color: var(--color-text-secondary);
-  }
-
-  /* Inline code */
-  .inline-code {
-    background: var(--color-bg-tertiary);
-    padding: 0.15rem 0.4rem;
-    border-radius: 0.25rem;
-    font-size: 0.875em;
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    color: #f4f4f5;
-  }
-
-  /* Status colors */
-  .c-done { color: #22c55e; }
-  .c-ip { color: #eab308; }
-  .c-open { color: #e5e7eb; }
-  .c-dim { color: #6b7280; }
+  .step p, .step li { color: var(--color-text-secondary); line-height: 1.75; }
+  .step p { margin: .85rem 0; }
+  .step ul { list-style: disc; padding-left: 1.5rem; }
+  .step a, .source-note a { color: var(--color-accent-primary); text-decoration: underline; text-underline-offset: 2px; }
+  .eyebrow { color: var(--color-accent-primary); font: 700 .75rem 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .75rem; }
+  .toc { display: flex; flex-wrap: wrap; gap: .6rem 1rem; padding: 1rem; border: 1px solid var(--color-border-primary); border-radius: .5rem; background: var(--color-bg-secondary); }
+  .toc a { color: var(--color-text-secondary); font: .8rem 'JetBrains Mono', monospace; text-decoration: none; }
+  .toc a:hover { color: var(--color-accent-primary); }
+  .term { font: .84rem/1.6 'JetBrains Mono', ui-monospace, monospace; white-space: pre; background: var(--color-bg-secondary); border: 1px solid var(--color-border-primary); border-radius: .5rem; padding: 1rem 1.25rem; overflow-x: auto; color: var(--color-text-primary); margin: 1rem 0; }
+  .inline-code, .step code { background: var(--color-bg-tertiary); padding: .12rem .32rem; border-radius: .22rem; font-family: 'JetBrains Mono', ui-monospace, monospace; color: #f4f4f5; }
+  .term code { background: transparent; padding: 0; }
+  .notice, .warning { border-left: 3px solid var(--color-accent-primary); padding: .75rem 1rem; background: var(--color-bg-secondary); }
+  .warning { border-left-color: #eab308; }
+  .source-note { border-top: 1px solid var(--color-border-primary); padding-top: 2rem; color: var(--color-text-tertiary); font-size: .875rem; }
 </style>

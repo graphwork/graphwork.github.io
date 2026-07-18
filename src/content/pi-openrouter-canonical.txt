@@ -1,0 +1,16 @@
+mkdir -p ~/work/my-wg-project
+cd ~/work/my-wg-project
+wg init
+
+wg pi-plugin install
+WG_MODEL="pi:openrouter:$MODEL"
+wg profile pi --strong "$WG_MODEL" --weak "$WG_MODEL"
+wg profile use pi --no-reload
+
+wg pi-plugin status
+wg profile show
+wg config --models
+
+wg service start
+wg service status
+wg tui

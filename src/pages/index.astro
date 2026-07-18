@@ -188,22 +188,14 @@ Analyst    Balanced  <span class="c-done">.88</span></pre>
     <section class="mb-16">
       <h2 class="text-xl font-bold text-zinc-50 mb-4 font-mono lowercase">get started</h2>
       <p class="text-text-secondary mb-4">
-        Install with <a href="https://rustup.rs" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Rust</a> (Linux, macOS, Windows):
+        Install WorksGood with <a href="https://rustup.rs" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Rust</a>, then explicitly select an execution system. Pi + a currently available OpenRouter free model is the recommended first test:
       </p>
-      <pre class="install-cmd">cargo install --git https://github.com/graphwork/wg</pre>
-      <p class="text-text-secondary mt-6 mb-4">Then start a project:</p>
-      <pre class="viz-block"><span class="text-text-tertiary">$</span> wg init
-<span class="text-text-tertiary">$</span> wg add "Design auth API"
-<span class="text-text-tertiary">$</span> wg add "Implement endpoints" \
-    --after design-auth-api \
-    --verify "cargo test passes"
-<span class="text-text-tertiary">$</span> wg add "Integration tests" \
-    --after implement-endpoints
-<span class="text-text-tertiary">$</span> wg service start --max-agents 4
-<span class="text-text-tertiary">$</span> wg chat "What's blocking auth?"</pre>
+      <pre class="install-cmd">cargo install --git https://github.com/graphwork/wg --locked</pre>
+      <p class="text-text-secondary mt-6 mb-4">
+        The verified quickstart covers safe interactive authentication, live free-model discovery, <code>pi-worksgood</code>, explicit Pi routing, service startup, and <code>wg tui</code>. Opening the TUI alone never selects OpenRouter or changes configuration.
+      </p>
       <p class="text-text-secondary mt-4">
-        The service dispatches agents, verifies results, evolves
-        the agent population, and loops. You define structure. It does the rest.
+        <a href="/quickstart/" class="text-accent-primary hover:text-accent-hover underline underline-offset-2 transition-colors">Follow the Pi + OpenRouter quickstart →</a>
       </p>
     </section>
 
